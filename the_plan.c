@@ -6,9 +6,26 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 15:45:06 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/02/17 15:45:37 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/02/17 16:36:19 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* Todos before we write any code:
+ * 
+ * Figure out how branches work in git and set things up so we have a main branch, 
+ * and a separate branch for each of us to be working with ourselves. And then we can 
+ * do pull requests to put stuff into the main branch after we have both reviewed 
+ * all the changes.
+ 
+ * Figure out what syntax trees are and why they would be useful for this project
+ 
+ * read up on signals processing, cover whatever we missed by not doing minitalk as a project
+ 
+ * make a plan on how to divide the work to start with
+
+ Review in detail this post:
+ https://dashboard.hive.fi/topics/101/messages?cursus_id=21 
+ * */
 
 /* Your shell should:
 • Display a prompt when waiting for a new command.

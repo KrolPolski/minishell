@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 15:45:06 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/02/17 16:36:19 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/02/26 14:31:48 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,13 @@
  * Figure out how branches work in git and set things up so we have a main branch, 
  * and a separate branch for each of us to be working with ourselves. And then we can 
  * do pull requests to put stuff into the main branch after we have both reviewed 
- * all the changes.
+ * all the changes. Andrey
  
- * Figure out what syntax trees are and why they would be useful for this project
+ * Figure out what syntax trees are and why they would be useful for this project: Andrey
  
- * read up on signals processing, cover whatever we missed by not doing minitalk as a project
+ * read up on signals processing, cover whatever we missed by not doing minitalk as a project - Ryan
+
+ * read up on unit testing, make a plan for automated unit tests to grow as the project grows - Ryan
  
  * make a plan on how to divide the work to start with
 

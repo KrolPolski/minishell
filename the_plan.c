@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 15:45:06 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/02/26 14:31:48 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/02/26 15:11:29 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,26 @@
 
  Review in detail this post:
  https://dashboard.hive.fi/topics/101/messages?cursus_id=21 
- * */
+ * 
+* Familiarize ourselves with all the permitted functions:
+	readline, rl_clear_history, rl_on_new_line,
+	rl_replace_line, rl_redisplay, add_history,
+	printf, malloc, free, write, access, open, read,
+	close, fork, wait, waitpid, wait3, wait4, signal,
+	sigaction, sigemptyset, sigaddset, kill, exit,
+	getcwd, chdir, stat, lstat, fstat, unlink, execve,
+	dup, dup2, pipe, opendir, readdir, closedir,
+	strerror, perror, isatty, ttyname, ttyslot, ioctl,
+	getenv, tcsetattr, tcgetattr, tgetent, tgetflag,
+	tgetnum, tgetstr, tgoto, tputs
+ */
+
+/*readline is keg-only, which means it was not symlinked into /Users/rboudwin/.brew,
+because macOS provides BSD libedit.
+
+For compilers to find readline you may need to set:
+  export LDFLAGS="-L/Users/rboudwin/.brew/opt/readline/lib"
+  export CPPFLAGS="-I/Users/rboudwin/.brew/opt/readline/include"*/
 
 /* Your shell should:
 • Display a prompt when waiting for a new command.

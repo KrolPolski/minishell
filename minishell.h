@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/05 18:09:58 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/11 13:19:32 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,14 @@
 # include "Libft/vec.h"
 # include "Libft/ft_printf.h"
 # include "Libft/get_next_line_bonus.h"
+# include <signal.h>
 /*# include <readline/readline.h>
 # include <readline/history.h>*/
 # include <stdio.h>
+
+void	set_signal_action(void);
+char *readline (const char *prompt);
+
 # include <fcntl.h>
 
 char	*readline(const char *prompt);

@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/05 14:36:43 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/11 13:15:05 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ int	main(int argc, char **argv, char **env)
 	char		*input;
 	HIST_ENTRY	*hist_entry;
 
+
+	set_signal_action();
+
 	i = 0;
 	while (env[i] != NULL)
 	{
@@ -40,6 +43,10 @@ int	main(int argc, char **argv, char **env)
 	}
 	read_history(".shell_history");
 	ft_prompt(username, "AR-Shell", init_dir);
+
+	while (i)
+		sleep(1);
+
 
 	input = readline("\nEnter something: ");
 
@@ -58,6 +65,7 @@ int	main(int argc, char **argv, char **env)
 			printf("Line %d: %s\n", i, hist_entry->line);
 		i++;
 	}
+
 	//readline();
 	//cleanup
 

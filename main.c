@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/02/26 18:48:01 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/11 13:15:05 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ int	main(int argc, char **argv, char **env)
 	char	*init_dir;
 	int		i;
 
+	set_signal_action();
+	i = 0;
 	while (env[i] != NULL)
 	{
 		if (ft_strnstr(env[i], "USER=", 5))
@@ -32,6 +34,8 @@ int	main(int argc, char **argv, char **env)
 		i++;
 	}
 	ft_prompt(username, "AR-Shell", init_dir);
+	while (i)
+		sleep(1);
 	//readline();
 	//cleanup
 	free(username);

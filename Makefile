@@ -3,7 +3,7 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+         #
+#    By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 13:42:54 by rboudwin          #+#    #+#              #
 #    Updated: 2024/03/11 13:20:17 by rboudwin         ###   ########.fr        #
@@ -23,7 +23,7 @@ all: $(NAME)
 	@$(CC) $(CFLAGS) -o $@ -c $< 
 
 $(NAME): $(OBJS) 
-	@$(CC) $(OBJS) -o $(NAME)
+	@$(CC) $(OBJS) -o $(NAME) -lreadline
 
 Libft/libft.a: 
 	$(MAKE) -C Libft/ all

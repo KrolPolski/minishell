@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/05 19:04:48 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/07 19:03:11 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,11 +94,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq)
 	if (q)
 		*q = str;
 	ret = *str;
-	if (*str == 0)
-	{
-		// do nothing
-	}
-	else if (*str == '|' || *str == '(' || *str == ')' || *str == ';' || *str == '&')
+	if (*str == '|' || *str == '(' || *str == ')' || *str == ';' || *str == '&')
 		str++;
 	else if (*str == '>')
 	{
@@ -118,7 +114,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq)
 			str++;
 		}
 	}
-	else
+	else if (*str != 0)
 	{
 		ret = 'a';
 		while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str))
@@ -210,7 +206,7 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es)
 			panic("missing file for redirection");
 		if (tok == '<')
 			cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
-		else if (tok == '<')
+		else if (tok == '>')
 			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
 		else if (tok == '+')
 			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
@@ -242,9 +238,8 @@ t_cmd	*parseexec(char **ps, char *es)
 	t_execcmd	*cmd;
 	t_cmd		*ret;
 
- 	if (peek(ps, es, "("))
+	if (peek(ps, es, "("))
 		return (parseblock(ps, es));
-
 	ret = execcmd();
 	cmd = (t_execcmd *)ret;
 
@@ -318,19 +313,64 @@ t_cmd	*nullterminate(t_cmd *cmd)
 	return (cmd);
 }
 
-int	main(void)
+int fork1(void)
+{
+	int	pid;
+
+	pid = fork();
+	if (pid == -1)
+		panic("fork");
+	return (pid);
+}
+
+void runcmd(t_cmd *cmd)
+{
+	int			p[2];
+	t_backcmd	*bcmd;
+	t_execcmd	*ecmd;
+	t_listcmd	*lcmd;
+	t_pipecmd	*pcmd;
+	t_redircmd	*rcmd;
+
+	exit(0);
+}
+
+
+int	main	(void)
 {
 	int			fd;
 	char		*str;
 	t_cmd		*cmd;
+	int			status;
+	t_execcmd	*ecmd;
+	char		buf[100];
 
-	fd = 1;
+	fd = 0;
 	while (str != NULL)
 	{
 		str = get_next_line(fd);
-		//printf("String: %s\n", str);
+		//printf("> ");
 		cmd = parsecommand(str);
-		printf("type %d\n", cmd->type);
+		if (cmd->type == 1)
+		{
+			ecmd = (t_execcmd *)cmd;
+			if (ft_strncmp(ecmd->argv[0], "cd", 3) == 0)
+			{
+				if (chdir(ecmd->argv[1]) < 0)
+					printf("cannot cd %s\n", ecmd->argv[1]);
+			}
+			else if (ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
+			{
+				if (!(getcwd(buf, sizeof(buf))))
+					printf("pwd error\n");
+				else
+					(printf("%s%s", buf, "\n"));
+			}
+		}
+		// if (fork1() == 0)
+		// 	runcmd(cmd);
+		// wait(&status);
+		//printf("type %d\n", cmd->type);
 		free(str);
 	}
 	return (0);

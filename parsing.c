@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/07 19:03:11 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/11 18:19:33 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq)
 	char	*str;
 	int		ret;
 	char	whitespace[] = " \t\r\n\v";
-	char	symbols[] = "<|>&;()";
+	char	symbols[] = "<|>";
 
 	str = *pstr;
 	while (str < end_str && ft_strchr(whitespace, *str))
@@ -94,7 +94,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq)
 	if (q)
 		*q = str;
 	ret = *str;
-	if (*str == '|' || *str == '(' || *str == ')' || *str == ';' || *str == '&')
+	if (*str == '|')
 		str++;
 	else if (*str == '>')
 	{
@@ -132,7 +132,7 @@ int	peek(char **ps, char *es, char *tokens)
 {
 	char	*s;
 	char	whitespace[] = " \t\r\n\v";
-	char	symbols[] = "<|>&;()";
+	char	symbols[] = "<|>";
 
 	s = *ps;
 	while (s < es && ft_strchr(whitespace, *s))
@@ -167,27 +167,28 @@ t_cmd	*parseline(char **ps, char *es)
 	t_cmd	*cmd;
 
 	cmd = parsepipe(ps, es);
-	while (peek(ps, es, "&"))
-	{
-		gettoken(ps, es, 0, 0);
-		cmd = backcmd(cmd);
-	}
-	if (peek(ps, es, ";"))
-	{
-		gettoken(ps, es, 0, 0);
-		cmd = listcmd(cmd, parseline(ps, es));
-	}
+	// while (peek(ps, es, "&"))
+	// {
+	// 	gettoken(ps, es, 0, 0);
+	// 	cmd = backcmd(cmd);
+	// }
+	// if (peek(ps, es, ";"))
+	// {
+	// 	gettoken(ps, es, 0, 0);
+	// 	cmd = listcmd(cmd, parseline(ps, es));
+	// }
 	return (cmd);
 }
 
 t_cmd	*parsepipe(char **ps, char *es)
 {
 	t_cmd	*cmd;
+	int		tok;
 
 	cmd = parseexec(ps, es);
 	if (peek(ps, es, "|"))
 	{
-		gettoken(ps, es, 0, 0);
+		tok = gettoken(ps, es, 0, 0);
 		cmd = pipecmd(cmd, parsepipe(ps, es));
 	}
 	return (cmd);
@@ -214,20 +215,20 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es)
 	return (cmd);
 }
 
-t_cmd	*parseblock(char **ps, char *es)
-{
-	t_cmd	*cmd;
+// t_cmd	*parseblock(char **ps, char *es)
+// {
+// 	t_cmd	*cmd;
 
-	if (!peek(ps, es, "("))
-		panic("parseblock");
-	gettoken(ps, es, 0, 0);
-	cmd = parseline(ps, es);
-	if (!peek(ps, es, ")"))
-		panic("syntax - missing )");
-	gettoken(ps, es, 0, 0);
-	cmd = parseredirs(cmd, ps, es);
-	return (cmd);
-}
+// 	if (!peek(ps, es, "("))
+// 		panic("parseblock");
+// 	gettoken(ps, es, 0, 0);
+// 	cmd = parseline(ps, es);
+// 	if (!peek(ps, es, ")"))
+// 		panic("syntax - missing )");
+// 	gettoken(ps, es, 0, 0);
+// 	cmd = parseredirs(cmd, ps, es);
+// 	return (cmd);
+// }
 
 t_cmd	*parseexec(char **ps, char *es)
 {
@@ -238,14 +239,17 @@ t_cmd	*parseexec(char **ps, char *es)
 	t_execcmd	*cmd;
 	t_cmd		*ret;
 
-	if (peek(ps, es, "("))
-		return (parseblock(ps, es));
+	// tok = gettoken(ps, es, 0, 0);
+	// if (tok != 'a')
+	// 	panic("syntax: multiple operators");
+	// if (peek(ps, es, "("))
+	// 	return (parseblock(ps, es));
 	ret = execcmd();
 	cmd = (t_execcmd *)ret;
 
 	argc = 0;
 	ret = parseredirs(ret, ps, es);
-	while (!peek(ps, es, "|)&;"))
+	while (!peek(ps, es, "|"))
 	{
 		if ((tok = gettoken(ps, es, &q, &eq)) == 0)
 			break ;
@@ -335,11 +339,53 @@ void runcmd(t_cmd *cmd)
 	exit(0);
 }
 
+void	print_exec(t_execcmd *ecmd)
+{
+	int	i;
+
+	i = 0;
+	printf("Exec node\n");
+	while (ecmd->argv[i])
+	{
+		printf("Arg[%d]: %s\n", i, ecmd->argv[i]);
+		i++;
+	}
+	printf("\n");
+}
+
+void	print_tree(t_cmd *cmd)
+{
+	t_execcmd	*ecmd;
+	t_pipecmd	*pcmd;
+	t_redircmd	*rcmd;
+
+	if (cmd->type == 1)
+	{
+		ecmd = (t_execcmd *)cmd;
+		print_exec(ecmd);
+	}
+	if (cmd->type == 2)
+	{
+		printf("Redir node: \n\n");
+		rcmd = (t_redircmd *)cmd;
+		//if (rcmd->cmd->type)
+		print_tree(rcmd->cmd);
+	}
+	if (cmd->type == 3)
+	{
+		pcmd = (t_pipecmd *)cmd;
+		printf("Pipe node: \n\n");
+		print_tree(pcmd->left);
+		print_tree(pcmd->right);
+	}
+}
 
 int	main	(void)
 {
 	int			fd;
 	char		*str;
+	char		*str_check;
+	char		*tmp;
 	t_cmd		*cmd;
 	int			status;
 	t_execcmd	*ecmd;
@@ -349,6 +395,21 @@ int	main	(void)
 	while (str != NULL)
 	{
 		str = get_next_line(fd);
+		str_check = ft_strdup (str);
+		tmp = str_check;
+		while (*str_check)
+		{
+			if (*str_check == '|')
+			{
+				str_check++;
+				if (*str_check == '|')
+					panic("syntax: multiple operators\n");
+			}
+			else
+				str_check++;
+		}
+		free (tmp);
+
 		//printf("> ");
 		cmd = parsecommand(str);
 		if (cmd->type == 1)
@@ -371,6 +432,7 @@ int	main	(void)
 		// 	runcmd(cmd);
 		// wait(&status);
 		//printf("type %d\n", cmd->type);
+		print_tree(cmd);
 		free(str);
 	}
 	return (0);

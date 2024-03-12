@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/07 19:03:11 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/12 16:26:55 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,122 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+char	**parse_paths(char **env)
+{
+	int		i;
+	char	**paths;
+
+	paths = NULL;
+	i = 0;
+	while (env[i])
+	{
+		if (ft_strnstr(env[i], "PATH=", 5))
+			paths = ft_split(env[i] + 5, ':');
+		i++;
+	}
+	return (paths);
+}
+
+char	*check_command(char *com, char **env)
+{
+	char	*com_slash;
+	char	*command;
+	int		i;
+	char	**paths;
+
+	paths = parse_paths(env);
+	i = 0;
+	while (paths[i])
+	{
+		com_slash = ft_strjoin(paths[i], "/");
+		command = ft_strjoin(com_slash, com);
+		free(com_slash);
+		com_slash = NULL;
+		if (access(command, X_OK) != -1)
+			return (command);
+		i++;
+		free(command);
+	}
+	return (NULL);
+}
+
+
 void	panic(char *s)
 {
 	printf("%s\n", s);
 	exit(1);
+}
+
+int fork1(void)
+{
+	int	pid;
+
+	pid = fork();
+	if (pid == -1)
+		panic("fork");
+	return (pid);
+}
+
+void	execute(t_cmd *cmd, char **env)
+{
+	int			p[2];
+	t_execcmd	*ecmd;
+	t_pipecmd	*pcmd;
+	t_redircmd	*rcmd;
+	int			status;
+	char		*command;
+
+	if (cmd == NULL)
+		exit (1);
+	if (!cmd->type)
+		panic("execute");
+	if (cmd->type == PIPE)
+	{
+		pcmd = (t_pipecmd *)cmd;
+		if (pipe(p) < 0)
+			panic("pipe");
+		if (fork1() == 0)
+		{
+			close(1);
+			dup(p[1]);
+			close(p[0]);
+			close(p[1]);
+			execute(pcmd->left, env);
+		}
+		if (fork1() == 0)
+		{
+			close(0);
+			dup(p[0]);
+			close(p[0]);
+			close(p[1]);
+			execute(pcmd->right, env);
+		}
+		close(p[0]);
+		close(p[1]);
+		wait(&status);
+		wait(&status);
+	}
+	else if (cmd->type == EXEC)
+	{
+		ecmd = (t_execcmd *)cmd;
+		if (ecmd->argv[0] == NULL)
+			panic("empty arg");
+		command = check_command(ecmd->argv[0], env);
+		execve(command, ecmd->argv, env);
+		printf("execve failed\n");
+		exit(1);
+	}
+	else if (cmd->type == REDIR)
+	{
+		rcmd = (t_redircmd *)cmd;
+		close (rcmd->fd);
+		if (open(rcmd->file, rcmd->mode, 0666) < 0)
+		{
+			printf("open %s failed\n", rcmd->file);
+			exit(1);
+		}
+		execute (rcmd->cmd, env);
+	}
 }
 
 t_cmd	*execcmd(void)
@@ -86,7 +198,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq)
 	char	*str;
 	int		ret;
 	char	whitespace[] = " \t\r\n\v";
-	char	symbols[] = "<|>&;()";
+	char	symbols[] = "<|>";
 
 	str = *pstr;
 	while (str < end_str && ft_strchr(whitespace, *str))
@@ -94,7 +206,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq)
 	if (q)
 		*q = str;
 	ret = *str;
-	if (*str == '|' || *str == '(' || *str == ')' || *str == ';' || *str == '&')
+	if (*str == '|')
 		str++;
 	else if (*str == '>')
 	{
@@ -132,7 +244,7 @@ int	peek(char **ps, char *es, char *tokens)
 {
 	char	*s;
 	char	whitespace[] = " \t\r\n\v";
-	char	symbols[] = "<|>&;()";
+	char	symbols[] = "<|>";
 
 	s = *ps;
 	while (s < es && ft_strchr(whitespace, *s))
@@ -167,27 +279,28 @@ t_cmd	*parseline(char **ps, char *es)
 	t_cmd	*cmd;
 
 	cmd = parsepipe(ps, es);
-	while (peek(ps, es, "&"))
-	{
-		gettoken(ps, es, 0, 0);
-		cmd = backcmd(cmd);
-	}
-	if (peek(ps, es, ";"))
-	{
-		gettoken(ps, es, 0, 0);
-		cmd = listcmd(cmd, parseline(ps, es));
-	}
+	// while (peek(ps, es, "&"))
+	// {
+	// 	gettoken(ps, es, 0, 0);
+	// 	cmd = backcmd(cmd);
+	// }
+	// if (peek(ps, es, ";"))
+	// {
+	// 	gettoken(ps, es, 0, 0);
+	// 	cmd = listcmd(cmd, parseline(ps, es));
+	// }
 	return (cmd);
 }
 
 t_cmd	*parsepipe(char **ps, char *es)
 {
 	t_cmd	*cmd;
+	int		tok;
 
 	cmd = parseexec(ps, es);
 	if (peek(ps, es, "|"))
 	{
-		gettoken(ps, es, 0, 0);
+		tok = gettoken(ps, es, 0, 0);
 		cmd = pipecmd(cmd, parsepipe(ps, es));
 	}
 	return (cmd);
@@ -207,27 +320,27 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es)
 		if (tok == '<')
 			cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
 		else if (tok == '>')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
+			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_TRUNC, 1);
 		else if (tok == '+')
 			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
 	}
 	return (cmd);
 }
 
-t_cmd	*parseblock(char **ps, char *es)
-{
-	t_cmd	*cmd;
+// t_cmd	*parseblock(char **ps, char *es)
+// {
+// 	t_cmd	*cmd;
 
-	if (!peek(ps, es, "("))
-		panic("parseblock");
-	gettoken(ps, es, 0, 0);
-	cmd = parseline(ps, es);
-	if (!peek(ps, es, ")"))
-		panic("syntax - missing )");
-	gettoken(ps, es, 0, 0);
-	cmd = parseredirs(cmd, ps, es);
-	return (cmd);
-}
+// 	if (!peek(ps, es, "("))
+// 		panic("parseblock");
+// 	gettoken(ps, es, 0, 0);
+// 	cmd = parseline(ps, es);
+// 	if (!peek(ps, es, ")"))
+// 		panic("syntax - missing )");
+// 	gettoken(ps, es, 0, 0);
+// 	cmd = parseredirs(cmd, ps, es);
+// 	return (cmd);
+// }
 
 t_cmd	*parseexec(char **ps, char *es)
 {
@@ -238,14 +351,17 @@ t_cmd	*parseexec(char **ps, char *es)
 	t_execcmd	*cmd;
 	t_cmd		*ret;
 
-	if (peek(ps, es, "("))
-		return (parseblock(ps, es));
+	// tok = gettoken(ps, es, 0, 0);
+	// if (tok != 'a')
+	// 	panic("syntax: multiple operators");
+	// if (peek(ps, es, "("))
+	// 	return (parseblock(ps, es));
 	ret = execcmd();
 	cmd = (t_execcmd *)ret;
 
 	argc = 0;
 	ret = parseredirs(ret, ps, es);
-	while (!peek(ps, es, "|)&;"))
+	while (!peek(ps, es, "|"))
 	{
 		if ((tok = gettoken(ps, es, &q, &eq)) == 0)
 			break ;
@@ -313,16 +429,6 @@ t_cmd	*nullterminate(t_cmd *cmd)
 	return (cmd);
 }
 
-int fork1(void)
-{
-	int	pid;
-
-	pid = fork();
-	if (pid == -1)
-		panic("fork");
-	return (pid);
-}
-
 void runcmd(t_cmd *cmd)
 {
 	int			p[2];
@@ -335,20 +441,84 @@ void runcmd(t_cmd *cmd)
 	exit(0);
 }
 
+void	print_exec(t_execcmd *ecmd)
+{
+	int	i;
 
-int	main	(void)
+	i = 0;
+	printf("Exec node\n");
+	while (ecmd->argv[i])
+	{
+		printf("Arg[%d]: %s\n", i, ecmd->argv[i]);
+		i++;
+	}
+	printf("\n");
+}
+
+void	print_tree(t_cmd *cmd)
+{
+	t_execcmd	*ecmd;
+	t_pipecmd	*pcmd;
+	t_redircmd	*rcmd;
+
+	if (cmd->type == 1)
+	{
+		ecmd = (t_execcmd *)cmd;
+		print_exec(ecmd);
+	}
+	if (cmd->type == 2)
+	{
+		printf("Redir node: \n\n");
+		rcmd = (t_redircmd *)cmd;
+		//if (rcmd->cmd->type)
+		print_tree(rcmd->cmd);
+	}
+	if (cmd->type == 3)
+	{
+		pcmd = (t_pipecmd *)cmd;
+		printf("Pipe node: \n\n");
+		print_tree(pcmd->left);
+		print_tree(pcmd->right);
+	}
+}
+
+int	main	(int argc, char **argv, char **env)
 {
 	int			fd;
 	char		*str;
+	char		*str_check;
+	char		*tmp;
 	t_cmd		*cmd;
 	int			status;
 	t_execcmd	*ecmd;
 	char		buf[100];
 
-	fd = 0;
+	while ((fd = open("console", O_RDWR)) >= 0)
+	{
+		if (fd >= 3)
+		{
+			close(fd);
+			break ;
+		}
+	}
 	while (str != NULL)
 	{
-		str = get_next_line(fd);
+		str = get_next_line(0);
+		str_check = ft_strdup (str);
+		tmp = str_check;
+		while (*str_check)
+		{
+			if (*str_check == '|')
+			{
+				str_check++;
+				if (*str_check == '|')
+					panic("syntax: multiple operators\n");
+			}
+			else
+				str_check++;
+		}
+		free (tmp);
+
 		//printf("> ");
 		cmd = parsecommand(str);
 		if (cmd->type == 1)
@@ -367,10 +537,11 @@ int	main	(void)
 					(printf("%s%s", buf, "\n"));
 			}
 		}
-		// if (fork1() == 0)
-		// 	runcmd(cmd);
-		// wait(&status);
+		if (fork1() == 0)
+			execute(cmd, env);
+		wait(&status);
 		//printf("type %d\n", cmd->type);
+		//print_tree(cmd);
 		free(str);
 	}
 	return (0);

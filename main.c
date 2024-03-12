@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/12 12:25:10 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/12 12:28:07 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,20 +64,20 @@ int	main(int argc, char **argv, char **env)
 	read_history(".shell_history");
 	
 	prompt = ft_prompt(username, "AR-Shell", init_dir);
-	readline(prompt);
+	input = readline(prompt);
 
 	//while (i)
 	//	sleep(1);
 
 
-	/*input = readline("\nEnter something: ");
+	//input = readline("\nEnter something: ");
 
 	if (input != NULL)
 	{
 		printf("\nYou entered: %s\n", input);
 		add_history(input);
 		free(input);
-	}*/
+	}
 	write_history(".shell_history");
 	i = 0;
 	while (i < history_length + 1)

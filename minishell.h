@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/11 13:19:32 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/12 19:01:35 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,11 @@
 /*# include <readline/readline.h>
 # include <readline/history.h>*/
 # include <stdio.h>
-
-void	set_signal_action(void);
-char *readline (const char *prompt);
-
 # include <fcntl.h>
 
+void	set_signal_action(void);
 char	*readline(const char *prompt);
+int	parsing(int argc, char **argv, char **env);
 
 # define EXEC  1
 # define REDIR 2

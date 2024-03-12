@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/12 12:28:07 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/12 19:02:21 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int	main(int argc, char **argv, char **env)
 			printf("Line %d: %s\n", i, hist_entry->line);
 		i++;
 	}
-
+	parsing(argc, argv, env);
 	//readline();
 	//cleanup
 

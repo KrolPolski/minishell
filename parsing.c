@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/12 16:26:55 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/12 19:00:31 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -482,7 +482,7 @@ void	print_tree(t_cmd *cmd)
 	}
 }
 
-int	main	(int argc, char **argv, char **env)
+int	parsing(int argc, char **argv, char **env)
 {
 	int			fd;
 	char		*str;

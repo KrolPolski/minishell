@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/11 13:15:05 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/12 12:28:07 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,29 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-void	ft_prompt(char *username, char *hostname, char *path)
+char	*ft_prompt(char *username, char *hostname, char *path)
 {
-	ft_printf("[%s@%s %s]$", username, hostname, path);
-	//readline("");
+//	ft_printf("[%s@%s %s]$", username, hostname, path);
+	char *prompt;
+	char *ptr_parking;
+
+	prompt = ft_strjoin("[", username);
+	ptr_parking = prompt;
+	prompt = ft_strjoin(prompt, "@");
+	free(ptr_parking);
+	ptr_parking = prompt;
+	prompt = ft_strjoin(prompt, hostname);
+	free(ptr_parking);
+	ptr_parking = prompt;
+	prompt = ft_strjoin(prompt, " ");
+	free(ptr_parking);
+	ptr_parking = prompt; 
+	prompt = ft_strjoin(prompt, path);
+	free(ptr_parking);
+	ptr_parking = prompt;
+	prompt = ft_strjoin(prompt, "]$");
+	free(ptr_parking);
+	return (prompt);
 }
 int	main(int argc, char **argv, char **env)
 {
@@ -28,6 +47,7 @@ int	main(int argc, char **argv, char **env)
 	int			i;
 	char		*input;
 	HIST_ENTRY	*hist_entry;
+	char		*prompt;
 
 
 	set_signal_action();
@@ -42,13 +62,15 @@ int	main(int argc, char **argv, char **env)
 		i++;
 	}
 	read_history(".shell_history");
-	ft_prompt(username, "AR-Shell", init_dir);
+	
+	prompt = ft_prompt(username, "AR-Shell", init_dir);
+	input = readline(prompt);
 
-	while (i)
-		sleep(1);
+	//while (i)
+	//	sleep(1);
 
 
-	input = readline("\nEnter something: ");
+	//input = readline("\nEnter something: ");
 
 	if (input != NULL)
 	{
@@ -71,4 +93,5 @@ int	main(int argc, char **argv, char **env)
 
 	free(username);
 	free(init_dir);
+	free(prompt);
 }

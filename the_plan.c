@@ -6,10 +6,26 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 15:45:06 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/02/26 15:11:29 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/12 14:02:45 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/* Current focuses:
+	1. Add execution logic that uses the tree created in parsing.c. This should
+		largely follow the pipex fork and exec logic. The tree needs to determine
+		order of operations.
+		a) first make it work with a single command with args.
+		b) then make it work with a single pipe
+		c) make it work with redirects
+		d) make it work with multiple pipes and redirects
+	2. Dig deeply into readline and figure out:
+		a) how to implement ctrl-D detection properly. Particularly need to figure
+			out what are all the things that can cause readline to return a NULL
+			pointer.
+	3. implement all the required built in functions. Make sure that they modify the
+		prompt when the path changes, etc.
+	4. Start writing unit tests for the functionality above.		
+*/
 /* Todos before we write any code:
  * 
  * Figure out how branches work in git and set things up so we have a main branch, 

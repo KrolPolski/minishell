@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/12 16:17:23 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/12 16:26:55 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ void	execute(t_cmd *cmd, char **env)
 	{
 		rcmd = (t_redircmd *)cmd;
 		close (rcmd->fd);
-		if (open(rcmd->file, rcmd->mode) < 0)
+		if (open(rcmd->file, rcmd->mode, 0666) < 0)
 		{
 			printf("open %s failed\n", rcmd->file);
 			exit(1);
@@ -320,7 +320,7 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es)
 		if (tok == '<')
 			cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
 		else if (tok == '>')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
+			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_TRUNC, 1);
 		else if (tok == '+')
 			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT, 1);
 	}
@@ -541,7 +541,7 @@ int	main	(int argc, char **argv, char **env)
 			execute(cmd, env);
 		wait(&status);
 		//printf("type %d\n", cmd->type);
-		print_tree(cmd);
+		//print_tree(cmd);
 		free(str);
 	}
 	return (0);

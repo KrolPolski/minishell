@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/11 18:19:33 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/12 16:17:23 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,122 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+char	**parse_paths(char **env)
+{
+	int		i;
+	char	**paths;
+
+	paths = NULL;
+	i = 0;
+	while (env[i])
+	{
+		if (ft_strnstr(env[i], "PATH=", 5))
+			paths = ft_split(env[i] + 5, ':');
+		i++;
+	}
+	return (paths);
+}
+
+char	*check_command(char *com, char **env)
+{
+	char	*com_slash;
+	char	*command;
+	int		i;
+	char	**paths;
+
+	paths = parse_paths(env);
+	i = 0;
+	while (paths[i])
+	{
+		com_slash = ft_strjoin(paths[i], "/");
+		command = ft_strjoin(com_slash, com);
+		free(com_slash);
+		com_slash = NULL;
+		if (access(command, X_OK) != -1)
+			return (command);
+		i++;
+		free(command);
+	}
+	return (NULL);
+}
+
+
 void	panic(char *s)
 {
 	printf("%s\n", s);
 	exit(1);
+}
+
+int fork1(void)
+{
+	int	pid;
+
+	pid = fork();
+	if (pid == -1)
+		panic("fork");
+	return (pid);
+}
+
+void	execute(t_cmd *cmd, char **env)
+{
+	int			p[2];
+	t_execcmd	*ecmd;
+	t_pipecmd	*pcmd;
+	t_redircmd	*rcmd;
+	int			status;
+	char		*command;
+
+	if (cmd == NULL)
+		exit (1);
+	if (!cmd->type)
+		panic("execute");
+	if (cmd->type == PIPE)
+	{
+		pcmd = (t_pipecmd *)cmd;
+		if (pipe(p) < 0)
+			panic("pipe");
+		if (fork1() == 0)
+		{
+			close(1);
+			dup(p[1]);
+			close(p[0]);
+			close(p[1]);
+			execute(pcmd->left, env);
+		}
+		if (fork1() == 0)
+		{
+			close(0);
+			dup(p[0]);
+			close(p[0]);
+			close(p[1]);
+			execute(pcmd->right, env);
+		}
+		close(p[0]);
+		close(p[1]);
+		wait(&status);
+		wait(&status);
+	}
+	else if (cmd->type == EXEC)
+	{
+		ecmd = (t_execcmd *)cmd;
+		if (ecmd->argv[0] == NULL)
+			panic("empty arg");
+		command = check_command(ecmd->argv[0], env);
+		execve(command, ecmd->argv, env);
+		printf("execve failed\n");
+		exit(1);
+	}
+	else if (cmd->type == REDIR)
+	{
+		rcmd = (t_redircmd *)cmd;
+		close (rcmd->fd);
+		if (open(rcmd->file, rcmd->mode) < 0)
+		{
+			printf("open %s failed\n", rcmd->file);
+			exit(1);
+		}
+		execute (rcmd->cmd, env);
+	}
 }
 
 t_cmd	*execcmd(void)
@@ -317,16 +429,6 @@ t_cmd	*nullterminate(t_cmd *cmd)
 	return (cmd);
 }
 
-int fork1(void)
-{
-	int	pid;
-
-	pid = fork();
-	if (pid == -1)
-		panic("fork");
-	return (pid);
-}
-
 void runcmd(t_cmd *cmd)
 {
 	int			p[2];
@@ -380,7 +482,7 @@ void	print_tree(t_cmd *cmd)
 	}
 }
 
-int	main	(void)
+int	main	(int argc, char **argv, char **env)
 {
 	int			fd;
 	char		*str;
@@ -391,10 +493,17 @@ int	main	(void)
 	t_execcmd	*ecmd;
 	char		buf[100];
 
-	fd = 0;
+	while ((fd = open("console", O_RDWR)) >= 0)
+	{
+		if (fd >= 3)
+		{
+			close(fd);
+			break ;
+		}
+	}
 	while (str != NULL)
 	{
-		str = get_next_line(fd);
+		str = get_next_line(0);
 		str_check = ft_strdup (str);
 		tmp = str_check;
 		while (*str_check)
@@ -428,9 +537,9 @@ int	main	(void)
 					(printf("%s%s", buf, "\n"));
 			}
 		}
-		// if (fork1() == 0)
-		// 	runcmd(cmd);
-		// wait(&status);
+		if (fork1() == 0)
+			execute(cmd, env);
+		wait(&status);
 		//printf("type %d\n", cmd->type);
 		print_tree(cmd);
 		free(str);

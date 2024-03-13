@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 11:55:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/13 12:32:58 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/13 14:39:57 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,29 +37,29 @@ void	sigint_handler(int signal)
 	instead of the main minishell process
 	unless we are just waiting for a command with readline. if we are 
 	waiting for a command it should just reprint the prompt */
+	/*need to make the below logic smart enough to not redraw the prompt twice
+	when we use ctrl-c to end a child process*/
 	if (signal == SIGINT)
 	{
 		write(2, "\n", 1);
 		rl_replace_line("", 0);
    		rl_on_new_line();
     	rl_redisplay();
-		//we need to reenter the parsing loop somehow so it triggers readline with proper execution again.
-		//but without access to &info, how can I call the function properly?
+		//still need to hide the ^C output, probably using stty.
 	}
 	if (signal == SIGQUIT) //CTRL-backslash
 	{
-		//might need some cleanup here. or not? because 
-		//exit frees memory anyway, right?
-		//should still think about fd leakage at least surely
-		exit(1);
+		return ;
 	}
 }
 
 void	set_signal_action(void)
 {
 	struct sigaction	act;
+	sigset_t 			set;
 
 	ft_bzero(&act, sizeof(act));
 	act.sa_handler = &sigint_handler;
 	sigaction(SIGINT, &act, NULL);
+	sigaction(SIGQUIT, &act, NULL);
 }

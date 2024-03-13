@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/13 16:41:59 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/13 17:25:32 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,37 @@ void	ft_pwd(t_execcmd *ecmd, t_info *info)
 		(printf("%s%s", buf, "\n"));
 }
 
+void	ft_echo(t_execcmd *ecmd, t_info *info)
+{
+	int	newline;
+	int	i;
+
+	newline = 1;
+	i = 1;
+	if (ecmd->argv[1] && !ft_strncmp(ecmd->argv[1], "-n", 3))
+	{
+		newline = 0;
+		i++;
+	}
+	while (ecmd->argv[i])
+	{
+		ft_putstr_fd(ecmd->argv[i], 1);
+		if (ecmd->argv[i + 1])
+			ft_putchar_fd(' ', 1);
+		i++;
+	}
+	if (newline == 1)
+		ft_putchar_fd('\n', 1);
+}
+
 void	handle_builtins(t_execcmd *ecmd, char **env, char *builtin_command, t_info *info)
 {
 	if (!ft_strncmp(builtin_command, "pwd", ft_strlen(builtin_command)))
 		ft_pwd(ecmd, info);
 	if (!ft_strncmp(builtin_command, "cd", ft_strlen(builtin_command)))
 		return ;
+	if (!ft_strncmp(builtin_command, "echo", ft_strlen(builtin_command)))
+		ft_echo(ecmd, info);
 }
 
 char	**parse_paths(char **env)

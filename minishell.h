@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/13 11:36:03 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/13 12:44:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ typedef struct s_info
 
 void	set_signal_action(void);
 char	*readline(const char *prompt);
+extern void rl_replace_line (const char *, int);
 int		parsing(t_info *info);
 char	*ft_prompt(char *username, char *hostname, char *path);
 #endif

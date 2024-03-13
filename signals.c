@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 11:55:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/13 10:38:08 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/13 12:32:58 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,12 @@ void	sigint_handler(int signal)
 	waiting for a command it should just reprint the prompt */
 	if (signal == SIGINT)
 	{
-		
+		write(2, "\n", 1);
+		rl_replace_line("", 0);
+   		rl_on_new_line();
+    	rl_redisplay();
+		//we need to reenter the parsing loop somehow so it triggers readline with proper execution again.
+		//but without access to &info, how can I call the function properly?
 	}
 	if (signal == SIGQUIT) //CTRL-backslash
 	{

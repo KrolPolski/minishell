@@ -6,14 +6,14 @@
 #    By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 13:42:54 by rboudwin          #+#    #+#              #
-#    Updated: 2024/03/12 18:59:53 by rboudwin         ###   ########.fr        #
+#    Updated: 2024/03/13 12:51:01 by rboudwin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	:= minishell 
 #CFLAGS	:= -Wextra -Wall -Werror -Wunreachable-code -Ofast 
-#CFLAGS := -I/Users/rboudwin/.brew/opt/readline/include
-#LDFLAGS := -L/Users/rboudwin/.brew/opt/readline/lib
+CFLAGS := -I /Users/rboudwin/.brew/opt/readline/include
+LDFLAGS := -L /Users/rboudwin/.brew/opt/readline/lib
 SRCS	:= main.c signals.c parsing.c
 OBJS	:= ${SRCS:.c=.o} Libft/libft.a
 BONUS_OBJS := ${BONUS_SRCS:.c=.o} Libft/libft.a 
@@ -23,7 +23,7 @@ all: $(NAME)
 	@$(CC) $(CFLAGS) -o $@ -c $< 
 
 $(NAME): $(OBJS) 
-	@$(CC) $(OBJS) -o $(NAME) -lreadline
+	@$(CC) $(OBJS) -o $(NAME) $(LDFLAGS) -lreadline
 
 Libft/libft.a: 
 	$(MAKE) -C Libft/ all

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/13 11:06:03 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/13 11:35:48 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -529,6 +529,13 @@ int	parsing(t_info *info)
 			{
 				if (chdir(ecmd->argv[1]) < 0)
 					printf("cannot cd %s\n", ecmd->argv[1]);
+				else
+				{
+					info->curr_dir = getcwd(buf, sizeof(buf));
+					free(info->prompt);
+					info->prompt = ft_prompt(info->username, "AR-Shell", info->curr_dir);
+				}
+
 			}
 			else if (ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
 			{

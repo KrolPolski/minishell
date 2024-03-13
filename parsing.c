@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/13 17:25:32 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/13 18:21:19 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 void	ft_cd(t_execcmd *ecmd, t_info *info)
 {
-	char		buf[100];
+	char	buf[100];
 
 	if (chdir(ecmd->argv[1]) < 0)
 		printf("cannot cd %s\n", ecmd->argv[1]);
@@ -30,12 +30,23 @@ void	ft_cd(t_execcmd *ecmd, t_info *info)
 
 void	ft_pwd(t_execcmd *ecmd, t_info *info)
 {
-	char		buf[100];
+	char	buf[100];
 
 	if (!(getcwd(buf, sizeof(buf))))
 		printf("pwd error\n");
 	else
 		(printf("%s%s", buf, "\n"));
+}
+
+void	ft_env(t_execcmd *ecmd, t_info *info)
+{
+	int	i;
+
+	if (info->env == NULL)
+		panic("env not set");
+	i = 0;
+	while (info->env[i])
+		ft_putstr_fd(info->env[i], 1);
 }
 
 void	ft_echo(t_execcmd *ecmd, t_info *info)
@@ -69,6 +80,8 @@ void	handle_builtins(t_execcmd *ecmd, char **env, char *builtin_command, t_info 
 		return ;
 	if (!ft_strncmp(builtin_command, "echo", ft_strlen(builtin_command)))
 		ft_echo(ecmd, info);
+	if (!ft_strncmp(builtin_command, "env", ft_strlen(builtin_command)))
+		ft_env(ecmd, info);
 }
 
 char	**parse_paths(char **env)

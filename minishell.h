@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/13 12:44:30 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/13 13:16:53 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,4 +90,5 @@ char	*readline(const char *prompt);
 extern void rl_replace_line (const char *, int);
 int		parsing(t_info *info);
 char	*ft_prompt(char *username, char *hostname, char *path);
+t_cmd	*parsecommand(char *str);
 #endif

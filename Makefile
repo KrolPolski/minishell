@@ -6,14 +6,14 @@
 #    By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 13:42:54 by rboudwin          #+#    #+#              #
-#    Updated: 2024/03/13 12:51:01 by rboudwin         ###   ########.fr        #
+#    Updated: 2024/03/13 13:43:48 by akovalev         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	:= minishell 
 #CFLAGS	:= -Wextra -Wall -Werror -Wunreachable-code -Ofast 
-CFLAGS := -I /Users/rboudwin/.brew/opt/readline/include
-LDFLAGS := -L /Users/rboudwin/.brew/opt/readline/lib
+CFLAGS := -I /Users/$(USER)/.brew/opt/readline/include
+LDFLAGS := -L /Users/$(USER)/.brew/opt/readline/lib
 SRCS	:= main.c signals.c parsing.c
 OBJS	:= ${SRCS:.c=.o} Libft/libft.a
 BONUS_OBJS := ${BONUS_SRCS:.c=.o} Libft/libft.a 

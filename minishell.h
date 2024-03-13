@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/12 19:01:35 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/13 11:05:29 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,17 @@
 # include "Libft/ft_printf.h"
 # include "Libft/get_next_line_bonus.h"
 # include <signal.h>
-/*# include <readline/readline.h>
-# include <readline/history.h>*/
 # include <stdio.h>
 # include <fcntl.h>
-
-void	set_signal_action(void);
-char	*readline(const char *prompt);
-int	parsing(int argc, char **argv, char **env);
+# include <stdlib.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 # define EXEC  1
 # define REDIR 2
 # define PIPE  3
 # define LIST  4
 # define BACK  5
-
 # define MAXARGS 10
 
 typedef struct s_cmd
@@ -77,4 +73,19 @@ typedef struct s_backcmd
 	t_cmd		*cmd;
 }	t_backcmd;
 
+typedef struct s_info
+{
+	char	*username;
+	char	*init_dir;
+	char	*curr_dir;
+	char	*input;
+	char	*prompt;
+	int		argc;
+	char	**argv;
+	char	**env;
+}	t_info;
+
+void	set_signal_action(void);
+char	*readline(const char *prompt);
+int		parsing(t_info *info);
 #endif

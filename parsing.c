@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/12 19:00:31 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/13 11:06:03 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -482,7 +482,7 @@ void	print_tree(t_cmd *cmd)
 	}
 }
 
-int	parsing(int argc, char **argv, char **env)
+int	parsing(t_info *info)
 {
 	int			fd;
 	char		*str;
@@ -501,9 +501,10 @@ int	parsing(int argc, char **argv, char **env)
 			break ;
 		}
 	}
+	str = readline(info->prompt);
 	while (str != NULL)
 	{
-		str = get_next_line(0);
+		//str = get_next_line(0);
 		str_check = ft_strdup (str);
 		tmp = str_check;
 		while (*str_check)
@@ -538,11 +539,12 @@ int	parsing(int argc, char **argv, char **env)
 			}
 		}
 		if (fork1() == 0)
-			execute(cmd, env);
+			execute(cmd, info->env);
 		wait(&status);
 		//printf("type %d\n", cmd->type);
 		//print_tree(cmd);
 		free(str);
+		str = readline(info->prompt);
 	}
 	return (0);
 }

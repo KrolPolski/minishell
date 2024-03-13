@@ -3,16 +3,48 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/13 15:27:09 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/13 16:41:59 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+void	ft_cd(t_execcmd *ecmd, t_info *info)
+{
+	char		buf[100];
+
+	if (chdir(ecmd->argv[1]) < 0)
+		printf("cannot cd %s\n", ecmd->argv[1]);
+	else
+	{
+		info->curr_dir = getcwd(buf, sizeof(buf));
+		free(info->prompt);
+		info->prompt = ft_prompt(info->username, "AR-Shell", info->curr_dir);
+	}
+}
+
+void	ft_pwd(t_execcmd *ecmd, t_info *info)
+{
+	char		buf[100];
+
+	if (!(getcwd(buf, sizeof(buf))))
+		printf("pwd error\n");
+	else
+		(printf("%s%s", buf, "\n"));
+}
+
+void	handle_builtins(t_execcmd *ecmd, char **env, char *builtin_command, t_info *info)
+{
+	if (!ft_strncmp(builtin_command, "pwd", ft_strlen(builtin_command)))
+		ft_pwd(ecmd, info);
+	if (!ft_strncmp(builtin_command, "cd", ft_strlen(builtin_command)))
+		return ;
+}
 
 char	**parse_paths(char **env)
 {
@@ -70,7 +102,7 @@ int fork1(void)
 	return (pid);
 }
 
-void	execute(t_cmd *cmd, char **env)
+void	execute(t_cmd *cmd, char **env, t_info *info)
 {
 	int			p[2];
 	t_execcmd	*ecmd;
@@ -78,6 +110,16 @@ void	execute(t_cmd *cmd, char **env)
 	t_redircmd	*rcmd;
 	int			status;
 	char		*command;
+	char		*builtins[7];
+	int			i;
+
+	i = 0;
+	builtins[0] = "cd";
+	builtins[1] = "pwd";
+	builtins[2] = "echo";
+	builtins[3] = "export";
+	builtins[4] = "unset";
+	builtins[5] = "exit";
 
 	if (cmd == NULL)
 		exit (1);
@@ -94,7 +136,7 @@ void	execute(t_cmd *cmd, char **env)
 			dup(p[1]);
 			close(p[0]);
 			close(p[1]);
-			execute(pcmd->left, env);
+			execute(pcmd->left, env, info);
 		}
 		if (fork1() == 0)
 		{
@@ -102,7 +144,7 @@ void	execute(t_cmd *cmd, char **env)
 			dup(p[0]);
 			close(p[0]);
 			close(p[1]);
-			execute(pcmd->right, env);
+			execute(pcmd->right, env, info);
 		}
 		close(p[0]);
 		close(p[1]);
@@ -114,6 +156,15 @@ void	execute(t_cmd *cmd, char **env)
 		ecmd = (t_execcmd *)cmd;
 		if (ecmd->argv[0] == NULL)
 			exit(1);
+		while (builtins[i])
+		{
+			if (ft_strlen(builtins[i]) == ft_strlen(ecmd->argv[0]) && !ft_strncmp(ecmd->argv[0], builtins[i], ft_strlen(builtins[i])))
+			{
+				handle_builtins(ecmd, env, builtins[i], info);
+				exit(1);
+			}
+			i++;
+		}
 		command = check_command(ecmd->argv[0], env);
 		execve(command, ecmd->argv, env);
 		printf("execve failed\n");
@@ -128,9 +179,9 @@ void	execute(t_cmd *cmd, char **env)
 			printf("open %s failed\n", rcmd->file);
 			exit(1);
 		}
-		execute (rcmd->cmd, env);
+		execute (rcmd->cmd, env, info);
 	}
-	exit (0);
+	exit (0); //remember to manually free memory on all exits
 }
 
 t_cmd	*execcmd(void)
@@ -492,7 +543,6 @@ int	parsing(t_info *info)
 	t_cmd		*cmd;
 	int			status;
 	t_execcmd	*ecmd;
-	char		buf[100];
 
 	while ((fd = open("console", O_RDWR)) >= 0)
 	{
@@ -505,7 +555,6 @@ int	parsing(t_info *info)
 	str = readline(info->prompt);
 	while (str != NULL)
 	{
-		//str = get_next_line(0);
 		str_check = ft_strdup (str);
 		tmp = str_check;
 		while (*str_check)
@@ -520,36 +569,18 @@ int	parsing(t_info *info)
 				str_check++;
 		}
 		free (tmp);
-
-		//printf("> ");
 		cmd = parsecommand(str);
 		if (cmd->type == 1)
 		{
 			ecmd = (t_execcmd *)cmd;
 			if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "cd", 3) == 0)
-			{
-				if (chdir(ecmd->argv[1]) < 0)
-					printf("cannot cd %s\n", ecmd->argv[1]);
-				else
-				{
-					info->curr_dir = getcwd(buf, sizeof(buf));
-					free(info->prompt);
-					info->prompt = ft_prompt(info->username, "AR-Shell", info->curr_dir);
-				}
-
-			}
-			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
-			{
-				if (!(getcwd(buf, sizeof(buf))))
-					printf("pwd error\n");
-				else
-					(printf("%s%s", buf, "\n"));
-			}
+				ft_cd(ecmd, info);
+		// 	// else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
+		// 	// 	ft_pwd(ecmd, info);
 		}
 		if (fork1() == 0)
-			execute(cmd, info->env);
+			execute(cmd, info->env, info);
 		wait(&status);
-		//printf("type %d\n", cmd->type);
 		//print_tree(cmd);
 		free(str);
 		str = readline(info->prompt);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/13 11:35:48 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/13 13:53:23 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ void	execute(t_cmd *cmd, char **env)
 	{
 		ecmd = (t_execcmd *)cmd;
 		if (ecmd->argv[0] == NULL)
-			panic("empty arg");
+			exit(1);
 		command = check_command(ecmd->argv[0], env);
 		execve(command, ecmd->argv, env);
 		printf("execve failed\n");
@@ -525,7 +525,7 @@ int	parsing(t_info *info)
 		if (cmd->type == 1)
 		{
 			ecmd = (t_execcmd *)cmd;
-			if (ft_strncmp(ecmd->argv[0], "cd", 3) == 0)
+			if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "cd", 3) == 0)
 			{
 				if (chdir(ecmd->argv[1]) < 0)
 					printf("cannot cd %s\n", ecmd->argv[1]);
@@ -537,7 +537,7 @@ int	parsing(t_info *info)
 				}
 
 			}
-			else if (ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
+			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
 			{
 				if (!(getcwd(buf, sizeof(buf))))
 					printf("pwd error\n");

@@ -6,15 +6,12 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/12 19:02:21 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/13 12:47:55 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <readline/readline.h>
-#include <readline/history.h>
+
 
 char	*ft_prompt(char *username, char *hostname, char *path)
 {
@@ -36,35 +33,35 @@ char	*ft_prompt(char *username, char *hostname, char *path)
 	prompt = ft_strjoin(prompt, path);
 	free(ptr_parking);
 	ptr_parking = prompt;
-	prompt = ft_strjoin(prompt, "]$");
+	prompt = ft_strjoin(prompt, "]$ ");
 	free(ptr_parking);
 	return (prompt);
 }
+
 int	main(int argc, char **argv, char **env)
 {
-	char		*username;
-	char		*init_dir;
-	int			i;
-	char		*input;
+	t_info	info;	
+	int		i;
 	HIST_ENTRY	*hist_entry;
-	char		*prompt;
-
 
 	set_signal_action();
-
+	info.argc = argc;
+	info.argv = argv;
+	info.env = env;
 	i = 0;
 	while (env[i] != NULL)
 	{
 		if (ft_strnstr(env[i], "USER=", 5))
-			username = ft_strdup(env[i] + 5);
+			info.username = ft_strdup(env[i] + 5);
 		else if (ft_strnstr(env[i], "PWD=", 4))
-			init_dir = ft_strdup(env[i] + 4);
+			info.init_dir = ft_strdup(env[i] + 4);
 		i++;
 	}
 	read_history(".shell_history");
 	
-	prompt = ft_prompt(username, "AR-Shell", init_dir);
-	input = readline(prompt);
+	info.prompt = ft_prompt(info.username, "AR-Shell", info.init_dir);
+	info.curr_dir = info.init_dir;
+	//info.input = readline(info.prompt);
 
 	//while (i)
 	//	sleep(1);
@@ -72,11 +69,11 @@ int	main(int argc, char **argv, char **env)
 
 	//input = readline("\nEnter something: ");
 
-	if (input != NULL)
+	/*if (info.input != NULL)
 	{
-		printf("\nYou entered: %s\n", input);
-		add_history(input);
-		free(input);
+		printf("\nYou entered: %s\n", info.input);
+		add_history(info.input);
+		free(info.input);
 	}
 	write_history(".shell_history");
 	i = 0;
@@ -86,12 +83,12 @@ int	main(int argc, char **argv, char **env)
 		if (hist_entry != NULL)
 			printf("Line %d: %s\n", i, hist_entry->line);
 		i++;
-	}
-	parsing(argc, argv, env);
+	}*/
+	parsing(&info);
 	//readline();
 	//cleanup
 
-	free(username);
-	free(init_dir);
-	free(prompt);
+	free(info.username);
+	free(info.init_dir);
+	free(info.prompt);
 }

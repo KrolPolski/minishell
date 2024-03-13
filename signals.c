@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 11:55:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/12 16:18:21 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/13 12:32:58 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,21 @@ void	sigint_handler(int signal)
 	applies to interactive mode. and we can have keybindings outside of readline that handle
 	while child processes are running etc. called a keymap in the documentation*/
 	//CTRL-\ should exit the shell or the program running in the shell as appropriate
+	
+	/* at present ctrl-C will just quit our minishell entirely, not the 
+	program running in the minishell.
+	we need to figure out a way to make it target the child processes 
+	instead of the main minishell process
+	unless we are just waiting for a command with readline. if we are 
+	waiting for a command it should just reprint the prompt */
 	if (signal == SIGINT)
 	{
-		ft_printf("\nI am not so easily murdered. But I will take my leave\n");
-		//forbidden
-		sleep(1);
-		ft_printf("...\n");
-		//forbidden
-		sleep(1);
-		exit(1);
+		write(2, "\n", 1);
+		rl_replace_line("", 0);
+   		rl_on_new_line();
+    	rl_redisplay();
+		//we need to reenter the parsing loop somehow so it triggers readline with proper execution again.
+		//but without access to &info, how can I call the function properly?
 	}
 	if (signal == SIGQUIT) //CTRL-backslash
 	{

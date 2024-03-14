@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/14 14:12:20 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/14 14:39:19 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,14 @@ void	ft_env(t_execcmd *ecmd, t_info *info)
 
 void	ft_echo(t_execcmd *ecmd, t_info *info)
 {
-	int	newline;
+	int	nl;
 	int	i;
 
-	newline = 1;
+	nl = 1;
 	i = 1;
 	if (ecmd->argv[1] && !ft_strncmp(ecmd->argv[1], "-n", 3))
 	{
-		newline = 0;
+		nl = 0;
 		i++;
 	}
 	while (ecmd->argv[i])
@@ -78,7 +78,7 @@ void	ft_echo(t_execcmd *ecmd, t_info *info)
 			ft_putchar_fd(' ', 1);
 		i++;
 	}
-	if (newline == 1)
+	if (nl == 1)
 		ft_putchar_fd('\n', 1);
 }
 

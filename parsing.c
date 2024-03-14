@@ -6,13 +6,19 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/13 18:21:19 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/14 14:12:20 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+void	panic(char *s)
+{
+	printf("%s\n", s);
+	exit(1);
+}
 
 void	ft_cd(t_execcmd *ecmd, t_info *info)
 {
@@ -46,7 +52,11 @@ void	ft_env(t_execcmd *ecmd, t_info *info)
 		panic("env not set");
 	i = 0;
 	while (info->env[i])
+	{
 		ft_putstr_fd(info->env[i], 1);
+		printf("\n");
+		i++;
+	}
 }
 
 void	ft_echo(t_execcmd *ecmd, t_info *info)
@@ -124,12 +134,6 @@ char	*check_command(char *com, char **env)
 }
 
 
-void	panic(char *s)
-{
-	printf("%s\n", s);
-	exit(1);
-}
-
 int fork1(void)
 {
 	int	pid;
@@ -158,6 +162,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 	builtins[3] = "export";
 	builtins[4] = "unset";
 	builtins[5] = "exit";
+	builtins[6] = "env";
 
 	if (cmd == NULL)
 		exit (1);

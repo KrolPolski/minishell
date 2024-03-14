@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 11:55:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/13 14:39:57 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/14 13:39:39 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,7 @@ void	sigint_handler(int signal)
 	while child processes are running etc. called a keymap in the documentation*/
 	//CTRL-\ should exit the shell or the program running in the shell as appropriate
 	
-	/* at present ctrl-C will just quit our minishell entirely, not the 
-	program running in the minishell.
-	we need to figure out a way to make it target the child processes 
-	instead of the main minishell process
-	unless we are just waiting for a command with readline. if we are 
-	waiting for a command it should just reprint the prompt */
+	/* we also need to make the readline output below actually get executed, not just read*/
 	/*need to make the below logic smart enough to not redraw the prompt twice
 	when we use ctrl-c to end a child process*/
 	if (signal == SIGINT)
@@ -45,9 +40,8 @@ void	sigint_handler(int signal)
 		rl_replace_line("", 0);
    		rl_on_new_line();
     	rl_redisplay();
-		//still need to hide the ^C output, probably using stty.
 	}
-	if (signal == SIGQUIT) //CTRL-backslash
+	if (signal == SIGQUIT)
 	{
 		return ;
 	}
@@ -56,7 +50,7 @@ void	sigint_handler(int signal)
 void	set_signal_action(void)
 {
 	struct sigaction	act;
-	sigset_t 			set;
+	sigset_t			set;
 
 	ft_bzero(&act, sizeof(act));
 	act.sa_handler = &sigint_handler;

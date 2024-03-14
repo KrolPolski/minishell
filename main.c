@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/13 12:47:55 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/14 14:08:02 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,17 @@ char	*ft_prompt(char *username, char *hostname, char *path)
 	free(ptr_parking);
 	return (prompt);
 }
+/*suppresses echo of control characters, using a bitwise
+compound assignment to invert the ECHOCTL flag with a 
+bitwise NOT */
+void	set_termios_settings(void)
+{
+	struct termios		term;
+
+	tcgetattr(0, &term);
+	term.c_lflag &= ~ECHOCTL;
+	tcsetattr(0, TCSADRAIN, &term);
+}
 
 int	main(int argc, char **argv, char **env)
 {
@@ -44,6 +55,7 @@ int	main(int argc, char **argv, char **env)
 	int		i;
 	HIST_ENTRY	*hist_entry;
 
+	set_termios_settings();
 	set_signal_action();
 	info.argc = argc;
 	info.argv = argv;

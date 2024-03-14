@@ -6,10 +6,13 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 15:45:06 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/12 14:02:45 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/14 12:51:34 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/* Current Bugs
+	1. when we ctrl-c a process, we end up with two printings of the prompt.
+	2. when we ctrl-c an idle prompt, the input isn't actually used for anything.
 /* Current focuses:
 	1. Add execution logic that uses the tree created in parsing.c. This should
 		largely follow the pipex fork and exec logic. The tree needs to determine
@@ -21,10 +24,14 @@
 	2. Dig deeply into readline and figure out:
 		a) how to implement ctrl-D detection properly. Particularly need to figure
 			out what are all the things that can cause readline to return a NULL
-			pointer.
+			pointer. 
+			Except CTRL-D seems to be working already to log us out without us needing
+			to do anything.
 	3. implement all the required built in functions. Make sure that they modify the
 		prompt when the path changes, etc.
-	4. Start writing unit tests for the functionality above.		
+	4. get caught up on termcaps and figure out how to move the cursor.
+	5. implement history.
+	6. Start writing unit tests for the functionality above.		
 */
 /* Todos before we write any code:
  * 

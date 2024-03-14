@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/13 12:47:55 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/14 11:33:44 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,24 @@ char	*ft_prompt(char *username, char *hostname, char *path)
 	return (prompt);
 }
 
+void	set_termios_settings(void)
+{
+	struct termios		term;
+	int					fd;
+
+	fd = 0;
+	tcgetattr(fd, &term);
+	term.c_lflag &= ~ECHOCTL;
+	tcsetattr(0, TCSADRAIN, &term);
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	t_info	info;	
 	int		i;
 	HIST_ENTRY	*hist_entry;
 
+	set_termios_settings();
 	set_signal_action();
 	info.argc = argc;
 	info.argv = argv;

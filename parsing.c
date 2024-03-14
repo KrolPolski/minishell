@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/14 14:39:19 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/14 15:11:50 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 	t_redircmd	*rcmd;
 	int			status;
 	char		*command;
-	char		*builtins[7];
+	char		*builtins[8];
 	int			i;
 
 	i = 0;
@@ -163,6 +163,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 	builtins[4] = "unset";
 	builtins[5] = "exit";
 	builtins[6] = "env";
+	builtins[7] = NULL;
 
 	if (cmd == NULL)
 		exit (1);

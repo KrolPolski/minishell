@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/13 17:25:32 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/14 14:12:20 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void	panic(char *s)
+{
+	printf("%s\n", s);
+	exit(1);
+}
+
 void	ft_cd(t_execcmd *ecmd, t_info *info)
 {
-	char		buf[100];
+	char	buf[100];
 
 	if (chdir(ecmd->argv[1]) < 0)
 		printf("cannot cd %s\n", ecmd->argv[1]);
@@ -30,12 +36,27 @@ void	ft_cd(t_execcmd *ecmd, t_info *info)
 
 void	ft_pwd(t_execcmd *ecmd, t_info *info)
 {
-	char		buf[100];
+	char	buf[100];
 
 	if (!(getcwd(buf, sizeof(buf))))
 		printf("pwd error\n");
 	else
 		(printf("%s%s", buf, "\n"));
+}
+
+void	ft_env(t_execcmd *ecmd, t_info *info)
+{
+	int	i;
+
+	if (info->env == NULL)
+		panic("env not set");
+	i = 0;
+	while (info->env[i])
+	{
+		ft_putstr_fd(info->env[i], 1);
+		printf("\n");
+		i++;
+	}
 }
 
 void	ft_echo(t_execcmd *ecmd, t_info *info)
@@ -69,6 +90,8 @@ void	handle_builtins(t_execcmd *ecmd, char **env, char *builtin_command, t_info 
 		return ;
 	if (!ft_strncmp(builtin_command, "echo", ft_strlen(builtin_command)))
 		ft_echo(ecmd, info);
+	if (!ft_strncmp(builtin_command, "env", ft_strlen(builtin_command)))
+		ft_env(ecmd, info);
 }
 
 char	**parse_paths(char **env)
@@ -111,12 +134,6 @@ char	*check_command(char *com, char **env)
 }
 
 
-void	panic(char *s)
-{
-	printf("%s\n", s);
-	exit(1);
-}
-
 int fork1(void)
 {
 	int	pid;
@@ -145,6 +162,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 	builtins[3] = "export";
 	builtins[4] = "unset";
 	builtins[5] = "exit";
+	builtins[6] = "env";
 
 	if (cmd == NULL)
 		exit (1);

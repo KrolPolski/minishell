@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+         #
+#    By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 13:42:54 by rboudwin          #+#    #+#              #
-#    Updated: 2024/03/13 13:43:48 by akovalev         ###   ########.fr        #
+#    Updated: 2024/03/14 19:04:49 by akovalev         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,8 @@ all: $(NAME)
 	@$(CC) $(CFLAGS) -o $@ -c $< 
 
 $(NAME): $(OBJS) 
-	@$(CC) $(OBJS) -o $(NAME) $(LDFLAGS) -lreadline
+	@$(CC) $(OBJS) -o $(NAME) $(LDFLAGS) -lreadline -ltermcap -lncurses
+#-ltermcap -lncurses might be needed for termcap stuff like save/restore cursor
 
 Libft/libft.a: 
 	$(MAKE) -C Libft/ all

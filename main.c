@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/14 14:08:02 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/14 19:05:19 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 char	*ft_prompt(char *username, char *hostname, char *path)
 {
@@ -55,8 +54,10 @@ int	main(int argc, char **argv, char **env)
 	int		i;
 	HIST_ENTRY	*hist_entry;
 
+	signal(SIGQUIT, SIG_IGN);
 	set_termios_settings();
 	set_signal_action();
+
 	info.argc = argc;
 	info.argv = argv;
 	info.env = env;
@@ -70,32 +71,9 @@ int	main(int argc, char **argv, char **env)
 		i++;
 	}
 	read_history(".shell_history");
-	
 	info.prompt = ft_prompt(info.username, "AR-Shell", info.init_dir);
 	info.curr_dir = info.init_dir;
-	//info.input = readline(info.prompt);
 
-	//while (i)
-	//	sleep(1);
-
-
-	//input = readline("\nEnter something: ");
-
-	/*if (info.input != NULL)
-	{
-		printf("\nYou entered: %s\n", info.input);
-		add_history(info.input);
-		free(info.input);
-	}
-	write_history(".shell_history");
-	i = 0;
-	while (i < history_length + 1)
-	{
-		hist_entry = history_get(i);
-		if (hist_entry != NULL)
-			printf("Line %d: %s\n", i, hist_entry->line);
-		i++;
-	}*/
 	parsing(&info);
 	//readline();
 	//cleanup

@@ -3,37 +3,52 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 11:55:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/14 13:39:39 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/14 19:01:38 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+//currently save and restore cursor functions don't seem to work properly, but they might not be needed
+//if the signal() function does indeed take care of the CTRL-\ cursor issue.
+
+void	save_curs_pos(void)
+{
+	char	buf[1024];
+	char	*save_curs;
+
+	if (tgetent(buf, getenv("TERM")) < 0)
+	{
+		fprintf(stderr, "Failed to get terminal capabilities\n");
+		exit(1);
+	}
+	save_curs = tgetstr("sc", NULL);
+	if (save_curs == NULL)
+	{
+		fprintf(stderr, "Failed to get save cursor capability\n");
+		exit(1);
+	}
+	tputs(save_curs, 1, putchar);
+}
+
+void	restore_curs_pos(void)
+{
+	char	*restore_curs;
+
+	restore_curs = tgetstr("rc", NULL);
+	if (restore_curs == NULL)
+	{
+		fprintf(stderr, "Failed to get restore cursor capability\n");
+		exit(1);
+	}
+	tputs(restore_curs, 1, putchar);
+}
+
 void	sigint_handler(int signal)
 {
-	//CTRL-C when the minishell is in interactive mode should just reprint the prompt
-	//CTRL-C while something is running should interrupt it
-	//CTRL-D should logout the current user, but this isn't actually a POSIX signal so
-	// have to handle it a different way. probably a "key function"
-	// as described in the readline docs.
-
-	/* From the documentation:
-	Variable: int rl_eof_found
-	Readline will set this variable when it has read an EOF character (e.g., 
-	the stty ‘EOF’ character) on an empty line or encountered a read error and 
-	is about to return a NULL line to the caller.
-	*/
-	/* So it looks like we can create key bindings etc in readline. so anything bound there
-	applies to interactive mode. and we can have keybindings outside of readline that handle
-	while child processes are running etc. called a keymap in the documentation*/
-	//CTRL-\ should exit the shell or the program running in the shell as appropriate
-	
-	/* we also need to make the readline output below actually get executed, not just read*/
-	/*need to make the below logic smart enough to not redraw the prompt twice
-	when we use ctrl-c to end a child process*/
 	if (signal == SIGINT)
 	{
 		write(2, "\n", 1);
@@ -43,7 +58,8 @@ void	sigint_handler(int signal)
 	}
 	if (signal == SIGQUIT)
 	{
-		return ;
+		restore_curs_pos();
+		//return ;
 	}
 }
 
@@ -55,5 +71,5 @@ void	set_signal_action(void)
 	ft_bzero(&act, sizeof(act));
 	act.sa_handler = &sigint_handler;
 	sigaction(SIGINT, &act, NULL);
-	sigaction(SIGQUIT, &act, NULL);
+	//sigaction(SIGQUIT, &act, NULL);
 }

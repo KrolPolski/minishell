@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/14 12:09:00 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/14 19:05:03 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <termios.h>
 # include <curses.h>
 # include <term.h>
+# include <termcap.h>
 
 # define EXEC  1
 # define REDIR 2
@@ -94,4 +95,6 @@ extern void rl_replace_line (const char *, int);
 int		parsing(t_info *info);
 char	*ft_prompt(char *username, char *hostname, char *path);
 t_cmd	*parsecommand(char *str);
+void	restore_curs_pos(void);
+void	save_curs_pos(void);
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/14 19:03:15 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/15 09:32:33 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,13 @@ char	*check_command(char *com, char **env)
 
 	paths = parse_paths(env);
 	i = 0;
+	if (ft_strchr(com, '/'))
+	{
+		if (access(command, X_OK != -1))
+			return (ft_strdup(com));
+		else
+			return (NULL);
+	}
 	while (paths[i])
 	{
 		com_slash = ft_strjoin(paths[i], "/");

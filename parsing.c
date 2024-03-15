@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/14 15:11:50 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/14 19:03:15 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -596,6 +596,7 @@ int	parsing(t_info *info)
 			break ;
 		}
 	}
+	//save_curs_pos(); //currently unnecessary
 	str = readline(info->prompt);
 	while (str != NULL)
 	{
@@ -623,7 +624,10 @@ int	parsing(t_info *info)
 		// 	// 	ft_pwd(ecmd, info);
 		}
 		if (fork1() == 0)
+		{
+			signal(SIGQUIT, SIG_DFL);
 			execute(cmd, info->env, info);
+		}
 		wait(&status);
 		//print_tree(cmd);
 		free(str);

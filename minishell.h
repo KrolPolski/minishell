@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/18 16:22:45 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/18 17:31:46 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,6 @@ t_cmd	*parsecommand(char *str);
 void	restore_curs_pos(void);
 void	save_curs_pos(void);
 char	*expand_env_var(char *var, char **env);
-char	*expand_string(char **str, char **env);
+char	*expand_string(char *str, char **env);
 int		peek(char **ps, char *es, char *tokens);
 #endif

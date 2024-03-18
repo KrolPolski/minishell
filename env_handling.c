@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 10:13:35 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/18 16:41:28 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/18 18:00:56 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	speek(char **ps, char *es, char *tokens)
 	*ps = s;
 }
 
-char	*replace_name(char *ptr, char *var, char *exp_var, char **str, char *beg_str)
+char	*replace_name(char *ptr, char *var, char *exp_var, char *beg_str)
 {
 	size_t	old_vlen;
 	size_t	new_vlen;
@@ -55,21 +55,15 @@ char	*replace_name(char *ptr, char *var, char *exp_var, char **str, char *beg_st
 	upd_str = malloc(new_strlen + 1);
 	if (upd_str == NULL)
 		return (NULL);
-	//ft_bzero((void *)upd_str, new_strlen);
 	memcpy(upd_str, beg_str, ptr - beg_str);
-	printf("String: %s\n", upd_str);
-    memcpy(upd_str + (ptr - beg_str), exp_var, new_vlen);
-	printf("String: %s\n", upd_str);
-    memcpy(upd_str + (ptr - beg_str) + new_vlen, ptr + old_vlen, old_strlen - (ptr - beg_str) - old_vlen);
-	printf("String: %s\n", upd_str);
-
-	//ft_memmove(ptr + new_vlen, ptr + old_vlen, old_strlen - old_vlen + 1);
-	//ft_memcpy(ptr, exp_var, new_vlen);
-	*str = ptr + new_vlen;
-	return(upd_str);
+	memcpy(upd_str + (ptr - beg_str), exp_var, new_vlen);
+	memcpy(upd_str + (ptr - beg_str) + new_vlen, ptr + old_vlen, \
+		old_strlen - (ptr - beg_str) - old_vlen + 1);
+	free(beg_str);
+	return (upd_str);
 }
 
-char	*expand_string(char **str, char **env)
+char	*expand_string(char *str, char **env)
 {
 	char	*ptr;
 	char	*end_str;
@@ -78,39 +72,31 @@ char	*expand_string(char **str, char **env)
 	char	whitespace[] = " \t\r\n\v";
 	char	*beg_str;
 
-	beg_str = *str;
-	end_str = *str + ft_strlen(*str);
-	if (*str == end_str)
+	beg_str = str;
+	end_str = str + ft_strlen(str);
+	if (str == end_str)
 		return (NULL);
-	speek(str, end_str, "$");
-	//printf("String: %s\n", *str);
-	if (ft_strlen(*str) > 0)
+	speek(&str, end_str, "$");
+	if (ft_strlen(str) > 0)
 	{
-		while (ft_strlen(*str) > 0)
+		ptr = str;
+		while (str < end_str && !ft_strchr(whitespace, *str))
+			(str)++;
+		var = malloc(str - ptr + 1);
+		ft_strlcpy(var, ptr, str - ptr + 1);
+		exp_var = expand_env_var(var, env);
+		beg_str = replace_name(ptr, var, exp_var, beg_str);
+		if (ft_strlen(str) > 0)
 		{
-			ptr = *str;
-			while (*str < end_str && !ft_strchr(whitespace, **str))
-				(*str)++;
-			var = malloc(*str - ptr + 1);
-			ft_strlcpy(var, ptr, *str - ptr + 1);
-			//printf("Found variable: %s\n", var);
-			exp_var = expand_env_var(var, env);
-			replace_name(ptr, var, exp_var, str, beg_str);
-			//printf("Variable: %s\n", var);
-			//printf("Expanded variable: %s\n", exp_var);
-			//printf("String now is at: %s\n", *str);
-			//printf("len is %d\n", (int)ft_strlen(*str));
-			if (ft_strlen(*str) > 0)
-			{
-				expand_string(str, env);
-				while (*str && !ft_strchr(whitespace, **str))
-					(*str)++;
-			}
+			beg_str = expand_string(beg_str, env);
+			while (str && !ft_strchr(whitespace, *str))
+				(str)++;
 		}
 	}
 	else
 	{
 		printf("did not find any dollaridoos\n");
 	}
-	return (NULL);
+	free (var);
+	return (beg_str);
 }

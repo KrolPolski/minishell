@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/14 19:05:19 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/18 16:42:54 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,20 +47,42 @@ void	set_termios_settings(void)
 	term.c_lflag &= ~ECHOCTL;
 	tcsetattr(0, TCSADRAIN, &term);
 }
+void	populate_env_list(t_info *info)
+{
+	int		i;
+	t_list	*new;
+	t_list *curr;
 
+	info->curr_env = malloc(sizeof(t_list *));
+	i = 0;
+	while (info->init_env[i])
+	{
+		new = ft_lstnew(info->init_env[i]);
+		ft_lstadd_back(info->curr_env, new);
+		i++;
+	}
+	ft_printf("The list now has %d nodes:\n", ft_lstsize(*(info->curr_env)));
+
+	curr = *(info->curr_env);
+	while (curr)
+	{
+		ft_printf("%s\n", curr->content);
+		curr = curr->next;
+	}
+}
 int	main(int argc, char **argv, char **env)
 {
-	t_info	info;	
+	t_info	info;
 	int		i;
 	HIST_ENTRY	*hist_entry;
 
 	signal(SIGQUIT, SIG_IGN);
 	set_termios_settings();
 	set_signal_action();
-
 	info.argc = argc;
 	info.argv = argv;
-	info.env = env;
+	info.init_env = env;
+	populate_env_list(&info);
 	i = 0;
 	while (env[i] != NULL)
 	{

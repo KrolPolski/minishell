@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 10:13:35 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/15 18:14:24 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/18 16:41:28 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,19 +40,33 @@ void	speek(char **ps, char *es, char *tokens)
 	*ps = s;
 }
 
-void	replace_name(char *ptr, char *var, char *exp_var, char **str)
+char	*replace_name(char *ptr, char *var, char *exp_var, char **str, char *beg_str)
 {
 	size_t	old_vlen;
 	size_t	new_vlen;
 	size_t	old_strlen;
 	size_t	new_strlen;
+	char	*upd_str;
 
-	old_strlen = ft_strlen(ptr);
+	old_strlen = ft_strlen(beg_str);
 	old_vlen = ft_strlen(var);
 	new_vlen = ft_strlen(exp_var);
-	ft_memmove(ptr + new_vlen, ptr + old_vlen, old_strlen - old_vlen + 1);
-	ft_memcpy(ptr, exp_var, new_vlen);
+	new_strlen = old_strlen + new_vlen - old_vlen;
+	upd_str = malloc(new_strlen + 1);
+	if (upd_str == NULL)
+		return (NULL);
+	//ft_bzero((void *)upd_str, new_strlen);
+	memcpy(upd_str, beg_str, ptr - beg_str);
+	printf("String: %s\n", upd_str);
+    memcpy(upd_str + (ptr - beg_str), exp_var, new_vlen);
+	printf("String: %s\n", upd_str);
+    memcpy(upd_str + (ptr - beg_str) + new_vlen, ptr + old_vlen, old_strlen - (ptr - beg_str) - old_vlen);
+	printf("String: %s\n", upd_str);
+
+	//ft_memmove(ptr + new_vlen, ptr + old_vlen, old_strlen - old_vlen + 1);
+	//ft_memcpy(ptr, exp_var, new_vlen);
 	*str = ptr + new_vlen;
+	return(upd_str);
 }
 
 char	*expand_string(char **str, char **env)
@@ -62,7 +76,9 @@ char	*expand_string(char **str, char **env)
 	char	*var;
 	char	*exp_var;
 	char	whitespace[] = " \t\r\n\v";
+	char	*beg_str;
 
+	beg_str = *str;
 	end_str = *str + ft_strlen(*str);
 	if (*str == end_str)
 		return (NULL);
@@ -79,7 +95,7 @@ char	*expand_string(char **str, char **env)
 			ft_strlcpy(var, ptr, *str - ptr + 1);
 			//printf("Found variable: %s\n", var);
 			exp_var = expand_env_var(var, env);
-			replace_name(ptr, var, exp_var, str);
+			replace_name(ptr, var, exp_var, str, beg_str);
 			//printf("Variable: %s\n", var);
 			//printf("Expanded variable: %s\n", exp_var);
 			//printf("String now is at: %s\n", *str);

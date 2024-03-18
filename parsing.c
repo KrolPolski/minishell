@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/18 08:54:34 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/18 17:48:26 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -606,6 +606,7 @@ int	parsing(t_info *info)
 	t_cmd		*cmd;
 	int			status;
 	t_execcmd	*ecmd;
+	char		*expanded;
 
 	while ((fd = open("console", O_RDWR)) >= 0)
 	{
@@ -634,12 +635,12 @@ int	parsing(t_info *info)
 		}
 		free (tmp);
 		pstr = str;
-		printf("Command before expansion: %s\n", str);
-		expand_string(&str, info->env);
-		str = pstr;
-		printf("Command after expansion: %s\n", str);
+		//printf("Command before expansion: %s\n", str);
+		expanded = expand_string(str, info->env);
+		//str = pstr;
+		//printf("Command after expansion: %s\n", expanded);
 		//free(str);
-		cmd = parsecommand(str);
+		cmd = parsecommand(expanded);
 		if (cmd->type == 1)
 		{
 			ecmd = (t_execcmd *)cmd;
@@ -660,7 +661,7 @@ int	parsing(t_info *info)
 			ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
 		}
 		//print_tree(cmd);
-		free(str);
+		//free(str);
 		str = readline(info->prompt);
 	}
 	return (0);

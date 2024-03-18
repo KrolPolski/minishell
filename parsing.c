@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/15 17:26:34 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/18 08:54:34 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,17 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 		close(p[0]);
 		close(p[1]);
 		wait(&status);
+		if (WIFEXITED(status))
+		{
+			info->exit_code = WEXITSTATUS(status);
+			ft_printf("Exit code of pipe fork is %d\n", info->exit_code);
+		}
 		wait(&status);
+		if (WIFEXITED(status))
+		{
+			info->exit_code = WEXITSTATUS(status);
+			ft_printf("Exit code of pipe fork2 is %d\n", info->exit_code);
+		}
 	}
 	else if (cmd->type == EXEC)
 	{
@@ -232,7 +242,8 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 		}
 		execute (rcmd->cmd, env, info);
 	}
-	exit (0); //remember to manually free memory on all exits
+	exit(info->exit_code);
+	//exit (0); //remember to manually free memory on all exits
 }
 
 t_cmd	*execcmd(void)
@@ -643,6 +654,11 @@ int	parsing(t_info *info)
 			execute(cmd, info->env, info);
 		}
 		wait(&status);
+		if (WIFEXITED(status))
+		{
+			info->exit_code = WEXITSTATUS(status);
+			ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
+		}
 		//print_tree(cmd);
 		free(str);
 		str = readline(info->prompt);

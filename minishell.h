@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/18 08:49:36 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/18 16:22:45 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,9 @@ typedef struct s_info
 	char	*prompt;
 	int		argc;
 	char	**argv;
-	char	**env;
+	char	**init_env;
 	int		exit_code;
+	t_list	**curr_env;
 }	t_info;
 
 void	set_signal_action(void);

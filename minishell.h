@@ -86,8 +86,9 @@ typedef struct s_info
 	char	*prompt;
 	int		argc;
 	char	**argv;
-	char	**env;
+	char	**init_env;
 	int		exit_code;
+	t_list	**curr_env;
 }	t_info;
 
 void	set_signal_action(void);

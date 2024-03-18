@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 10:13:35 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/18 18:00:56 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/18 19:14:19 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,17 @@
 
 char	*expand_env_var(char *var, char **env)
 {
-	int	i;
+	int		i;
+	char	*eq_ptr;
 
 	i = 0;
 
 	while (env[i])
 	{
-		if (ft_strnstr(env[i], var + 1, ft_strlen(var) -1)) //offsets are to account for $
-			return(env[i] + ft_strlen(var)); //to get past VAR=
+		eq_ptr = ft_strchr(env[i], '=');
+		if (ft_strlen(var) - 1 == eq_ptr - env[i])
+			if (ft_strnstr(env[i], var + 1, ft_strlen(var) - 1)) //offsets are to account for $
+				return (env[i] + ft_strlen(var));//to get past VAR=
 		i++;
 	}
 	return (NULL);
@@ -74,6 +77,7 @@ char	*expand_string(char *str, char **env)
 
 	beg_str = str;
 	end_str = str + ft_strlen(str);
+	var = NULL;
 	if (str == end_str)
 		return (NULL);
 	speek(&str, end_str, "$");
@@ -85,7 +89,14 @@ char	*expand_string(char *str, char **env)
 		var = malloc(str - ptr + 1);
 		ft_strlcpy(var, ptr, str - ptr + 1);
 		exp_var = expand_env_var(var, env);
-		beg_str = replace_name(ptr, var, exp_var, beg_str);
+		if (exp_var != NULL)
+			beg_str = replace_name(ptr, var, exp_var, beg_str);
+		else
+		{
+			exp_var = ft_strdup("");
+			beg_str = replace_name(ptr, var, exp_var, beg_str);
+			free(exp_var);
+		}
 		if (ft_strlen(str) > 0)
 		{
 			beg_str = expand_string(beg_str, env);
@@ -97,6 +108,7 @@ char	*expand_string(char *str, char **env)
 	{
 		printf("did not find any dollaridoos\n");
 	}
-	free (var);
+	if (var)
+		free (var);
 	return (beg_str);
 }

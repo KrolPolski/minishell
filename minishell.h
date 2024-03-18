@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/14 19:05:03 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/15 16:41:11 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,4 +97,7 @@ char	*ft_prompt(char *username, char *hostname, char *path);
 t_cmd	*parsecommand(char *str);
 void	restore_curs_pos(void);
 void	save_curs_pos(void);
+char	*expand_env_var(char *var, char **env);
+char	*expand_string(char **str, char **env);
+int		peek(char **ps, char *es, char *tokens);
 #endif

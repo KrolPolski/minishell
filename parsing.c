@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/15 09:32:33 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/15 17:26:34 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -589,6 +589,7 @@ int	parsing(t_info *info)
 {
 	int			fd;
 	char		*str;
+	char		*pstr;
 	char		*str_check;
 	char		*tmp;
 	t_cmd		*cmd;
@@ -621,6 +622,12 @@ int	parsing(t_info *info)
 				str_check++;
 		}
 		free (tmp);
+		pstr = str;
+		printf("Command before expansion: %s\n", str);
+		expand_string(&str, info->env);
+		str = pstr;
+		printf("Command after expansion: %s\n", str);
+		//free(str);
 		cmd = parsecommand(str);
 		if (cmd->type == 1)
 		{

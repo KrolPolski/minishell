@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 08:57:25 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/19 09:19:58 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ typedef struct s_info
 	char	**curr_env;
 }	t_info;
 
+void	free_2d(char **arr);
 void	set_signal_action(void);
 char	*readline(const char *prompt);
 extern void rl_replace_line (const char *, int);

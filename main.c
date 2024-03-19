@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 09:11:41 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/19 09:20:46 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,4 +100,5 @@ int	main(int argc, char **argv, char **env)
 	free(info.username);
 	free(info.init_dir);
 	free(info.prompt);
+	free_2d(info.curr_env);
 }

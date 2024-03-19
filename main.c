@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/18 16:42:54 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/19 13:10:10 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,29 +47,49 @@ void	set_termios_settings(void)
 	term.c_lflag &= ~ECHOCTL;
 	tcsetattr(0, TCSADRAIN, &term);
 }
-void	populate_env_list(t_info *info)
+void	populate_env_matrix(t_info *info)
 {
+	char	*str;
+	int		line_count;
 	int		i;
-	t_list	*new;
-	t_list *curr;
 
-	info->curr_env = malloc(sizeof(t_list *));
+	i = 0;
+	while (info->init_env[i])
+		i++;
+	ft_printf("i is %d\n", i);
+	info->curr_env = malloc(sizeof(char *) * (i + 1));
 	i = 0;
 	while (info->init_env[i])
 	{
-		new = ft_lstnew(info->init_env[i]);
-		ft_lstadd_back(info->curr_env, new);
+		info->curr_env[i] = ft_strdup(info->init_env[i]);
 		i++;
 	}
-	ft_printf("The list now has %d nodes:\n", ft_lstsize(*(info->curr_env)));
+	info->curr_env[i] = NULL;
+}
 
-	curr = *(info->curr_env);
-	while (curr)
+void	set_shell_level(t_info *info)
+{
+	int	i;
+	int lvl;
+	char *lvlstr;
+
+	i = 0;
+	while (info->curr_env[i])
 	{
-		ft_printf("%s\n", curr->content);
-		curr = curr->next;
+		if (ft_strnstr(info->curr_env[i], "SHLVL=", 6))
+		{
+			lvl = ft_atoi(info->curr_env[i] + 6);
+			lvl++;
+			free(info->curr_env[i]);
+			lvlstr = ft_itoa(lvl);
+			info->curr_env[i] = ft_strjoin("SHLVL=", lvlstr);
+			free(lvlstr);
+			return ;
+		}
+		i++;
 	}
 }
+
 int	main(int argc, char **argv, char **env)
 {
 	t_info	info;
@@ -82,14 +102,15 @@ int	main(int argc, char **argv, char **env)
 	info.argc = argc;
 	info.argv = argv;
 	info.init_env = env;
-	populate_env_list(&info);
+	populate_env_matrix(&info);
+	set_shell_level(&info);
 	i = 0;
-	while (env[i] != NULL)
+	while (info.curr_env[i] != NULL)
 	{
-		if (ft_strnstr(env[i], "USER=", 5))
-			info.username = ft_strdup(env[i] + 5);
-		else if (ft_strnstr(env[i], "PWD=", 4))
-			info.init_dir = ft_strdup(env[i] + 4);
+		if (ft_strnstr(info.curr_env[i], "USER=", 5))
+			info.username = ft_strdup(info.curr_env[i] + 5);
+		else if (ft_strnstr(info.curr_env[i], "PWD=", 4))
+			info.init_dir = ft_strdup(info.curr_env[i] + 4);
 		i++;
 	}
 	read_history(".shell_history");
@@ -103,4 +124,5 @@ int	main(int argc, char **argv, char **env)
 	free(info.username);
 	free(info.init_dir);
 	free(info.prompt);
+	free_2d(info.curr_env);
 }

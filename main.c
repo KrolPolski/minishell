@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 09:20:46 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/19 13:01:56 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,29 @@ void	populate_env_matrix(t_info *info)
 	info->curr_env[i] = NULL;
 }
 
+void	set_shell_level(t_info *info)
+{
+	int	i;
+	int lvl;
+	char *lvlstr;
+
+	i = 0;
+	while (info->curr_env[i])
+	{
+		if (ft_strnstr(info->curr_env[i], "SHLVL=", 6))
+		{
+			lvl = ft_atoi(info->curr_env[i] + 6);
+			lvl++;
+			free(info->curr_env[i]);
+			lvlstr = ft_itoa(lvl);
+			info->curr_env[i] = ft_strjoin("SHLVL=", lvlstr);
+			free(lvlstr);
+			return ;
+		}
+		i++;
+	}
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	t_info	info;
@@ -80,6 +103,7 @@ int	main(int argc, char **argv, char **env)
 	info.argv = argv;
 	info.init_env = env;
 	populate_env_matrix(&info);
+	set_shell_level(&info);
 	i = 0;
 	while (env[i] != NULL)
 	{

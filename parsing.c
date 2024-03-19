@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/18 17:48:26 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/19 09:09:26 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,12 @@ void	ft_env(t_execcmd *ecmd, t_info *info)
 {
 	int	i;
 
-	if (info->env == NULL)
+	if (info->curr_env == NULL)
 		panic("env not set");
 	i = 0;
-	while (info->env[i])
+	while (info->curr_env[i])
 	{
-		ft_putstr_fd(info->env[i], 1);
+		ft_putstr_fd(info->curr_env[i], 1);
 		printf("\n");
 		i++;
 	}
@@ -636,7 +636,7 @@ int	parsing(t_info *info)
 		free (tmp);
 		pstr = str;
 		//printf("Command before expansion: %s\n", str);
-		expanded = expand_string(str, info->env);
+		expanded = expand_string(str, info->curr_env);
 		//str = pstr;
 		//printf("Command after expansion: %s\n", expanded);
 		//free(str);
@@ -652,7 +652,7 @@ int	parsing(t_info *info)
 		if (fork1() == 0)
 		{
 			signal(SIGQUIT, SIG_DFL);
-			execute(cmd, info->env, info);
+			execute(cmd, info->curr_env, info);
 		}
 		wait(&status);
 		if (WIFEXITED(status))

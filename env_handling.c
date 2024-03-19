@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_handling.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 10:13:35 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/18 18:00:56 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/19 09:24:43 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,11 +92,11 @@ char	*expand_string(char *str, char **env)
 			while (str && !ft_strchr(whitespace, *str))
 				(str)++;
 		}
+		free(var); // this free was moved because var only gets allocated if we go inside this if block
 	}
 	else
 	{
 		printf("did not find any dollaridoos\n");
 	}
-	free (var);
 	return (beg_str);
 }

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/19 10:19:52 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/19 11:59:40 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -572,6 +572,8 @@ int	parsing(t_info *info)
 			ecmd = (t_execcmd *)cmd;
 			if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "cd", 3) == 0)
 				ft_cd(ecmd, info);
+			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "export", 7) == 0)
+				ft_export(ecmd, info);
 		// 	// else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
 		// 	// 	ft_pwd(ecmd, info);
 		}

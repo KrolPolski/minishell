@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 09:19:48 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 09:20:05 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/19 11:34:39 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,4 +24,14 @@ void	free_2d(char **arr)
 	}
 	free(arr);
 	arr = NULL;
+}
+
+int	ft_matrix_len(char **str)
+{
+	int i;
+	
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
 }

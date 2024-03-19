@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 10:20:38 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/19 12:00:52 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ typedef struct s_info
 void	free_2d(char **arr);
 void	set_signal_action(void);
 char	*readline(const char *prompt);
-extern void rl_replace_line (const char *, int);
+extern void	rl_replace_line (const char *, int);
 int		parsing(t_info *info);
 char	*ft_prompt(char *username, char *hostname, char *path);
 t_cmd	*parsecommand(char *str);
@@ -104,11 +104,13 @@ char	*expand_env_var(char *var, char **env);
 char	*expand_string(char *str, char **env);
 int		peek(char **ps, char *es, char *tokens);
 void	handle_builtins(t_execcmd *ecmd, char **env,
-	char *builtin_command, t_info *info);
+			char *builtin_command, t_info *info);
 void	ft_cd(t_execcmd *ecmd, t_info *info);
 void	ft_echo(t_execcmd *ecmd, t_info *info);
 void	ft_env(t_execcmd *ecmd, t_info *info);
 void	ft_pwd(t_execcmd *ecmd, t_info *info);
 void	panic(char *s);
+int		ft_matrix_len(char **str);
+void	ft_export(t_execcmd *ecmd, t_info *info);
 
 #endif

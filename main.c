@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 13:01:56 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/19 13:10:10 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,11 @@ int	main(int argc, char **argv, char **env)
 	populate_env_matrix(&info);
 	set_shell_level(&info);
 	i = 0;
-	while (env[i] != NULL)
+	while (info.curr_env[i] != NULL)
 	{
-		if (ft_strnstr(env[i], "USER=", 5))
+		if (ft_strnstr(info.curr_env[i], "USER=", 5))
 			info.username = ft_strdup(info.curr_env[i] + 5);
-		else if (ft_strnstr(env[i], "PWD=", 4))
+		else if (ft_strnstr(info.curr_env[i], "PWD=", 4))
 			info.init_dir = ft_strdup(info.curr_env[i] + 4);
 		i++;
 	}

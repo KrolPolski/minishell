@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 09:19:58 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/19 10:20:38 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,4 +103,12 @@ void	save_curs_pos(void);
 char	*expand_env_var(char *var, char **env);
 char	*expand_string(char *str, char **env);
 int		peek(char **ps, char *es, char *tokens);
+void	handle_builtins(t_execcmd *ecmd, char **env,
+	char *builtin_command, t_info *info);
+void	ft_cd(t_execcmd *ecmd, t_info *info);
+void	ft_echo(t_execcmd *ecmd, t_info *info);
+void	ft_env(t_execcmd *ecmd, t_info *info);
+void	ft_pwd(t_execcmd *ecmd, t_info *info);
+void	panic(char *s);
+
 #endif

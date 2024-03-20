@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 12:00:52 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/19 18:44:50 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,5 +112,7 @@ void	ft_pwd(t_execcmd *ecmd, t_info *info);
 void	panic(char *s);
 int		ft_matrix_len(char **str);
 void	ft_export(t_execcmd *ecmd, t_info *info);
+char	*quote_handler(char *str, char **env);
+char	*replace_name(char *ptr, char *var, char *exp_var, char *beg_str, char **str);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/20 17:41:02 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/20 18:06:26 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ char	*replace_name(char *ptr, char *var, char *exp_var, char *beg_str, char **st
 	size_t	new_strlen;
 	char	*upd_str;
 
+	if (exp_var == NULL)
+		exp_var = ft_strdup("' '"); //will need to be freed
 	old_strlen = ft_strlen(beg_str);
 	old_vlen = ft_strlen(var);
 	new_vlen = ft_strlen(exp_var);
@@ -70,17 +72,14 @@ char	*expand_env(char **beg_str, char *str, char **env, char **begq, char **endq
 	var = malloc(str - ptr + 1);
 	ft_strlcpy(var, ptr, str - ptr + 1);
 	exp_var = fetch_env_var(var, env);
-	if (exp_var != NULL)
+	*beg_str = replace_name(ptr, var, exp_var, *beg_str, &str);
+	if (*begq && *endq)
 	{
-		*beg_str = replace_name(ptr, var, exp_var, *beg_str, &str);
-		if (*begq && *endq)
-		{
-			*begq = *beg_str + diff;
-			//printf("begq is moved to %s\n", *begq);
-			*endq = ft_strchr(*begq + 1, '\"');
-			// *begq = ft_strchr(*beg_str, '\"');
-			// *endq = ft_strchr(*begq + 1, '\"');
-		}
+		*begq = *beg_str + diff;
+		//printf("begq is moved to %s\n", *begq);
+		*endq = ft_strchr(*begq + 1, '\"');
+		// *begq = ft_strchr(*beg_str, '\"');
+		// *endq = ft_strchr(*begq + 1, '\"');
 	}
 	free(var);
 	return (str);

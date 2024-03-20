@@ -6,13 +6,13 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 12:23:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/20 15:38:38 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/20 15:49:16 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	heredoc_handler(char *terminator)
+char	*heredoc_builder(char *delimiter)
 {
 	char *input;
 	char *old_buffer;
@@ -24,10 +24,10 @@ void	heredoc_handler(char *terminator)
 	old_buffer = ft_strjoin(input, "\n");
 	free(input);
 	//ft_printf("Our first strjoin finished");
-	while (ft_strncmp(input, terminator, ft_strlen(terminator)))
+	while (ft_strncmp(input, delimiter, ft_strlen(delimiter)))
 	{
 		input = readline("> ");
-		if (!ft_strncmp(input, terminator, ft_strlen(terminator)))
+		if (!ft_strncmp(input, delimiter, ft_strlen(delimiter)))
 			break ;
 		new_buffer = ft_strjoin(old_buffer, input);
 		free(old_buffer);
@@ -39,5 +39,5 @@ void	heredoc_handler(char *terminator)
 	}
 	
 	ft_printf("%s", old_buffer);
-	// The problem is, we are also appending the EOF marker, which we should not.
+	return (old_buffer);
 }

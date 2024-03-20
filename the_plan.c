@@ -6,10 +6,15 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 15:45:06 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/14 12:51:34 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/20 12:23:11 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/* Heredoc thought process
+	It seems to me that << basically does the same thing as < file, except that
+	instead of reading a file we are able to basically provide the output
+	ourselves at that very moment. that and we need to handle the delimiter.
+*/
 /* Current Bugs
 	1. when we ctrl-c a process, we end up with two printings of the prompt.
 	2. when we ctrl-c an idle prompt, the input isn't actually used for anything.

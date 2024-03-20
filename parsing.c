@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/19 18:12:35 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/20 12:36:58 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,9 +356,13 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es)
 	{
 		tok = gettoken(ps, es, 0, 0);
 		if (gettoken(ps, es, &q, &eq) != 'a')
-			panic("missing file for redirection");
+			ft_printf("missing file for redirection\n");
 		if (tok == '<')
 			cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
+		else if (tok == '-')
+		{
+			heredoc_handler();
+		}
 		else if (tok == '>')
 			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_TRUNC, 1);
 		else if (tok == '+')

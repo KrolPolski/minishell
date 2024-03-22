@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/20 15:50:37 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/22 16:14:36 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -568,7 +568,7 @@ int	parsing(t_info *info)
 		free (tmp);
 		pstr = str;
 		//printf("Command before expansion: %s\n", str);
-		expanded = quote_handler(str, info->curr_env);
+		expanded = expand_env_remove_quotes(str, info->curr_env);
 		//str = pstr;
 		//printf("Command after expansion: %s\n", expanded);
 		//free(str);

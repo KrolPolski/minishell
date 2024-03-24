@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/20 15:49:34 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:08:10 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 # define PIPE  3
 # define LIST  4
 # define BACK  5
+# define HEREDOC 6
 # define MAXARGS 10
 
 typedef struct s_cmd
@@ -55,6 +56,7 @@ typedef struct s_redircmd
 	char		*efile;
 	int			mode;
 	int			fd;
+	int			heredoc;
 }	t_redircmd;
 
 typedef struct s_pipecmd

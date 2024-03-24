@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/20 15:50:37 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/20 16:10:10 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -362,6 +362,7 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es)
 			cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
 		else if (tok == '-')
 		{
+		
 			heredoc_buff = heredoc_builder("EOF");
 			ft_printf("Assembled buffer is:\n%s", heredoc_buff);
 		}

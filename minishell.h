@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/20 16:08:10 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/24 14:29:15 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,7 @@
 # define PIPE  3
 # define LIST  4
 # define BACK  5
-# define HEREDOC 6
-# define MAXARGS 10
+# define MAXARGS 100
 
 typedef struct s_cmd
 {
@@ -93,6 +92,20 @@ typedef struct s_info
 	char	**curr_env;
 }	t_info;
 
+typedef struct s_line_info
+{
+	bool	sfl;
+	bool	dfl;
+	char	*endsq;
+	char	*enddq;
+	char	*begsq;
+	char	*begdq;
+	char	*beg_str;
+	char	*end_str;
+	char	*beg_var;
+	bool	free_flag;
+}	t_line_info;
+
 void	free_2d(char **arr);
 void	set_signal_action(void);
 char	*readline(const char *prompt);
@@ -114,9 +127,8 @@ void	ft_pwd(t_execcmd *ecmd, t_info *info);
 void	panic(char *s);
 int		ft_matrix_len(char **str);
 void	ft_export(t_execcmd *ecmd, t_info *info);
-char	*quote_handler(char *str, char **env);
-char	*replace_name(char *ptr, char *var,
-			char *exp_var, char *beg_str, char **str);
+char	*expand_env_remove_quotes(char *str, char **env);
+char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str);
 char	*heredoc_builder(char *delimiter);
 
 #endif

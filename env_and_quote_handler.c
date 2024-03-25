@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/22 18:10:24 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/25 18:25:21 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,6 @@ void	init_line_info(t_line_info *li, char **str)
 	li->enddq = NULL;
 	li->begsq = NULL;
 	li->begdq = NULL;
-	li->beg_str = NULL;
 	li->end_str = NULL;
 	li->beg_var = NULL;
 	li->beg_str = *str;

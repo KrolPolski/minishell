@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/24 14:29:15 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/25 15:00:08 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,5 +130,6 @@ void	ft_export(t_execcmd *ecmd, t_info *info);
 char	*expand_env_remove_quotes(char *str, char **env);
 char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str);
 char	*heredoc_builder(char *delimiter);
+void	init_line_info(t_line_info *li, char **str);
 
 #endif

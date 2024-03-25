@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quote_handler.c                                    :+:      :+:    :+:   */
+/*   env_and_quote_handler.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/22 16:17:06 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/22 18:10:24 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,19 +146,19 @@ char	*expand_env_remove_quotes(char *str, char **env)
 		quote_handler(&li, &str, env);
 		if (li.endsq != NULL && (str == li.endsq))
 		{
-			remove_quotes(li.begsq, li.endsq);
+			//remove_quotes(li.begsq, li.endsq);
 			li.sfl = 0;
 			li.endsq = NULL;
-			str--;
-			str--;
+			//str--;
+			//str--;
 		}
 		if (li.enddq != NULL && (str == li.enddq))
 		{
-			remove_quotes(li.begdq, li.enddq);
+			//remove_quotes(li.begdq, li.enddq);
 			li.dfl = 0;
 			li.enddq = NULL;
-			str--;
-			str--;
+			//str--;
+			//str--;
 		}
 		str++;
 	}

@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/22 16:14:36 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/25 14:52:37 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,7 +269,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq)
 	else if (*str != 0)
 	{
 		ret = 'a';
-		while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str))
+		while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str)) //this will need to not look at symbols while we are inside quotes
 			str++;
 	}
 	if (eq)
@@ -294,8 +294,9 @@ int	peek(char **ps, char *es, char *tokens)
 }
 t_cmd *parseline(char**, char*);
 t_cmd *parsepipe(char**, char*);
-t_cmd *parseexec(char**, char*);
+t_cmd *parseexec(char**, char*, t_line_info *li);
 t_cmd *nullterminate(t_cmd *);
+t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
 
 t_cmd	*parsecommand(char *str)
 {
@@ -314,39 +315,83 @@ t_cmd	*parsecommand(char *str)
 	return (cmd);
 }
 
+// t_cmd	*parseline(char **ps, char *es)
+// {
+// 	t_cmd	*cmd;
+
+// 	cmd = parsepipe(ps, es);
+// 	// while (peek(ps, es, "&"))
+// 	// {
+// 	// 	gettoken(ps, es, 0, 0);
+// 	// 	cmd = backcmd(cmd);
+// 	// }
+// 	// if (peek(ps, es, ";"))
+// 	// {
+// 	// 	gettoken(ps, es, 0, 0);
+// 	// 	cmd = listcmd(cmd, parseline(ps, es));
+// 	// }
+// 	return (cmd);
+// }
+
 t_cmd	*parseline(char **ps, char *es)
 {
-	t_cmd	*cmd;
+	t_cmd		*cmd;
+	int			tok;
+	t_line_info	li;
 
-	cmd = parsepipe(ps, es);
-	// while (peek(ps, es, "&"))
-	// {
-	// 	gettoken(ps, es, 0, 0);
-	// 	cmd = backcmd(cmd);
-	// }
-	// if (peek(ps, es, ";"))
-	// {
-	// 	gettoken(ps, es, 0, 0);
-	// 	cmd = listcmd(cmd, parseline(ps, es));
-	// }
-	return (cmd);
-}
+	init_line_info(&li, ps);
+	//printf("string is: %s\n", li.beg_str);
 
-t_cmd	*parsepipe(char **ps, char *es)
-{
-	t_cmd	*cmd;
-	int		tok;
-
-	cmd = parseexec(ps, es);
+	cmd = parseexec(ps, es, &li);
 	if (peek(ps, es, "|"))
 	{
 		tok = gettoken(ps, es, 0, 0);
-		cmd = pipecmd(cmd, parsepipe(ps, es));
+		cmd = pipecmd(cmd, parseline(ps, es));
 	}
 	return (cmd);
 }
 
-t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es)
+t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
+{
+	char		*q;
+	char		*eq;
+	int			tok;
+	int			argc;
+	t_execcmd	*cmd;
+	t_cmd		*ret;
+
+	// tok = gettoken(ps, es, 0, 0);
+	// if (tok != 'a')
+	// 	panic("syntax: multiple operators");
+	// if (peek(ps, es, "("))
+	// 	return (parseblock(ps, es));
+	ret = execcmd();
+	cmd = (t_execcmd *)ret;
+
+	argc = 0;
+	ret = parseredirs(ret, ps, es, li);
+	while (!peek(ps, es, "|")) //in case we are inside the quotes this instead will need to look for that
+	{
+		if ((tok = gettoken(ps, es, &q, &eq)) == 0)
+			break ;
+		if (tok != 'a')
+			panic("syntax");
+		cmd->argv[argc] = q;
+		cmd->eargv[argc] = eq;
+		argc++;
+		if (argc >= MAXARGS)
+		{
+			printf("argc: %d", argc);
+			panic("too many args");
+		}
+		ret = parseredirs(ret, ps, es, li);
+	}
+	cmd->argv[argc] = 0;
+	cmd->eargv[argc] = 0;
+	return (ret);
+}
+
+t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 {
 	int		tok;
 	char	*q;
@@ -388,45 +433,6 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es)
 // 	return (cmd);
 // }
 
-t_cmd	*parseexec(char **ps, char *es)
-{
-	char		*q;
-	char		*eq;
-	int			tok;
-	int			argc;
-	t_execcmd	*cmd;
-	t_cmd		*ret;
-
-	// tok = gettoken(ps, es, 0, 0);
-	// if (tok != 'a')
-	// 	panic("syntax: multiple operators");
-	// if (peek(ps, es, "("))
-	// 	return (parseblock(ps, es));
-	ret = execcmd();
-	cmd = (t_execcmd *)ret;
-
-	argc = 0;
-	ret = parseredirs(ret, ps, es);
-	while (!peek(ps, es, "|"))
-	{
-		if ((tok = gettoken(ps, es, &q, &eq)) == 0)
-			break ;
-		if (tok != 'a')
-			panic("syntax");
-		cmd->argv[argc] = q;
-		cmd->eargv[argc] = eq;
-		argc++;
-		if (argc >= MAXARGS)
-		{
-			printf("argc: %d", argc);
-			panic("too many args");
-		}
-		ret = parseredirs(ret, ps, es);
-	}
-	cmd->argv[argc] = 0;
-	cmd->eargv[argc] = 0;
-	return (ret);
-}
 
 t_cmd	*nullterminate(t_cmd *cmd)
 {

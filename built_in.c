@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 11:32:13 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/26 10:18:56 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,25 @@
 void	ft_cd(t_execcmd *ecmd, t_info *info)
 {
 	char	buf[100];
-
-	if (chdir(ecmd->argv[1]) < 0)
-		printf("cannot cd %s\n", ecmd->argv[1]);
+	char	*home_path;
+	char	*target_path;
+	//this is going to get weird if they change users, we don't yet have
+	//a mechanism to update the info->username field on user changes.
+	home_path = ft_strjoin("/Users/", info->username);
+	if (!ecmd->argv[1])
+	{
+		target_path = home_path;
+	}
 	else
 	{
-		info->curr_dir = getcwd(buf, sizeof(buf));
-		free(info->prompt);
-		info->prompt = ft_prompt(info->username, "AR-Shell", info->curr_dir);
+		target_path = ecmd->argv[1];
 	}
+	if (chdir(target_path) < 0)
+		printf("cannot cd %s\n", ecmd->argv[1]);
+	info->curr_dir = getcwd(buf, sizeof(buf));
+	free(info->prompt);
+	info->prompt = ft_prompt(info->username, "AR-Shell", info->curr_dir);
+	free(home_path);
 }
 
 void	ft_pwd(t_execcmd *ecmd, t_info *info)

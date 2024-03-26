@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/25 14:24:48 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/26 10:38:12 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,5 +130,6 @@ char	*expand_env_remove_quotes(char *str, char **env);
 char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str);
 char	*heredoc_builder(char *delimiter);
 void	init_line_info(t_line_info *li, char **str);
+void	ft_exit(t_execcmd *ecmd, t_info *info);
 
 #endif

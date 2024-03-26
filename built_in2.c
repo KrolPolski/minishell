@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 11:57:23 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/26 10:36:26 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,24 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 	free(info->curr_env);
 	info->curr_env = new_env;
 	//ft_printf("ecmd->argv[0] is %s and ecmd->argv[1] is %s\n", ecmd->argv[0], ecmd->argv[1]);
+}
+/* if exit code is provided as an argument, exits the shell with it.
+Otherwise exits with the last exit code provided by $? */
+void	ft_exit(t_execcmd *ecmd, t_info *info)
+{
+	char	*last_exit_code;
+	int		exit_code;
+	int		i;
+
+	i = 0;
+	//consider what happens if a non-int value is provided
+	if (ecmd->argv[1])
+		exit_code = ft_atoi(ecmd->argv[1]);
+	else
+	{
+		exit_code = info->exit_code;
+	}
+	free_2d(info->curr_env);
+	//consider freeing other stuff if required
+	exit(exit_code);
 }

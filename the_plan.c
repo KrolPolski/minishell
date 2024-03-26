@@ -6,10 +6,15 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 15:45:06 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/20 12:23:11 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/25 15:03:53 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
+	Quotes challenges:
+	The question is at what point do we resolve the quotes?
+	
+*/
 /* Heredoc thought process
 	It seems to me that << basically does the same thing as < file, except that
 	instead of reading a file we are able to basically provide the output

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/25 14:52:37 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/26 11:05:46 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -586,6 +586,11 @@ int	parsing(t_info *info)
 				ft_cd(ecmd, info);
 			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "export", 7) == 0)
 				ft_export(ecmd, info);
+			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "exit", 5) == 0)
+				ft_exit(ecmd, info);
+			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "unset", 6) == 0)
+				ft_unset(ecmd, info);
+
 		// 	// else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
 		// 	// 	ft_pwd(ecmd, info);
 		}

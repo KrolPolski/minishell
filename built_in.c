@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/26 10:37:45 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/26 11:04:34 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,4 +99,6 @@ void	handle_builtins(t_execcmd *ecmd, char **env,
 		ft_export(ecmd, info);
 	if (!ft_strncmp(builtin_command, "exit", ft_strlen(builtin_command)))
 		ft_exit(ecmd, info);
+	if (!ft_strncmp(builtin_command, "unset", ft_strlen(builtin_command)))
+		ft_unset(ecmd, info);
 }

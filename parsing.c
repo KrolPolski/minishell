@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/27 17:00:22 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:43:30 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,17 +287,25 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 		{
 			while (str < end_str && !ft_strchr(whitespace, *str))  //this will need to not look at symbols while we are inside quotes
 			{
+				if (str == li->begsq)
+				{
+					str++;
+					*q = str;
+					str--;
+				}
 				if (li->sfl == 1 && str == li->endsq)
 				{
-					printf("We have reached the end of single quotes at %s\n", str);
-					remove_quotes(li->begsq, li->endsq);
-					printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
+					//printf("We have reached the end of single quotes at %s\n", str);
+					//remove_quotes(li->begsq, li->endsq);
+					//printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
 					li->sfl = 0;
 					li->begsq = NULL;
 					li->endsq = NULL;
-					str--;
-					str--;
-					printf("Now the string points to %s\n", str);
+					li->flag_changed = 1;
+					//q--;
+					//str--;
+					//str--;
+					//printf("Now the q points to %s\n", *q);
 				}
 				str++;
 			}
@@ -306,18 +314,26 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 		{
 			while (str < end_str && !ft_strchr(whitespace, *str))  //this will need to not look at symbols while we are inside quotes
 			{
+				if (str == li->begdq)
+				{
+					str++;
+					*q = str;
+					str--;
+				}
 				if (li->dfl == 1 && str == li->enddq)
 				{
-					printf("We have reached the end of double quotes at %s\n", str);
-					printf("The actual positions double quotes were %s\n and %s\n", li->begdq, li->enddq);
-					remove_quotes(li->begdq, li->enddq);
-					printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
+					//printf("We have reached the end of double quotes at %s\n", str);
+					//printf("The actual positions double quotes were %s\n and %s\n", li->begdq, li->enddq);
+					//remove_quotes(li->begdq, li->enddq);
+					//printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
 					li->dfl = 0;
 					li->begdq = NULL;
 					li->enddq = NULL;
-					str--;
-					str--;
-					printf("Now the string points to %s\n", str);
+					li->flag_changed = 1;
+					///q--;
+					//str--;
+					//str--;
+					//printf("Now the q points to %s\n", *q);
 				}
 				str++;
 			}
@@ -330,6 +346,13 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 	}
 	if (eq)
 		*eq = str;
+	if (li->flag_changed)
+	{
+		str--;
+		*eq = str;
+		str++;
+		li->flag_changed = 0;
+	}
 	while (str < end_str && ft_strchr(whitespace, *str))
 		str++;
 	*pstr = str;
@@ -357,8 +380,10 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
 t_cmd	*parsecommand(char *str)
 {
 	char	*end_str;
+	char	*beg_str;
 	t_cmd	*cmd;
 
+	beg_str = str;
 	end_str = str + ft_strlen(str);
 	cmd = parseline(&str, end_str);
 	peek(&str, end_str, "");
@@ -367,6 +392,7 @@ t_cmd	*parsecommand(char *str)
 		printf("leftovers: %s\n", str);
 		panic("syntax");
 	}
+	//printf("The whole line before returning: %s\n", beg_str);
 	nullterminate(cmd);
 	return (cmd);
 }
@@ -434,8 +460,14 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 		//printf("New token is %d\n", tok);
 		if (tok != 'a')
 			panic("syntax");
+		// if (q == li->begsq)
+		// 	q++;
+		// else if (q == li->begdq)
+		// 	q++;
 		cmd->argv[argc] = q;
 		cmd->eargv[argc] = eq;
+		//printf("The position of ps is %s\n", *ps);
+		printf("Current token's start and end: %s\n%s\n", q, eq);
 		argc++;
 		if (argc >= MAXARGS)
 		{
@@ -458,8 +490,10 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	char		*str;
 
 	str = *ps;
-	li->begsq = ft_strchr(str, '\'');
-	li->begdq = ft_strchr(str, '\"');
+	if (!li->sfl)
+		li->begsq = ft_strchr(str, '\'');
+	if (!li->dfl)
+		li->begdq = ft_strchr(str, '\"');
 	if ((li->begsq) && ((li->begsq < li->begdq || li->begdq == NULL)) && li->dfl != 1 && li->sfl == 0)
 	{
 		li->endsq = ft_strchr(li->begsq + 1, '\'');

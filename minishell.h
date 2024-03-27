@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/26 11:24:54 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:06:45 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ typedef struct s_line_info
 	char	*end_str;
 	char	*beg_var;
 	bool	free_flag;
+	bool	flag_changed;
 }	t_line_info;
 
 void	free_2d(char **arr);

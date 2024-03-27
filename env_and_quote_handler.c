@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/26 17:49:54 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:07:15 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ void	init_line_info(t_line_info *li, char **str)
 	li->beg_var = NULL;
 	li->beg_str = *str;
 	li->free_flag = 0;
+	li->flag_changed = 0;
 }
 
 //seems like instead of making a function that sets everything in the struct

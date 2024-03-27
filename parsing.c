@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/26 17:36:22 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/27 17:00:22 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,13 +289,15 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 			{
 				if (li->sfl == 1 && str == li->endsq)
 				{
-					//printf("We have reached the end of single quotes at %s\n", str);
+					printf("We have reached the end of single quotes at %s\n", str);
 					remove_quotes(li->begsq, li->endsq);
+					printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
 					li->sfl = 0;
 					li->begsq = NULL;
 					li->endsq = NULL;
 					str--;
 					str--;
+					printf("Now the string points to %s\n", str);
 				}
 				str++;
 			}
@@ -306,13 +308,16 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 			{
 				if (li->dfl == 1 && str == li->enddq)
 				{
-					//printf("We have reached the end of double quotes at %s\n", str);
+					printf("We have reached the end of double quotes at %s\n", str);
+					printf("The actual positions double quotes were %s\n and %s\n", li->begdq, li->enddq);
 					remove_quotes(li->begdq, li->enddq);
+					printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
 					li->dfl = 0;
 					li->begdq = NULL;
 					li->enddq = NULL;
 					str--;
 					str--;
+					printf("Now the string points to %s\n", str);
 				}
 				str++;
 			}
@@ -398,6 +403,7 @@ t_cmd	*parseline(char **ps, char *es)
 		tok = gettoken(ps, es, 0, 0, &li);
 		cmd = pipecmd(cmd, parseline(ps, es));
 	}
+	//printf("The whole line before execution: %s\n", li.beg_str);
 	return (cmd);
 }
 
@@ -419,10 +425,13 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 	cmd = (t_execcmd *)ret;
 	argc = 0;
 	ret = parseredirs(ret, ps, es, li);
-	while (!peek(ps, es, "|")) //in case we are inside the quotes this instead will need to look for that (or appears that it's not needed)
+	//printf("Current position is %c\n", **ps);
+	while ((((**ps != '|') && (!li->sfl && !li->dfl)) || ((li->sfl || li->dfl))) && **ps) //in case we are inside the quotes this instead will need to look for that (or appears that it's not needed)
 	{
+		//printf("We are now at %s\n", *ps);
 		if ((tok = gettoken(ps, es, &q, &eq, li)) == 0)
 			break ;
+		//printf("New token is %d\n", tok);
 		if (tok != 'a')
 			panic("syntax");
 		cmd->argv[argc] = q;

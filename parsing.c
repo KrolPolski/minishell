@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/26 11:05:46 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/26 17:36:22 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,34 +233,48 @@ t_cmd	*backcmd(t_cmd *subcmd)
 }
 
 
-int	gettoken(char **pstr, char *end_str, char **q, char **eq)
+int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 {
 	char	*str;
 	int		ret;
 	char	whitespace[] = " \t\r\n\v";
 	char	symbols[] = "<|>";
 
+	// if (li->sfl == 1 && *pstr == li->endsq)
+	// {
+	// 	//printf("We have reached the end of single quotes at %s\n", *pstr);
+	// 	li->sfl = 0;
+	// 	li->begsq = NULL;
+	// 	li->endsq = NULL;
+	// }
+	// if (li->dfl == 1 && *pstr == li->enddq)
+	// {
+	// 	//printf("We have reached the end of double quotes at %s\n", *pstr);
+	// 	li->dfl = 0;
+	// 	li->begdq = NULL;
+	// 	li->enddq = NULL;
+	// }
 	str = *pstr;
 	while (str < end_str && ft_strchr(whitespace, *str))
 		str++;
 	if (q)
 		*q = str;
 	ret = *str;
-	if (*str == '|')
+	if (*str == '|' && (li->sfl != 1 && li->dfl != 1))
 		str++;
-	else if (*str == '>')
+	else if (*str == '>' && (li->sfl != 1 && li->dfl != 1))
 	{
 		str++;
-		if (*str == '>')
+		if (*str == '>' && (li->sfl != 1 && li->dfl != 1))
 		{
 			ret = '+';
 			str++;
 		}
 	}
-	else if (*str == '<')
+	else if (*str == '<' && (li->sfl != 1 && li->dfl != 1))
 	{
 		str++;
-		if (*str == '<')
+		if (*str == '<' && (li->sfl != 1 && li->dfl != 1))
 		{
 			ret = '-';
 			str++;
@@ -269,8 +283,45 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq)
 	else if (*str != 0)
 	{
 		ret = 'a';
-		while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str)) //this will need to not look at symbols while we are inside quotes
-			str++;
+		if (li->sfl == 1)
+		{
+			while (str < end_str && !ft_strchr(whitespace, *str))  //this will need to not look at symbols while we are inside quotes
+			{
+				if (li->sfl == 1 && str == li->endsq)
+				{
+					//printf("We have reached the end of single quotes at %s\n", str);
+					remove_quotes(li->begsq, li->endsq);
+					li->sfl = 0;
+					li->begsq = NULL;
+					li->endsq = NULL;
+					str--;
+					str--;
+				}
+				str++;
+			}
+		}
+		if (li->dfl == 1)
+		{
+			while (str < end_str && !ft_strchr(whitespace, *str))  //this will need to not look at symbols while we are inside quotes
+			{
+				if (li->dfl == 1 && str == li->enddq)
+				{
+					//printf("We have reached the end of double quotes at %s\n", str);
+					remove_quotes(li->begdq, li->enddq);
+					li->dfl = 0;
+					li->begdq = NULL;
+					li->enddq = NULL;
+					str--;
+					str--;
+				}
+				str++;
+			}
+		}
+		else
+		{
+			while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str))
+				str++;
+		}
 	}
 	if (eq)
 		*eq = str;
@@ -341,11 +392,10 @@ t_cmd	*parseline(char **ps, char *es)
 
 	init_line_info(&li, ps);
 	//printf("string is: %s\n", li.beg_str);
-
 	cmd = parseexec(ps, es, &li);
 	if (peek(ps, es, "|"))
 	{
-		tok = gettoken(ps, es, 0, 0);
+		tok = gettoken(ps, es, 0, 0, &li);
 		cmd = pipecmd(cmd, parseline(ps, es));
 	}
 	return (cmd);
@@ -367,12 +417,11 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 	// 	return (parseblock(ps, es));
 	ret = execcmd();
 	cmd = (t_execcmd *)ret;
-
 	argc = 0;
 	ret = parseredirs(ret, ps, es, li);
-	while (!peek(ps, es, "|")) //in case we are inside the quotes this instead will need to look for that
+	while (!peek(ps, es, "|")) //in case we are inside the quotes this instead will need to look for that (or appears that it's not needed)
 	{
-		if ((tok = gettoken(ps, es, &q, &eq)) == 0)
+		if ((tok = gettoken(ps, es, &q, &eq, li)) == 0)
 			break ;
 		if (tok != 'a')
 			panic("syntax");
@@ -397,24 +446,76 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	char	*q;
 	char	*eq;
 	char	*heredoc_buff;
+	char		*str;
 
-	while (peek(ps, es, "<>"))
+	str = *ps;
+	li->begsq = ft_strchr(str, '\'');
+	li->begdq = ft_strchr(str, '\"');
+	if ((li->begsq) && ((li->begsq < li->begdq || li->begdq == NULL)) && li->dfl != 1 && li->sfl == 0)
 	{
-		tok = gettoken(ps, es, 0, 0);
-		if (gettoken(ps, es, &q, &eq) != 'a')
-			ft_putstr_fd("missing file for redirection\n", 2);
-		if (tok == '<')
-			cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
-		else if (tok == '-')
+		li->endsq = ft_strchr(li->begsq + 1, '\'');
+		if (li->endsq)
 		{
-			heredoc_buff = heredoc_builder("EOF");
-			ft_printf("Assembled buffer is:\n%s", heredoc_buff);
+			li->sfl = 1;
+			//printf("Found single quotes that start at %s\n and end at %s\n", li->begsq, li->endsq);
 		}
-		else if (tok == '>')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_TRUNC, 1);
-		else if (tok == '+')
-			cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_APPEND, 1);
 	}
+	else if ((li->begdq) && ((li->begdq < li->begsq || li->begsq == NULL)) && li->sfl != 1 && li->dfl == 0)
+	{
+		li->enddq = ft_strchr(li->begdq + 1, '\"');
+		if (li->enddq)
+		{
+			li->dfl = 1;
+			//printf("Found double quotes that start at %s\n and end at %s\n", li->begdq, li->enddq);
+		}
+	}
+	// if (li->sfl == 1 && *ps == li->endsq)
+	// {
+	// 	//printf("We have reached the end of single quotes at %s\n", str);
+	// 	remove_quotes(li->begsq, li->endsq);
+	// 	li->sfl = 0;
+	// 	li->begsq = NULL;
+	// 	li->endsq = NULL;
+	// 	str--;
+	// 	str--;
+	// }
+	// if (li->dfl == 1 && *ps == li->enddq)
+	// {
+	// 	//printf("We have reached the end of double quotes at %s\n", str);
+	// 	remove_quotes(li->begdq, li->enddq);
+	// 	li->dfl = 0;
+	// 	li->begdq = NULL;
+	// 	li->enddq = NULL;
+	// 	str--;
+	// 	str--;
+	// }
+	//printf("String is now at %s\n, and begq is %s\n and end is %s\n and the flags are: %d, %d\n", *ps, li->begsq, li->endsq, li->sfl, li->dfl);
+	if ((!li->sfl && !li->dfl)) // && ((*ps > li->endsq && *ps < li->begsq) || (*ps > li->enddq && *ps < li->begdq))
+	{
+		//printf("The string is now not in between quotes\n");
+		while (peek(ps, es, "<>"))
+		{
+			//printf("We found a redir token at %s\n", *ps);
+			tok = gettoken(ps, es, 0, 0, li);
+			if (gettoken(ps, es, &q, &eq, li) != 'a')
+				ft_putstr_fd("missing file for redirection\n", 2);
+			if (tok == '<')
+				cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
+			else if (tok == '-')
+			{
+				heredoc_buff = heredoc_builder("EOF");
+				ft_printf("Assembled buffer is:\n%s", heredoc_buff);
+			}
+			else if (tok == '>')
+				cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_TRUNC, 1);
+			else if (tok == '+')
+				cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_APPEND, 1);
+		}
+	}
+	// else
+	// {
+	// 	printf("We are in quotes and string is now at %s\n, and begq is %s\n and end is %s\n", *ps, li->begsq, li->endsq);
+	// }
 	return (cmd);
 }
 

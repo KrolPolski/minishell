@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/28 18:33:20 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/28 20:03:39 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,7 +274,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 		ret = 'a';
 		if (li->sfl == 1 && li->in_quotes)
 		{
-			while (str < li->endsq)  //this will need to not look at symbols while we are inside quotes
+			while (str <= li->endsq)  //this will need to not look at symbols while we are inside quotes
 			{
 				//check_quotes(&str, li);
 				if (str == li->begsq)
@@ -305,9 +305,9 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 				//printf("WEe are here: %s\n", str);
 			}
 		}
-		else if (li->dfl == 1 && li->in_quotes)
+		else if (li->dfl == 1 && li->in_quotes) // seems like we are not entering here
 		{
-			while (str < li->enddq)  //this will need to not look at symbols while we are inside quotes
+			while (str <= li->enddq)  //this will need to not look at symbols while we are inside quotes
 			{
 				//check_quotes(&str, li);
 				if (str == li->begdq)
@@ -354,6 +354,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 		//printf("q now points to %s\nand eq now points to %s\n", *q ,*eq);
 		str++;
 		li->flag_changed = 0;
+		//str++;
 	}
 	while (str < end_str && ft_strchr(whitespace, *str))
 		str++;
@@ -379,6 +380,8 @@ t_cmd *parseexec(char**, char*, t_line_info *li);
 t_cmd *nullterminate(t_cmd *);
 t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
 
+
+void	print_exec(t_execcmd *ecmd);
 t_cmd	*parsecommand(char *str)
 {
 	char	*end_str;
@@ -396,6 +399,7 @@ t_cmd	*parsecommand(char *str)
 	}
 	//printf("The whole line before returning: %s\n", beg_str);
 	nullterminate(cmd);
+	//print_exec(cmd);
 	return (cmd);
 }
 
@@ -450,12 +454,12 @@ void	check_quotes(char **ps, t_line_info *li)
 		}
 		//printf("Double quotes found starting at %s\nand ending at %s\n", li->begdq, li->enddq);
 	}
-	if (li->endsq && (*ps >= li->begsq && *ps < li->endsq))
+	if (li->endsq && (*ps >= li->begsq && *ps <= li->endsq))
 	{
 		li->in_quotes = 1;
 		//printf("We are inside single quotes\n");
 	}
-	if (li->enddq && (*ps >= li->begdq && *ps < li->enddq))
+	if (li->enddq && (*ps >= li->begdq && *ps <= li->enddq))
 	{
 		li->in_quotes = 1;
 		//printf("We are inside double quotes\n");
@@ -470,11 +474,17 @@ void	check_quotes(char **ps, t_line_info *li)
 	}
 	if (li->dfl == 1 && *ps == li->enddq)
 	{
-		//printf("We have reached the end of double quotes at %s\n", *ps);
+		printf("We have reached the end of double quotes at %s\n", *ps); //seems we are not getting here ever
 		li->dfl = 0;
 		li->in_quotes = 0;
 		li->begdq = NULL;
 		li->enddq = NULL;
+		// str = *ps;
+		// printf("ps is at %s\n", *ps);
+		// str++;
+		// *ps = str;
+		// printf("ps is at %s\n", *ps);
+		//check_quotes(ps, li);
 	}
 }
 

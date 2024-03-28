@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/28 16:58:33 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/28 18:33:20 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,28 +241,28 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 	char	whitespace[] = " \t\r\n\v";
 	char	symbols[] = "<|>";
 
-	//check_quotes(pstr, li);
+	check_quotes(pstr, li);
 	str = *pstr;
 	while (str < end_str && ft_strchr(whitespace, *str))
 		str++;
 	if (q)
 		*q = str;
 	ret = *str;
-	if (*str == '|' && (li->sfl != 1 && li->dfl != 1))
+	if (*str == '|' && (!li->in_quotes))
 		str++;
-	else if (*str == '>' && (li->sfl != 1 && li->dfl != 1))
+	else if (*str == '>' && (!li->in_quotes))
 	{
 		str++;
-		if (*str == '>' && (li->sfl != 1 && li->dfl != 1))
+		if (*str == '>' && (!li->in_quotes))
 		{
 			ret = '+';
 			str++;
 		}
 	}
-	else if (*str == '<' && (li->sfl != 1 && li->dfl != 1))
+	else if (*str == '<' && (!li->in_quotes))
 	{
 		str++;
-		if (*str == '<' && (li->sfl != 1 && li->dfl != 1))
+		if (*str == '<' && (!li->in_quotes))
 		{
 			ret = '-';
 			str++;
@@ -270,13 +270,16 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 	}
 	else if (*str != 0)
 	{
+		//printf("We are at %s\nand the quote flag is %d\n", str, li->in_quotes);
 		ret = 'a';
-		if (li->sfl == 1)
+		if (li->sfl == 1 && li->in_quotes)
 		{
-			while (str < end_str && !ft_strchr(whitespace, *str))  //this will need to not look at symbols while we are inside quotes
+			while (str < li->endsq)  //this will need to not look at symbols while we are inside quotes
 			{
+				//check_quotes(&str, li);
 				if (str == li->begsq)
 				{
+					//printf("Noting the beg of quotes at %s\n", str);
 					str++;
 					*q = str;
 					str--;
@@ -291,20 +294,25 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 					li->endsq = NULL;
 					li->flag_changed = 1;
 					li->in_quotes = 0;
+					str++;
+					break ;
 					//q--;
 					//str--;
 					//str--;
 					//printf("Now the q points to %s\n", *q);
 				}
 				str++;
+				//printf("WEe are here: %s\n", str);
 			}
 		}
-		if (li->dfl == 1)
+		else if (li->dfl == 1 && li->in_quotes)
 		{
-			while (str < end_str && !ft_strchr(whitespace, *str))  //this will need to not look at symbols while we are inside quotes
+			while (str < li->enddq)  //this will need to not look at symbols while we are inside quotes
 			{
+				//check_quotes(&str, li);
 				if (str == li->begdq)
 				{
+					//printf("Noting the beg of quotes at %s\n", str);
 					str++;
 					*q = str;
 					str--;
@@ -320,12 +328,15 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 					li->enddq = NULL;
 					li->flag_changed = 1;
 					li->in_quotes = 0;
+					str++;
+					break ;
 					///q--;
 					//str--;
 					//str--;
 					//printf("Now the q points to %s\n", *q);
 				}
 				str++;
+				//printf("WEe are here: %s\n", str);
 			}
 		}
 		else
@@ -340,6 +351,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 	{
 		str--;
 		*eq = str;
+		//printf("q now points to %s\nand eq now points to %s\n", *q ,*eq);
 		str++;
 		li->flag_changed = 0;
 	}
@@ -438,12 +450,12 @@ void	check_quotes(char **ps, t_line_info *li)
 		}
 		//printf("Double quotes found starting at %s\nand ending at %s\n", li->begdq, li->enddq);
 	}
-	if (li->endsq && (*ps > li->begsq && *ps < li->endsq))
+	if (li->endsq && (*ps >= li->begsq && *ps < li->endsq))
 	{
 		li->in_quotes = 1;
 		//printf("We are inside single quotes\n");
 	}
-	if (li->enddq && (*ps > li->begdq && *ps < li->enddq))
+	if (li->enddq && (*ps >= li->begdq && *ps < li->enddq))
 	{
 		li->in_quotes = 1;
 		//printf("We are inside double quotes\n");
@@ -479,10 +491,10 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 	cmd = (t_execcmd *)ret;
 	argc = 0;
 	ret = parseredirs(ret, ps, es, li);
-	check_quotes(ps, li);
+	//check_quotes(ps, li);
 	while ((((**ps != '|') && (!li->in_quotes)) || (li->in_quotes)) && **ps)
 	{
-		check_quotes(ps, li);
+		//check_quotes(ps, li);
 		//printf("The ps position is %s\nand the flags are %d and %d\n", *ps, li->sfl, li->dfl);
 		if ((tok = gettoken(ps, es, &q, &eq, li)) == 0)
 			break ;
@@ -510,18 +522,20 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	char	*q;
 	char	*eq;
 	char	*heredoc_buff;
-	
-	check_quotes(ps, li);
-	//printf("String is now at %s\n, and begq is %s\n and end is %s\n and the flags are: %d, %d\n", *ps, li->begsq, li->endsq, li->sfl, li->dfl);
-	if ((!li->sfl && !li->dfl)) // && ((*ps > li->endsq && *ps < li->begsq) || (*ps > li->enddq && *ps < li->begdq))
+
+	//check_quotes(ps, li);
+	//printf("String is now at %s\n, and begq is %s\n and end is %s\n and the flags are: %d, %d\n", *ps, li->begdq, li->enddq, li->sfl, li->dfl);
+	if ((!li->in_quotes)) // && ((*ps > li->endsq && *ps < li->begsq) || (*ps > li->enddq && *ps < li->begdq))
 	{
 		//printf("The string is now not in between quotes\n");
-		while (peek(ps, es, "<>"))
+		while (peek(ps, es, "<>") && !li->in_quotes)
 		{
 			//printf("We found a redir token at %s\n", *ps);
 			tok = gettoken(ps, es, 0, 0, li);
+			//printf ("\nHalooooooooo\\nn");
 			if (gettoken(ps, es, &q, &eq, li) != 'a')
 				ft_putstr_fd("missing file for redirection\n", 2);
+			//printf("Redir was fould to be beginning and %s\nand ending at %s\n", q, eq);
 			if (tok == '<')
 				cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
 			else if (tok == '-')
@@ -727,7 +741,7 @@ int	parsing(t_info *info)
 		if (WIFEXITED(status))
 		{
 			info->exit_code = WEXITSTATUS(status);
-			ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
+			//ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
 		}
 		//print_tree(cmd);
 		//free(str);

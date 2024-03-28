@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 13:10:10 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/28 18:32:56 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	populate_env_matrix(t_info *info)
 	i = 0;
 	while (info->init_env[i])
 		i++;
-	ft_printf("i is %d\n", i);
+	//ft_printf("i is %d\n", i);
 	info->curr_env = malloc(sizeof(char *) * (i + 1));
 	i = 0;
 	while (info->init_env[i])

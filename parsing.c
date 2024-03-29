@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/28 20:03:39 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/29 13:04:25 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -732,7 +732,7 @@ int	parsing(t_info *info)
 			ecmd = (t_execcmd *)cmd;
 			if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "cd", 3) == 0)
 				ft_cd(ecmd, info);
-			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "export", 7) == 0)
+			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "export", 7) == 0 && ecmd->argv[1])
 				ft_export(ecmd, info);
 			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "exit", 5) == 0)
 				ft_exit(ecmd, info);

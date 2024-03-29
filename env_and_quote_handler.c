@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/22 18:10:24 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/03/28 17:56:57 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 	diff = li->begdq - li->beg_str;
 	li->end_str = li->beg_str + ft_strlen(li->beg_str);
 	li->beg_var = str;
-	while (str < li->end_str && !ft_strchr(" \t\r\n\v\'\"", *str))
+	while (str < li->end_str && !ft_strchr(" \t\r\n\v\'\"|<>", *str))
 		(str)++;
 	var = malloc(str - li->beg_var + 1);
 	ft_strlcpy(var, li->beg_var, str - li->beg_var + 1);
@@ -124,11 +124,12 @@ void	init_line_info(t_line_info *li, char **str)
 	li->enddq = NULL;
 	li->begsq = NULL;
 	li->begdq = NULL;
-	li->beg_str = NULL;
 	li->end_str = NULL;
 	li->beg_var = NULL;
 	li->beg_str = *str;
 	li->free_flag = 0;
+	li->flag_changed = 0;
+	li->in_quotes = 0;
 }
 
 //seems like instead of making a function that sets everything in the struct

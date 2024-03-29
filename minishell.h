@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/26 11:24:54 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/28 16:51:19 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ typedef struct s_line_info
 	char	*end_str;
 	char	*beg_var;
 	bool	free_flag;
+	bool	flag_changed;
+	bool	in_quotes;
 }	t_line_info;
 
 void	free_2d(char **arr);
@@ -130,6 +132,8 @@ char	*expand_env_remove_quotes(char *str, char **env);
 char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str);
 char	*heredoc_builder(char *delimiter);
 void	init_line_info(t_line_info *li, char **str);
+void	quote_handler(t_line_info *li, char **str, char **env);
+void	remove_quotes(char *begq, char *endq);
 void	ft_exit(t_execcmd *ecmd, t_info *info);
 void	ft_unset(t_execcmd *ecmd, t_info *info);
 #endif

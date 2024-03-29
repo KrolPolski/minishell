@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/29 12:27:30 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/29 12:37:55 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,11 @@ void	ft_env(t_execcmd *ecmd, t_info *info)
 	i = 0;
 	while (info->curr_env[i])
 	{
-		ft_putstr_fd(info->curr_env[i], 1);
-		printf("\n");
+		if (ft_strchr(info->curr_env[i], '='))
+		{
+			ft_putstr_fd(info->curr_env[i], 1);
+			printf("\n");
+		}
 		i++;
 	}
 }

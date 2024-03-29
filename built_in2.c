@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/29 12:35:18 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/29 12:40:38 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,10 @@ void	export_empty(t_info *info)
 	while (info->curr_env[i])
 	{
 		split_env = ft_split(info->curr_env[i], '=');
-		ft_printf("declare -x %s=\"%s\"\n", split_env[0], split_env[1]);
+		if (split_env[1])
+			ft_printf("declare -x %s=\"%s\"\n", split_env[0], split_env[1]);
+		else
+			ft_printf("declare -x %s\n", split_env[0]);
 		i++;
 		free_2d(split_env);
 	}
@@ -87,9 +90,6 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 		export_empty(info);
 		return ;
 	}
-	/*this function currently assumes nobody will ever try to export anything incorrectly,
-	and also that nobody ever tries to export something that already exists.*/
-	/*Also have the problem that this executes both in the parent and the child. so we get double output*/
 	k = 1;
 	curr_len = ft_matrix_len(info->curr_env);
 	ft_printf("current length of curr_env is %d\n", curr_len);

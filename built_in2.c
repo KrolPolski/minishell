@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/29 12:40:38 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/29 12:59:39 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,8 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 	while (ecmd->argv[k])
 	{
 		i = check_matrix(ecmd, info, k, new_env);
-		new_env[i] = ft_strdup(ecmd->argv[k]);
+		if (ft_strchr(ecmd->argv[k], '=') || !info->curr_env[i])
+			new_env[i] = ft_strdup(ecmd->argv[k]);
 		ft_printf("new_env[i] should now have a new value: %s\n", new_env[i]);
 		i++;
 		k++;

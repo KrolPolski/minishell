@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/26 11:34:25 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:21:14 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 		new_env[i] = info->curr_env[i];
 		i++;
 	}
-	new_env[i] = ecmd->argv[1];
+	new_env[i] = ft_strdup(ecmd->argv[1]);
 	ft_printf("new_env[i] should now have a new value: %s\n", new_env[i]);
 	i++;
 	new_env[i] = NULL;
@@ -74,7 +74,7 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 	}
 	if (info->curr_env[i])
 	{
-		//free(info->curr_env[i]); why are we getting free errors here? it should be leaking without it
+		free(info->curr_env[i]); //why are we getting free errors here? it should be leaking without it
 		info->curr_env[i] = NULL;
 		k = i;
 		i++;

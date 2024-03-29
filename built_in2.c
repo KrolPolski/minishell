@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/29 15:22:24 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/29 15:24:40 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,15 +149,15 @@ char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 
 	
 	arg_plus = ft_strjoin(arg, "=");
-	ft_printf("about to search for '%s' inside '%s'\n", arg_plus, matrix[*i]);
+	//ft_printf("about to search for '%s' inside '%s'\n", arg_plus, matrix[*i]);
 	while (*i < curr_len)
 	{
-		ft_printf("about to search for '%s' inside '%s'\n", arg_plus, matrix[*i]);
+		//ft_printf("about to search for '%s' inside '%s'\n", arg_plus, matrix[*i]);
 		if (!matrix[*i])
 			(*i)++;
 		else if (!ft_strncmp(matrix[*i], arg_plus, ft_strlen(arg_plus)))
 			{
-				ft_printf("we found it baby\n");
+			//	ft_printf("we found it baby\n");
 				free(arg_plus);
 				return (matrix[*i]);
 			}
@@ -165,7 +165,7 @@ char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 			(*i)++;
 	}
 	free(arg_plus);
-	ft_printf("about to return NULL");
+	//ft_printf("about to return NULL");
 	return (NULL);
 }
 void	ft_unset(t_execcmd *ecmd, t_info *info)
@@ -184,18 +184,18 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 	curr_len = ft_matrix_len(info->curr_env);
 	while (ecmd->argv[k])
 	{
-		ft_printf("about to search the matrix for an unset\n");
+		//ft_printf("about to search the matrix for an unset\n");
 		str = search_matrix(ecmd->argv[k], info->curr_env, &i, curr_len);
-		ft_printf("we exited search_matrix\n");
+		//ft_printf("we exited search_matrix\n");
 		// if we find a bad one we just wanna move on
 		if (!str)
 		{
-			ft_printf("we concluded that %s isn't actually in the matrix so moving on\n", ecmd->argv[k]);
+		//	ft_printf("we concluded that %s isn't actually in the matrix so moving on\n", ecmd->argv[k]);
 			k++;
 		}
 		else
 		{
-			ft_printf("we found %s in the matrix so we are freeing it\n", ecmd->argv[k]);
+		//	ft_printf("we found %s in the matrix so we are freeing it\n", ecmd->argv[k]);
 			free(info->curr_env[i]);
 			info->curr_env[i] = NULL;
 			i = 0;

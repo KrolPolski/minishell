@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/29 11:37:10 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/29 12:21:29 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,21 @@ int	check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env)
 	ft_printf("Check matrix decided i should be %d\n", i);
 	return (i);
 }
+
+void	export_empty(t_info *info)
+{
+	int		i;
+	char	**split_env;
+
+	i = 0;
+	while (info->curr_env[i])
+	{
+		split_env = ft_split(info->curr_env[i], '=');
+		ft_printf("declare -x %s=\"%s\"\n", split_env[0], split_env[1]);
+		i++;
+		free_2d(split_env);
+	}
+}
 void	ft_export(t_execcmd *ecmd, t_info *info)
 {
 	char	**new_env;
@@ -59,8 +74,14 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 	int		k;
 	int		target_len;
 
+	if (ecmd->argv[1] == NULL)
+	{
+		export_empty(info);
+		return ;
+	}
 	/*this function currently assumes nobody will ever try to export anything incorrectly,
 	and also that nobody ever tries to export something that already exists.*/
+	/*Also have the problem that this executes both in the parent and the child. so we get double output*/
 	k = 1;
 	curr_len = ft_matrix_len(info->curr_env);
 	ft_printf("current length of curr_env is %d\n", curr_len);

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/29 13:04:25 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/01 16:09:11 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,6 +339,16 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 				//printf("WEe are here: %s\n", str);
 			}
 		}
+		else if (li->begsq && li->endsq)
+		{
+			while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str) && str < li->begsq)
+				str++;
+		}
+		else if (li->begdq && li->enddq)
+		{
+			while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str) && str < li->begdq)
+				str++;
+		}
 		else
 		{
 			while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str))
@@ -447,6 +457,7 @@ void	check_quotes(char **ps, t_line_info *li)
 		li->enddq = ft_strchr(li->begdq + 1, '\"');
 		if (li->enddq)
 		{
+			//printf("Found the end\n");
 			li->dfl = 1;
 			li->sfl = 0;
 			li->begsq = NULL;
@@ -474,7 +485,7 @@ void	check_quotes(char **ps, t_line_info *li)
 	}
 	if (li->dfl == 1 && *ps == li->enddq)
 	{
-		printf("We have reached the end of double quotes at %s\n", *ps); //seems we are not getting here ever
+		//printf("We have reached the end of double quotes at %s\n", *ps); //seems we are not getting here ever
 		li->dfl = 0;
 		li->in_quotes = 0;
 		li->begdq = NULL;

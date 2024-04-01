@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/29 15:24:40 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/01 14:40:26 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,7 @@ void	ft_exit(t_execcmd *ecmd, t_info *info)
 		exit_code = info->exit_code;
 	}
 	free_2d(info->curr_env);
+	ft_printf("exit\n");
 	//consider freeing other stuff if required
 	exit(exit_code);
 }

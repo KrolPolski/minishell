@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/01 16:23:21 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/01 16:25:54 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,12 +167,14 @@ char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 			{
 				ft_printf("we found it baby: %s\n", matrix[*i]);
 				free(arg_plus);
+				arg_plus = NULL;
 				return (matrix[*i]);
 			}
 		else
 			(*i)++;
 	}
 	free(arg_plus);
+	arg_plus = NULL;
 	//ft_printf("about to return NULL");
 	return (NULL);
 }

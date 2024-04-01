@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/01 18:10:16 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/01 18:11:38 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 	new_env = malloc(sizeof(char *) * (curr_len + 1));
 	if (!new_env)
 		exit(1);
-	ft_bzero(new_env, sizeof(char *) * (target_len + 1)); // this fixes undefined behavior
+	ft_bzero(new_env, sizeof(char *) * (curr_len + 1)); // this fixes undefined behavior
 	a = 0;
 	b = 0;
 	while (b < curr_len)

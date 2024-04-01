@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/01 16:25:54 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/01 18:28:09 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 		ft_printf("malloc failure\n");
 		exit(1);
 	}
+	ft_bzero(new_env, sizeof(char *) * (target_len + 1)); // this fixes undefined behavior
 	i = 0;
 	while (info->curr_env[i])
 	{
@@ -216,6 +217,7 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 	new_env = malloc(sizeof(char *) * (curr_len + 1));
 	if (!new_env)
 		exit(1);
+	ft_bzero(new_env, sizeof(char *) * (curr_len + 1)); // this fixes undefined behavior
 	a = 0;
 	b = 0;
 	while (b < curr_len)
@@ -228,6 +230,7 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 		b++;	
 	}
 	new_env[++a] = NULL;
-	free(info->curr_env);
+	//free(info->curr_env); This should be causing leaks surely
+	info->curr_env = NULL;
 	info->curr_env = new_env;
 }

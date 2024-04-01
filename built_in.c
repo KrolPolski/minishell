@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/01 16:15:46 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/01 18:29:52 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	ft_cd(t_execcmd *ecmd, t_info *info)
 	free(info->prompt);
 	info->prompt = ft_prompt(info->username, "AR-Shell", info->curr_dir);
 	free(home_path);
+	home_path = NULL;
 }
 
 void	ft_pwd(t_execcmd *ecmd, t_info *info)
@@ -102,6 +103,6 @@ void	handle_builtins(t_execcmd *ecmd, char **env,
 		ft_export(ecmd, info); //we may not want this running in the child processes
 	if (!ft_strncmp(builtin_command, "exit", ft_strlen(builtin_command)))
 		ft_exit(ecmd, info);
-	//if (!ft_strncmp(builtin_command, "unset", ft_strlen(builtin_command)))
-		//ft_unset(ecmd, info);
+	if (!ft_strncmp(builtin_command, "unset", ft_strlen(builtin_command)))
+		ft_unset(ecmd, info);
 }

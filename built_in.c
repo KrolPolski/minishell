@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/26 11:04:34 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/03/29 15:27:26 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,11 @@ void	ft_env(t_execcmd *ecmd, t_info *info)
 	i = 0;
 	while (info->curr_env[i])
 	{
-		ft_putstr_fd(info->curr_env[i], 1);
-		printf("\n");
+		if (ft_strchr(info->curr_env[i], '='))
+		{
+			ft_putstr_fd(info->curr_env[i], 1);
+			printf("\n");
+		}
 		i++;
 	}
 }
@@ -96,7 +99,7 @@ void	handle_builtins(t_execcmd *ecmd, char **env,
 	if (!ft_strncmp(builtin_command, "env", ft_strlen(builtin_command)))
 		ft_env(ecmd, info);
 	if (!ft_strncmp(builtin_command, "export", ft_strlen(builtin_command)))
-		ft_export(ecmd, info);
+		ft_export(ecmd, info); //we may not want this running in the child processes
 	if (!ft_strncmp(builtin_command, "exit", ft_strlen(builtin_command)))
 		ft_exit(ecmd, info);
 	if (!ft_strncmp(builtin_command, "unset", ft_strlen(builtin_command)))

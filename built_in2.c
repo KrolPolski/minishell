@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/02 09:56:43 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/02 11:02:19 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,8 +230,8 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 		}		
 		b++;	
 	}
-	new_env[++a] = NULL;
-	//free(info->curr_env); This should be causing leaks surely
+	new_env[a] = NULL;
+	//free(info->curr_env); //This should be causing leaks surely
 	info->curr_env = NULL;
 	info->curr_env = new_env;
 }

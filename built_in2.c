@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/01 18:28:09 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/02 09:56:43 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*var_to_equals(t_execcmd *ecmd, int k)
 		return (NULL);
 	else
 	{
-		needle = malloc(equal_pos - ecmd->argv[k] + 1);
+		needle = ft_calloc(equal_pos - ecmd->argv[k] + 1, 1);
 		if (!needle)
 			return (NULL);
 		while (ecmd->argv[k][i] && ecmd->argv[k][i] != '=')
@@ -95,13 +95,15 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 	ft_printf("current length of curr_env is %d\n", curr_len);
 	target_len = curr_len + ft_matrix_len(ecmd->argv);
 	//target_len = curr_len + ft_matrix_len(&ecmd->argv[k]);
-	new_env = malloc(sizeof(char *) * (target_len + 1)); //this might be mallocing more than we need.
+	//new_env = malloc(sizeof(char *) * (target_len + 1)); //this might be mallocing more than we need.
+	new_env = ft_calloc(sizeof(char *), target_len + 1);
 	if (!new_env)
 	{
 		ft_printf("malloc failure\n");
 		exit(1);
 	}
-	ft_bzero(new_env, sizeof(char *) * (target_len + 1)); // this fixes undefined behavior
+	//no longer required because we swapped to calloc
+	//ft_bzero(new_env, sizeof(char *) * (target_len + 1)); // this fixes undefined behavior
 	i = 0;
 	while (info->curr_env[i])
 	{
@@ -214,10 +216,9 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 			k++;
 		}
 	}
-	new_env = malloc(sizeof(char *) * (curr_len + 1));
+	new_env = ft_calloc(sizeof(char *),(curr_len + 1));
 	if (!new_env)
 		exit(1);
-	ft_bzero(new_env, sizeof(char *) * (curr_len + 1)); // this fixes undefined behavior
 	a = 0;
 	b = 0;
 	while (b < curr_len)

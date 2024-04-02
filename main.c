@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/28 18:32:56 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/02 11:23:47 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ int	main(int argc, char **argv, char **env)
 	parsing(&info);
 	//readline();
 	//cleanup
-
+	write_history(".shell_history");
 	free(info.username);
 	free(info.init_dir);
 	free(info.prompt);

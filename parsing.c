@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/01 16:09:11 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/02 11:22:32 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -732,6 +732,7 @@ int	parsing(t_info *info)
 		}
 		free (tmp);
 		pstr = str;
+		add_history(str);
 		//printf("Command before expansion: %s\n", str);
 		expanded = expand_env_remove_quotes(str, info->curr_env);
 		//str = pstr;

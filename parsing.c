@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/02 17:54:14 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/02 18:53:45 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,97 +270,51 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 	}
 	else if (*str != 0)
 	{
-		printf("We are at %s\nand the quote flag is %d\n", str, li->in_quotes);
 		ret = 'a';
-		while (str < end_str && !(ft_strchr(whitespace, *str)))
-		{	
+		while (str < end_str && (!(ft_strchr(whitespace, *str))) && ((!(ft_strchr(symbols, *str))))) // something needs to be done to handle stuff like echo hi|cat with no spaces near pipe or redir
+		{
 			check_quotes(&str, li);
-			printf("And now we are at %s\nand the quote flag is %d and the sfl is %d and the dfl is %d\n", str, li->in_quotes, li->sfl, li->dfl);
 			if (li->sfl == 1 && li->in_quotes)
 			{
 				while (str <= li->endsq)
 				{
 					if (li->sfl == 1 && str == li->endsq)
 					{
-						printf("We have reached the end of single quotes at %s\n", str);
 						remove_quotes(li->begsq, li->endsq);
-						//printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
 						li->sfl = 0;
 						li->begsq = NULL;
 						li->endsq = NULL;
-						li->flag_changed = 1;
 						li->in_quotes = 0;
 						str--;
 						break ;
-						//q--;
-						//str--;
-						//str--;
-						//printf("Now the q points to %s\n", *q);
 					}
 					str++;
-					//
 				}
 			}
-			else if (li->dfl == 1 && li->in_quotes) 
+			else if (li->dfl == 1 && li->in_quotes)
 			{
-				//printf("WEe are here: %s\n", str);
+				
 				while (str <= li->enddq)
 				{
 					if (li->dfl == 1 && str == li->enddq)
 					{
-						printf("We have reached the end of double quotes at %s\n", str);
-						//printf("The actual positions double quotes were %s\n and %s\n", li->begdq, li->enddq);
 						remove_quotes(li->begdq, li->enddq);
-						printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
 						li->dfl = 0;
 						li->begdq = NULL;
 						li->enddq = NULL;
-						li->flag_changed = 1;
 						li->in_quotes = 0;
 						str--;
-						printf("Now the q points to %s\n", *q);
 						break ;
-						///q--;
-						//str--;
-						//str--;
-						
 					}
 					str++;
-					//
 				}
 			}
-			// else if (li->begsq && li->endsq)
-			// {
-			// 	while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str) && str < li->begsq)
-			// 		str++;
-			// }
-			// else if (li->begdq && li->enddq && !li->in_quotes)
-			// {
-			// 	//printf("WEe are here: %s\n", str);
-			// 	while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str) && str < li->begdq)
-			// 		str++;
-			//}
 			else
-			{
-				//while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str))
-				//{
-				//	printf("Here\n");
-					str++;
-				//}
-			}
+				str++;
 		}
 	}
 	if (eq)
 		*eq = str;
-	// if (li->flag_changed)
-	// {
-	// 	str--;
-	// 	*eq = str;
-	// 	//printf("q now points to %s\nand eq now points to %s\n", *q ,*eq);
-	// 	str++;
-	// 	li->flag_changed = 0;
-	// 	//str++;
-	// }
 	while (str < end_str && ft_strchr(whitespace, *str))
 		str++;
 	*pstr = str;
@@ -445,53 +399,24 @@ void	check_quotes(char **ps, t_line_info *li)
 			li->begdq = NULL;
 			li->enddq = NULL;
 		}
-		printf("Single quotes found starting at %s\nand ending at %s\n", li->begsq, li->endsq);
+		//printf("Single quotes found starting at %s\nand ending at %s\n", li->begsq, li->endsq);
 	}
 	if ((!li->enddq) && (li->begdq) && ((li->begdq < li->begsq || li->begsq == NULL)) && li->sfl != 1 && li->dfl == 0)
 	{
 		li->enddq = ft_strchr(li->begdq + 1, '\"');
 		if (li->enddq)
 		{
-			//printf("Found the end\n");
 			li->dfl = 1;
 			li->sfl = 0;
 			li->begsq = NULL;
 			li->endsq = NULL;
 		}
-		printf("Double quotes found starting at %s\nand ending at %s\n", li->begdq, li->enddq);
+		//printf("Double quotes found starting at %s\nand ending at %s\n", li->begdq, li->enddq);
 	}
 	if (li->endsq && (*ps >= li->begsq && *ps <= li->endsq))
-	{
 		li->in_quotes = 1;
-		//printf("We are inside single quotes\n");
-	}
 	if (li->enddq && (*ps >= li->begdq && *ps <= li->enddq))
-	{
 		li->in_quotes = 1;
-		//printf("We are inside double quotes\n");
-	}
-	if (li->sfl == 1 && *ps == li->endsq)
-	{
-		//printf("We have reached the end of single quotes at %s\n", *ps);
-		li->sfl = 0;
-		li->in_quotes = 0;
-		li->begsq = NULL;
-		li->endsq = NULL;
-	}
-	if (li->dfl == 1 && *ps == li->enddq)
-	{
-		//printf("We have reached the end of double quotes at %s\n", *ps); //seems we are not getting here ever
-		li->dfl = 0;
-		li->in_quotes = 0;
-		li->begdq = NULL;
-		li->enddq = NULL;
-		// str = *ps;
-		// printf("ps is at %s\n", *ps);
-		// str++;
-		// *ps = str;
-		// printf("ps is at %s\n", *ps);
-		//check_quotes(ps, li);
-	}
 }
 
 t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
@@ -510,15 +435,13 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 	//check_quotes(ps, li);
 	while ((((**ps != '|') && (!li->in_quotes)) || (li->in_quotes)) && **ps)
 	{
-		//check_quotes(ps, li);
-		//printf("The ps position is %s\nand the flags are %d and %d\n", *ps, li->sfl, li->dfl);
 		if ((tok = gettoken(ps, es, &q, &eq, li)) == 0)
 			break ;
 		if (tok != 'a')
 			panic("syntax");
 		cmd->argv[argc] = q;
 		cmd->eargv[argc] = eq;
-		printf("Current token's start and end: %s\n%s\n", q, eq);
+		//printf("Current token's start and end: %s\n%s\n", q, eq);
 		argc++;
 		if (argc >= MAXARGS)
 		{
@@ -539,16 +462,12 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	char	*eq;
 	char	*heredoc_buff;
 
-	//check_quotes(ps, li);
 	//printf("String is now at %s\n, and begq is %s\n and end is %s\n and the flags are: %d, %d\n", *ps, li->begdq, li->enddq, li->sfl, li->dfl);
 	if ((!li->in_quotes)) // && ((*ps > li->endsq && *ps < li->begsq) || (*ps > li->enddq && *ps < li->begdq))
 	{
-		//printf("The string is now not in between quotes\n");
 		while (peek(ps, es, "<>") && !li->in_quotes)
 		{
-			//printf("We found a redir token at %s\n", *ps);
 			tok = gettoken(ps, es, 0, 0, li);
-			//printf ("\nHalooooooooo\\nn");
 			if (gettoken(ps, es, &q, &eq, li) != 'a')
 				ft_putstr_fd("missing file for redirection\n", 2);
 			//printf("Redir was fould to be beginning and %s\nand ending at %s\n", q, eq);
@@ -565,10 +484,6 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 				cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_APPEND, 1);
 		}
 	}
-	// else
-	// {
-	// 	printf("We are in quotes and string is now at %s\n, and begq is %s\n and end is %s\n", *ps, li->begsq, li->endsq);
-	// }
 	return (cmd);
 }
 

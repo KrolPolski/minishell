@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/02 11:22:32 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/02 17:54:14 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -270,102 +270,97 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 	}
 	else if (*str != 0)
 	{
-		//printf("We are at %s\nand the quote flag is %d\n", str, li->in_quotes);
+		printf("We are at %s\nand the quote flag is %d\n", str, li->in_quotes);
 		ret = 'a';
-		if (li->sfl == 1 && li->in_quotes)
-		{
-			while (str <= li->endsq)  //this will need to not look at symbols while we are inside quotes
+		while (str < end_str && !(ft_strchr(whitespace, *str)))
+		{	
+			check_quotes(&str, li);
+			printf("And now we are at %s\nand the quote flag is %d and the sfl is %d and the dfl is %d\n", str, li->in_quotes, li->sfl, li->dfl);
+			if (li->sfl == 1 && li->in_quotes)
 			{
-				//check_quotes(&str, li);
-				if (str == li->begsq)
+				while (str <= li->endsq)
 				{
-					//printf("Noting the beg of quotes at %s\n", str);
+					if (li->sfl == 1 && str == li->endsq)
+					{
+						printf("We have reached the end of single quotes at %s\n", str);
+						remove_quotes(li->begsq, li->endsq);
+						//printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
+						li->sfl = 0;
+						li->begsq = NULL;
+						li->endsq = NULL;
+						li->flag_changed = 1;
+						li->in_quotes = 0;
+						str--;
+						break ;
+						//q--;
+						//str--;
+						//str--;
+						//printf("Now the q points to %s\n", *q);
+					}
 					str++;
-					*q = str;
-					str--;
+					//
 				}
-				if (li->sfl == 1 && str == li->endsq)
-				{
-					//printf("We have reached the end of single quotes at %s\n", str);
-					//remove_quotes(li->begsq, li->endsq);
-					//printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
-					li->sfl = 0;
-					li->begsq = NULL;
-					li->endsq = NULL;
-					li->flag_changed = 1;
-					li->in_quotes = 0;
-					str++;
-					break ;
-					//q--;
-					//str--;
-					//str--;
-					//printf("Now the q points to %s\n", *q);
-				}
-				str++;
-				//printf("WEe are here: %s\n", str);
 			}
-		}
-		else if (li->dfl == 1 && li->in_quotes) // seems like we are not entering here
-		{
-			while (str <= li->enddq)  //this will need to not look at symbols while we are inside quotes
+			else if (li->dfl == 1 && li->in_quotes) 
 			{
-				//check_quotes(&str, li);
-				if (str == li->begdq)
-				{
-					//printf("Noting the beg of quotes at %s\n", str);
-					str++;
-					*q = str;
-					str--;
-				}
-				if (li->dfl == 1 && str == li->enddq)
-				{
-					//printf("We have reached the end of double quotes at %s\n", str);
-					//printf("The actual positions double quotes were %s\n and %s\n", li->begdq, li->enddq);
-					//remove_quotes(li->begdq, li->enddq);
-					//printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
-					li->dfl = 0;
-					li->begdq = NULL;
-					li->enddq = NULL;
-					li->flag_changed = 1;
-					li->in_quotes = 0;
-					str++;
-					break ;
-					///q--;
-					//str--;
-					//str--;
-					//printf("Now the q points to %s\n", *q);
-				}
-				str++;
 				//printf("WEe are here: %s\n", str);
+				while (str <= li->enddq)
+				{
+					if (li->dfl == 1 && str == li->enddq)
+					{
+						printf("We have reached the end of double quotes at %s\n", str);
+						//printf("The actual positions double quotes were %s\n and %s\n", li->begdq, li->enddq);
+						remove_quotes(li->begdq, li->enddq);
+						printf("We have removed the quotes and the line looks like: %s\n, and the string points to %s\n", li->beg_str, str);
+						li->dfl = 0;
+						li->begdq = NULL;
+						li->enddq = NULL;
+						li->flag_changed = 1;
+						li->in_quotes = 0;
+						str--;
+						printf("Now the q points to %s\n", *q);
+						break ;
+						///q--;
+						//str--;
+						//str--;
+						
+					}
+					str++;
+					//
+				}
 			}
-		}
-		else if (li->begsq && li->endsq)
-		{
-			while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str) && str < li->begsq)
-				str++;
-		}
-		else if (li->begdq && li->enddq)
-		{
-			while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str) && str < li->begdq)
-				str++;
-		}
-		else
-		{
-			while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str))
-				str++;
+			// else if (li->begsq && li->endsq)
+			// {
+			// 	while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str) && str < li->begsq)
+			// 		str++;
+			// }
+			// else if (li->begdq && li->enddq && !li->in_quotes)
+			// {
+			// 	//printf("WEe are here: %s\n", str);
+			// 	while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str) && str < li->begdq)
+			// 		str++;
+			//}
+			else
+			{
+				//while (str < end_str && !ft_strchr(whitespace, *str) && !ft_strchr(symbols, *str))
+				//{
+				//	printf("Here\n");
+					str++;
+				//}
+			}
 		}
 	}
 	if (eq)
 		*eq = str;
-	if (li->flag_changed)
-	{
-		str--;
-		*eq = str;
-		//printf("q now points to %s\nand eq now points to %s\n", *q ,*eq);
-		str++;
-		li->flag_changed = 0;
-		//str++;
-	}
+	// if (li->flag_changed)
+	// {
+	// 	str--;
+	// 	*eq = str;
+	// 	//printf("q now points to %s\nand eq now points to %s\n", *q ,*eq);
+	// 	str++;
+	// 	li->flag_changed = 0;
+	// 	//str++;
+	// }
 	while (str < end_str && ft_strchr(whitespace, *str))
 		str++;
 	*pstr = str;
@@ -450,7 +445,7 @@ void	check_quotes(char **ps, t_line_info *li)
 			li->begdq = NULL;
 			li->enddq = NULL;
 		}
-		//printf("Single quotes found starting at %s\nand ending at %s\n", li->begsq, li->endsq);
+		printf("Single quotes found starting at %s\nand ending at %s\n", li->begsq, li->endsq);
 	}
 	if ((!li->enddq) && (li->begdq) && ((li->begdq < li->begsq || li->begsq == NULL)) && li->sfl != 1 && li->dfl == 0)
 	{
@@ -463,7 +458,7 @@ void	check_quotes(char **ps, t_line_info *li)
 			li->begsq = NULL;
 			li->endsq = NULL;
 		}
-		//printf("Double quotes found starting at %s\nand ending at %s\n", li->begdq, li->enddq);
+		printf("Double quotes found starting at %s\nand ending at %s\n", li->begdq, li->enddq);
 	}
 	if (li->endsq && (*ps >= li->begsq && *ps <= li->endsq))
 	{
@@ -523,7 +518,7 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 			panic("syntax");
 		cmd->argv[argc] = q;
 		cmd->eargv[argc] = eq;
-		//printf("Current token's start and end: %s\n%s\n", q, eq);
+		printf("Current token's start and end: %s\n%s\n", q, eq);
 		argc++;
 		if (argc >= MAXARGS)
 		{

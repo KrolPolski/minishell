@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/02 11:36:53 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/02 15:42:18 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 	}
 	k = 1;
 	curr_len = ft_matrix_len(info->curr_env);
-	ft_printf("current length of curr_env is %d\n", curr_len);
+//	ft_printf("current length of curr_env is %d\n", curr_len);
 	target_len = curr_len + ft_matrix_len(ecmd->argv);
 	//target_len = curr_len + ft_matrix_len(&ecmd->argv[k]);
 	//new_env = malloc(sizeof(char *) * (target_len + 1)); //this might be mallocing more than we need.
@@ -168,7 +168,7 @@ char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 			(*i)++;
 		else if (!ft_strncmp(matrix[*i], arg_plus, ft_strlen(arg_plus)) || !ft_strncmp(matrix[*i], arg, ft_strlen(arg) + 1))
 			{
-				ft_printf("we found it baby: %s\n", matrix[*i]);
+				//ft_printf("we found it baby: %s\n", matrix[*i]);
 				free(arg_plus);
 				arg_plus = NULL;
 				return (matrix[*i]);
@@ -203,20 +203,20 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 		// if we find a bad one we just wanna move on
 		if (!str)
 		{
-			ft_printf("we concluded that %s isn't actually in the matrix so moving on\n", ecmd->argv[k]);
+			///ft_printf("we concluded that %s isn't actually in the matrix so moving on\n", ecmd->argv[k]);
 			k++;
 		}
 		else
 		{
-			ft_printf("we found %s in the matrix so we are freeing it\n", ecmd->argv[k]);
-			ft_printf("str is '%s' and info->curr_env[%d] is currently '%s'\n", str, i, info->curr_env[i]);
+			//ft_printf("we found %s in the matrix so we are freeing it\n", ecmd->argv[k]);
+			//ft_printf("str is '%s' and info->curr_env[%d] is currently '%s'\n", str, i, info->curr_env[i]);
 			free(info->curr_env[i]);
 			info->curr_env[i] = NULL;
 			i = 0;
 			k++;
 		}
 	}
-	new_env = ft_calloc(sizeof(char *),(curr_len + 1));
+	new_env = ft_calloc(sizeof(char *), (curr_len + 1));
 	if (!new_env)
 		exit(1);
 	a = 0;
@@ -227,11 +227,11 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 		{
 			new_env[a] = info->curr_env[b];
 			a++;
-		}		
-		b++;	
+		}
+		b++;
 	}
 	new_env[a] = NULL;
-	free(info->curr_env); //This should be causing leaks surely
+	free(info->curr_env);
 	info->curr_env = NULL;
 	info->curr_env = new_env;
 }

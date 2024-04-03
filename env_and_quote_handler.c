@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/03/28 17:56:57 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/02 19:14:17 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str)
 	char	*upd_str;
 
 	if (exp_var == NULL)
-		exp_var = ft_strdup(" ");
+		exp_var = ft_strdup("");
 	old_strlen = ft_strlen(li->beg_str);
 	old_vlen = ft_strlen(var);
 	new_vlen = ft_strlen(exp_var);
@@ -67,8 +67,11 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 	diff = li->begdq - li->beg_str;
 	li->end_str = li->beg_str + ft_strlen(li->beg_str);
 	li->beg_var = str;
-	while (str < li->end_str && !ft_strchr(" \t\r\n\v\'\"|<>", *str))
-		(str)++;
+	if (*(str + 1) == ' ' || !*(str + 1))
+		return (str);
+	while (str++ < li->end_str && !ft_strchr(" \t\r\n\v\'\"|<>", *str))
+		if (*str == '$')
+			break ;
 	var = malloc(str - li->beg_var + 1);
 	ft_strlcpy(var, li->beg_var, str - li->beg_var + 1);
 	exp_var = fetch_env_var(var, env);

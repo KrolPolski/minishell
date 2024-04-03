@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/03 17:17:40 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/03 18:03:49 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,9 @@ int	check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env)
 	int		i;
 	char	*needle;
 	char	*alt_needle;
+
 	i = 0;
 	needle = var_to_equals(ecmd, k);
-	
-	//needs to address the case where an env variable
-	// already exists, but has no value
-	//and we want to set a value now.
 	if (!needle)
 	{
 		while (new_env[i] && ft_strncmp(new_env[i],
@@ -65,7 +62,7 @@ int	check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env)
 	while (new_env[i] && ft_strncmp(new_env[i], needle, ft_strlen(needle)))
 	{
 		if (!ft_strncmp(new_env[i], needle, ft_strlen(needle) - 1)
-			&& new_env[i][ft_strlen(needle)-1] == '\0')
+			&& new_env[i][ft_strlen(needle) - 1] == '\0')
 		{
 			return (i);
 		}

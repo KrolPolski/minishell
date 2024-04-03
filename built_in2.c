@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/02 15:42:18 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/03 16:14:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,10 @@
 
 char	*var_to_equals(t_execcmd *ecmd, int k)
 {
-	int i;
-	char *needle;
-	char *equal_pos;
+	int		i;
+	char	*needle;
+	char	*equal_pos;
+
 	i = 0;
 	equal_pos = ft_strchr(ecmd->argv[k], '=');
 	if (!equal_pos)
@@ -34,7 +35,6 @@ char	*var_to_equals(t_execcmd *ecmd, int k)
 		needle[i] = ecmd->argv[k][i];
 		i++;
 		needle[i] = '\0';
-		ft_printf("we have decided that since ecmd->argv[k] is '%s' the needle should be '%s'\n", ecmd->argv[k], needle);
 		return (needle);
 	}
 }
@@ -48,7 +48,8 @@ int	check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env)
 	needle = var_to_equals(ecmd, k);
 	if (!needle)
 	{
-		while (new_env[i] && ft_strncmp(new_env[i], ecmd->argv[k], ft_strlen(ecmd->argv[k])))
+		while (new_env[i] && ft_strncmp(new_env[i],
+				ecmd->argv[k], ft_strlen(ecmd->argv[k])))
 			i++;
 		return (i);
 	}
@@ -56,7 +57,6 @@ int	check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env)
 	{
 		i++;
 	}
-	ft_printf("Check matrix decided i should be %d\n", i);
 	return (i);
 }
 
@@ -77,6 +77,7 @@ void	export_empty(t_info *info)
 		free_2d(split_env);
 	}
 }
+
 void	ft_export(t_execcmd *ecmd, t_info *info)
 {
 	char	**new_env;
@@ -92,18 +93,13 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 	}
 	k = 1;
 	curr_len = ft_matrix_len(info->curr_env);
-//	ft_printf("current length of curr_env is %d\n", curr_len);
 	target_len = curr_len + ft_matrix_len(ecmd->argv);
-	//target_len = curr_len + ft_matrix_len(&ecmd->argv[k]);
-	//new_env = malloc(sizeof(char *) * (target_len + 1)); //this might be mallocing more than we need.
 	new_env = ft_calloc(sizeof(char *), target_len + 1);
 	if (!new_env)
 	{
 		ft_printf("malloc failure\n");
 		exit(1);
 	}
-	//no longer required because we swapped to calloc
-	//ft_bzero(new_env, sizeof(char *) * (target_len + 1)); // this fixes undefined behavior
 	i = 0;
 	while (info->curr_env[i])
 	{
@@ -113,24 +109,18 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 	while (ecmd->argv[k])
 	{
 		i = check_matrix(ecmd, info, k, new_env);
-	//	ft_printf("We think i should be %d\n", i);
-	//	ft_printf("ecmd->argv[k] is currently '%s' and k is %d\n", ecmd->argv[k], k);
 		if (ft_strchr(ecmd->argv[k], '=') || !new_env[i])
 		{
-		//	ft_printf("so we are going to copy it now\n");
 			new_env[i] = ft_strdup(ecmd->argv[k]);
-		//	ft_printf("new_env[i] should now have a new value: %s\n", new_env[i]);
 		}
-		
 		i++;
 		k++;
 	}
-	//need to put a null at the end, but i may not be at the end right now.
-		new_env[target_len] = NULL;
-		free(info->curr_env);
-		info->curr_env = new_env;
-	//ft_printf("ecmd->argv[0] is %s and ecmd->argv[1] is %s\n", ecmd->argv[0], ecmd->argv[1]);
+	new_env[target_len] = NULL;
+	free(info->curr_env);
+	info->curr_env = new_env;
 }
+
 /* if exit code is provided as an argument, exits the shell with it.
 Otherwise exits with the last exit code provided by $? */
 void	ft_exit(t_execcmd *ecmd, t_info *info)
@@ -153,85 +143,3 @@ void	ft_exit(t_execcmd *ecmd, t_info *info)
 	exit(exit_code);
 }
 
-char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
-{
-	char *arg_plus;
-	*i = 0;
-
-	
-	arg_plus = ft_strjoin(arg, "=");
-	//ft_printf("about to search for '%s' inside '%s'\n", arg_plus, matrix[*i]);
-	while (*i < curr_len)
-	{
-		//ft_printf("about to search for '%s' inside '%s'\n", arg_plus, matrix[*i]);
-		if (!matrix[*i])
-			(*i)++;
-		else if (!ft_strncmp(matrix[*i], arg_plus, ft_strlen(arg_plus)) || !ft_strncmp(matrix[*i], arg, ft_strlen(arg) + 1))
-			{
-				//ft_printf("we found it baby: %s\n", matrix[*i]);
-				free(arg_plus);
-				arg_plus = NULL;
-				return (matrix[*i]);
-			}
-		else
-			(*i)++;
-	}
-	free(arg_plus);
-	arg_plus = NULL;
-	//ft_printf("about to return NULL");
-	return (NULL);
-}
-void	ft_unset(t_execcmd *ecmd, t_info *info)
-{
-	int		k;
-	char	*str;
-	int		i;
-	char	*targets;
-	char	curr_len;
-	char	**new_env;
-	int		a;
-	int		b;
-
-	
-	k = 1;
-	curr_len = ft_matrix_len(info->curr_env);
-	while (ecmd->argv[k])
-	{
-		//ft_printf("about to search the matrix for an unset\n");
-		str = search_matrix(ecmd->argv[k], info->curr_env, &i, curr_len);
-		//ft_printf("we exited search_matrix\n");
-		// if we find a bad one we just wanna move on
-		if (!str)
-		{
-			///ft_printf("we concluded that %s isn't actually in the matrix so moving on\n", ecmd->argv[k]);
-			k++;
-		}
-		else
-		{
-			//ft_printf("we found %s in the matrix so we are freeing it\n", ecmd->argv[k]);
-			//ft_printf("str is '%s' and info->curr_env[%d] is currently '%s'\n", str, i, info->curr_env[i]);
-			free(info->curr_env[i]);
-			info->curr_env[i] = NULL;
-			i = 0;
-			k++;
-		}
-	}
-	new_env = ft_calloc(sizeof(char *), (curr_len + 1));
-	if (!new_env)
-		exit(1);
-	a = 0;
-	b = 0;
-	while (b < curr_len)
-	{
-		if (info->curr_env[b])
-		{
-			new_env[a] = info->curr_env[b];
-			a++;
-		}
-		b++;
-	}
-	new_env[a] = NULL;
-	free(info->curr_env);
-	info->curr_env = NULL;
-	info->curr_env = new_env;
-}

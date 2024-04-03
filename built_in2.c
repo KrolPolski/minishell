@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/03 17:16:19 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/03 17:17:40 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,9 @@ int	check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env)
 	alt_needle[ft_strlen(needle) - 1] = '\0';
 	while (new_env[i] && ft_strncmp(new_env[i], needle, ft_strlen(needle)))
 	{
-		if (!ft_strncmp(new_env[i], needle, ft_strlen(needle) - 1) && new_env[i][ft_strlen(needle)-1] == '\0')
+		if (!ft_strncmp(new_env[i], needle, ft_strlen(needle) - 1)
+			&& new_env[i][ft_strlen(needle)-1] == '\0')
 		{
-			ft_printf("We found special case\n");
 			return (i);
 		}
 		i++;

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 15:54:15 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/03 16:15:26 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/03 16:20:10 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,8 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 	int		k;
 	char	*str;
 	int		i;
-	char	*targets;
 	char	curr_len;
 	char	**new_env;
-	int		a;
-	int		b;
 
 	k = 1;
 	curr_len = ft_matrix_len(info->curr_env);
@@ -68,18 +65,18 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 	new_env = ft_calloc(sizeof(char *), (curr_len + 1));
 	if (!new_env)
 		exit(1);
-	a = 0;
-	b = 0;
-	while (b < curr_len)
+	i = 0;
+	k = 0;
+	while (k < curr_len)
 	{
-		if (info->curr_env[b])
+		if (info->curr_env[k])
 		{
-			new_env[a] = info->curr_env[b];
-			a++;
+			new_env[i] = info->curr_env[k];
+			i++;
 		}
-		b++;
+		k++;
 	}
-	new_env[a] = NULL;
+	new_env[i] = NULL;
 	free(info->curr_env);
 	info->curr_env = NULL;
 	info->curr_env = new_env;

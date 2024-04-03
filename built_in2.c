@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/03 16:14:30 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/03 16:34:00 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ char	*var_to_equals(t_execcmd *ecmd, int k)
 		return (NULL);
 	else
 	{
-		needle = ft_calloc(equal_pos - ecmd->argv[k] + 1, 1);
+		needle = ft_calloc(equal_pos - ecmd->argv[k] + 2, 1); //this needed plus 2 because it might need an equals sign and it needs null termination
 		if (!needle)
 			return (NULL);
 		while (ecmd->argv[k][i] && ecmd->argv[k][i] != '=')
@@ -32,8 +32,11 @@ char	*var_to_equals(t_execcmd *ecmd, int k)
 			needle[i] = ecmd->argv[k][i];
 			i++;
 		}
-		needle[i] = ecmd->argv[k][i];
-		i++;
+		if (ecmd->argv[k][i] == '=')
+		{
+			needle[i] = ecmd->argv[k][i];
+			i++;
+		}
 		needle[i] = '\0';
 		return (needle);
 	}
@@ -93,6 +96,8 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 	}
 	k = 1;
 	curr_len = ft_matrix_len(info->curr_env);
+	//we need to somehow make this dependent 
+	//on whether it actually exists already or not
 	target_len = curr_len + ft_matrix_len(ecmd->argv);
 	new_env = ft_calloc(sizeof(char *), target_len + 1);
 	if (!new_env)

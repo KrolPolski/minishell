@@ -1,0 +1,83 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   built_in3.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/03 15:54:15 by rboudwin          #+#    #+#             */
+/*   Updated: 2024/04/03 16:20:10 by rboudwin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
+{
+	char	*arg_plus;
+
+	*i = 0;
+	arg_plus = ft_strjoin(arg, "=");
+	while (*i < curr_len)
+	{
+		if (!matrix[*i])
+			(*i)++;
+		else if (!ft_strncmp(matrix[*i], arg_plus, ft_strlen(arg_plus))
+			|| !ft_strncmp(matrix[*i], arg, ft_strlen(arg) + 1))
+		{
+			free(arg_plus);
+			arg_plus = NULL;
+			return (matrix[*i]);
+		}
+		else
+			(*i)++;
+	}
+	free(arg_plus);
+	arg_plus = NULL;
+	return (NULL);
+}
+
+void	ft_unset(t_execcmd *ecmd, t_info *info)
+{
+	int		k;
+	char	*str;
+	int		i;
+	char	curr_len;
+	char	**new_env;
+
+	k = 1;
+	curr_len = ft_matrix_len(info->curr_env);
+	while (ecmd->argv[k])
+	{
+		str = search_matrix(ecmd->argv[k], info->curr_env, &i, curr_len);
+		if (!str)
+		{
+			k++;
+		}
+		else
+		{
+			free(info->curr_env[i]);
+			info->curr_env[i] = NULL;
+			i = 0;
+			k++;
+		}
+	}
+	new_env = ft_calloc(sizeof(char *), (curr_len + 1));
+	if (!new_env)
+		exit(1);
+	i = 0;
+	k = 0;
+	while (k < curr_len)
+	{
+		if (info->curr_env[k])
+		{
+			new_env[i] = info->curr_env[k];
+			i++;
+		}
+		k++;
+	}
+	new_env[i] = NULL;
+	free(info->curr_env);
+	info->curr_env = NULL;
+	info->curr_env = new_env;
+}

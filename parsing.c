@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/04 13:37:56 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/04 14:27:45 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,88 +234,104 @@ t_cmd	*backcmd(t_cmd *subcmd)
 
 void	check_quotes(char **ps, t_line_info *li);
 
+void	handle_quote_removal(char **str, int *ret, t_line_info *li, bool qflag)
+{
+	if (qflag == 0)
+	{
+		remove_quotes(li->begsq, li->endsq);
+		li->sfl = 0;
+		li->begsq = NULL;
+		li->endsq = NULL;
+		li->in_quotes = 0;
+		(*str)--;
+		(*str)--;
+	}
+	else if (qflag == 1)
+	{
+		remove_quotes(li->begdq, li->enddq);
+		li->dfl = 0;
+		li->begdq = NULL;
+		li->enddq = NULL;
+		li->in_quotes = 0;
+		(*str)--;
+		(*str)--;
+	}
+}
+
+void	handle_regular_chars(char **str, int *ret, t_line_info *li)
+{
+	while (*str < li->end_str && (!(ft_strchr(li->whitespace, **str))) \
+		&& ((!(ft_strchr(li->symbols, **str)))))
+	{
+		check_quotes(str, li);
+		if (li->sfl == 1 && li->in_quotes)
+		{
+			while (*str <= li->endsq)
+			{
+				if (li->sfl == 1 && *str == li->endsq)
+					handle_quote_removal(str, ret, li, 0);
+				(*str)++;
+			}
+		}
+		else if (li->dfl == 1 && li->in_quotes)
+		{
+			while (*str <= li->enddq)
+			{
+				if (li->dfl == 1 && *str == li->enddq)
+					handle_quote_removal(str, ret, li, 1);
+				(*str)++;
+			}
+		}
+		else
+			(*str)++;
+	}
+}
+
+void	handle_current_char(char **str, int *ret, t_line_info *li)
+{
+	if (**str == '|' && (!li->in_quotes))
+		(*str)++;
+	else if (**str == '>' && (!li->in_quotes))
+	{
+		(*str)++;
+		if (**str == '>' && (!li->in_quotes))
+		{
+			*ret = '+';
+			(*str)++;
+		}
+	}
+	else if (**str == '<' && (!li->in_quotes))
+	{
+		(*str)++;
+		if (**str == '<' && (!li->in_quotes))
+		{
+			*ret = '-';
+			(*str)++;
+		}
+	}
+	else if (**str != 0)
+	{
+		*ret = 'a';
+		handle_regular_chars(str, ret, li);
+	}
+}
+
 int	gettoken(char **pstr, char **q, char **eq, t_line_info *li)
 {
 	char	*str;
 	int		ret;
-	char	whitespace[] = " \t\r\n\v";
-	char	symbols[] = "<|>";
 
 	check_quotes(pstr, li);
 	str = *pstr;
-	while (str < li->end_str && ft_strchr(whitespace, *str))
+	while (str < li->end_str && ft_strchr(li->whitespace, *str))
 		str++;
 	if (q)
 		*q = str;
 	ret = *str;
-	if (*str == '|' && (!li->in_quotes))
-		str++;
-	else if (*str == '>' && (!li->in_quotes))
-	{
-		str++;
-		if (*str == '>' && (!li->in_quotes))
-		{
-			ret = '+';
-			str++;
-		}
-	}
-	else if (*str == '<' && (!li->in_quotes))
-	{
-		str++;
-		if (*str == '<' && (!li->in_quotes))
-		{
-			ret = '-';
-			str++;
-		}
-	}
-	else if (*str != 0)
-	{
-		ret = 'a';
-		while (str < li->end_str && (!(ft_strchr(whitespace, *str))) && ((!(ft_strchr(symbols, *str)))))
-		{
-			check_quotes(&str, li);
-			if (li->sfl == 1 && li->in_quotes)
-			{
-				while (str <= li->endsq)
-				{
-					if (li->sfl == 1 && str == li->endsq)
-					{
-						remove_quotes(li->begsq, li->endsq);
-						li->sfl = 0;
-						li->begsq = NULL;
-						li->endsq = NULL;
-						li->in_quotes = 0;
-						str--;
-						break ;
-					}
-					str++;
-				}
-			}
-			else if (li->dfl == 1 && li->in_quotes)
-			{
-				
-				while (str <= li->enddq)
-				{
-					if (li->dfl == 1 && str == li->enddq)
-					{
-						remove_quotes(li->begdq, li->enddq);
-						li->dfl = 0;
-						li->begdq = NULL;
-						li->enddq = NULL;
-						li->in_quotes = 0;
-						str--;
-						break ;
-					}
-					str++;
-				}
-			}
-			else
-				str++;
-		}
-	}
+	handle_current_char(&str, &ret, li);
 	if (eq)
 		*eq = str;
-	while (str < li->end_str && ft_strchr(whitespace, *str))
+	while (str < li->end_str && ft_strchr(li->whitespace, *str))
 		str++;
 	*pstr = str;
 	return (ret);

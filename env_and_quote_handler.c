@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/04 13:35:29 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/04 14:15:40 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,8 @@ void	init_line_info(t_line_info *li, char **str)
 	li->free_flag = 0;
 	li->flag_changed = 0;
 	li->in_quotes = 0;
+	li->whitespace = ft_strdup(" \t\r\n\v");
+	li->symbols = ft_strdup("<|>"); //need to free both of these
 }
 
 //seems like instead of making a function that sets everything in the struct

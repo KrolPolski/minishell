@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/28 16:51:19 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/04 13:31:58 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ typedef struct s_execcmd
 	char	*argv[MAXARGS];
 	char	*eargv[MAXARGS];
 }	t_execcmd;
-
 
 typedef struct s_redircmd
 {

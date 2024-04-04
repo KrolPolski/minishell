@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/02 18:53:45 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/04 13:37:56 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,7 +234,7 @@ t_cmd	*backcmd(t_cmd *subcmd)
 
 void	check_quotes(char **ps, t_line_info *li);
 
-int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
+int	gettoken(char **pstr, char **q, char **eq, t_line_info *li)
 {
 	char	*str;
 	int		ret;
@@ -243,7 +243,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 
 	check_quotes(pstr, li);
 	str = *pstr;
-	while (str < end_str && ft_strchr(whitespace, *str))
+	while (str < li->end_str && ft_strchr(whitespace, *str))
 		str++;
 	if (q)
 		*q = str;
@@ -271,7 +271,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 	else if (*str != 0)
 	{
 		ret = 'a';
-		while (str < end_str && (!(ft_strchr(whitespace, *str))) && ((!(ft_strchr(symbols, *str))))) // something needs to be done to handle stuff like echo hi|cat with no spaces near pipe or redir
+		while (str < li->end_str && (!(ft_strchr(whitespace, *str))) && ((!(ft_strchr(symbols, *str)))))
 		{
 			check_quotes(&str, li);
 			if (li->sfl == 1 && li->in_quotes)
@@ -315,7 +315,7 @@ int	gettoken(char **pstr, char *end_str, char **q, char **eq, t_line_info *li)
 	}
 	if (eq)
 		*eq = str;
-	while (str < end_str && ft_strchr(whitespace, *str))
+	while (str < li->end_str && ft_strchr(whitespace, *str))
 		str++;
 	*pstr = str;
 	return (ret);
@@ -373,7 +373,7 @@ t_cmd	*parseline(char **ps, char *es)
 	cmd = parseexec(ps, es, &li);
 	if (peek(ps, es, "|"))
 	{
-		tok = gettoken(ps, es, 0, 0, &li);
+		tok = gettoken(ps, 0, 0, &li);
 		cmd = pipecmd(cmd, parseline(ps, es));
 	}
 	//printf("The whole line before execution: %s\n", li.beg_str);
@@ -435,7 +435,7 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 	//check_quotes(ps, li);
 	while ((((**ps != '|') && (!li->in_quotes)) || (li->in_quotes)) && **ps)
 	{
-		if ((tok = gettoken(ps, es, &q, &eq, li)) == 0)
+		if ((tok = gettoken(ps, &q, &eq, li)) == 0)
 			break ;
 		if (tok != 'a')
 			panic("syntax");
@@ -467,8 +467,8 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	{
 		while (peek(ps, es, "<>") && !li->in_quotes)
 		{
-			tok = gettoken(ps, es, 0, 0, li);
-			if (gettoken(ps, es, &q, &eq, li) != 'a')
+			tok = gettoken(ps, 0, 0, li);
+			if (gettoken(ps, &q, &eq, li) != 'a')
 				ft_putstr_fd("missing file for redirection\n", 2);
 			//printf("Redir was fould to be beginning and %s\nand ending at %s\n", q, eq);
 			if (tok == '<')

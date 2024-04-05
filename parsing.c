@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/05 13:59:01 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 15:41:07 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -653,7 +653,9 @@ int	parsing(t_info *info)
 			signal(SIGQUIT, SIG_DFL);
 			execute(cmd, info->curr_env, info);
 		}
+		signal(SIGINT, SIG_IGN);
 		wait(&status);
+		set_signal_action();
 		if (WIFEXITED(status))
 		{
 			info->exit_code = WEXITSTATUS(status);

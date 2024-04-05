@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/05 10:28:20 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:31:01 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,26 @@ void	export_empty(t_info *info)
 		free_2d(split_env);
 	}
 }
-
+void	init_export(t_execcmd *ecmd, t_info *info, t_export *ex)
+{
+	ex->k = 1;
+	ex->curr_len = ft_matrix_len(info->curr_env);
+	//we need to somehow make this dependent 
+	//on whether it actually exists already or not
+	ex->target_len = ex->curr_len + ft_matrix_len(ecmd->argv);
+	ex->new_env = ft_calloc(sizeof(char *), ex->target_len + 1);
+	if (!ex->new_env)
+	{
+		ft_printf("malloc failure\n");
+		exit(1);
+	}
+	ex->i = 0;
+	while (info->curr_env[ex->i])
+	{
+		ex->new_env[ex->i] = info->curr_env[ex->i];
+		ex->i++;
+	}
+}
 void	ft_export(t_execcmd *ecmd, t_info *info)
 {
 	t_export	ex;
@@ -98,23 +117,7 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 		export_empty(info);
 		return ;
 	}
-	ex.k = 1;
-	ex.curr_len = ft_matrix_len(info->curr_env);
-	//we need to somehow make this dependent 
-	//on whether it actually exists already or not
-	ex.target_len = ex.curr_len + ft_matrix_len(ecmd->argv);
-	ex.new_env = ft_calloc(sizeof(char *), ex.target_len + 1);
-	if (!ex.new_env)
-	{
-		ft_printf("malloc failure\n");
-		exit(1);
-	}
-	ex.i = 0;
-	while (info->curr_env[ex.i])
-	{
-		ex.new_env[ex.i] = info->curr_env[ex.i];
-		ex.i++;
-	}
+	init_export(ecmd, info, &ex);
 	while (ecmd->argv[ex.k])
 	{
 		ex.i = check_matrix(ecmd, info, ex.k, ex.new_env);

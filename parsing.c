@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/04 15:38:31 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/05 13:59:01 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -634,16 +634,21 @@ int	parsing(t_info *info)
 			ecmd = (t_execcmd *)cmd;
 			if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "cd", 3) == 0)
 				ft_cd(ecmd, info);
-			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "export", 7) == 0 && ecmd->argv[1]) // should it not have the last condition removed? otherwise it does not run in parent without args
+			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "export", 7) == 0) // should it not have the last condition removed? otherwise it does not run in parent without args
 				ft_export(ecmd, info);
 			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "exit", 5) == 0)
 				ft_exit(ecmd, info);
 			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "unset", 6) == 0)
 				ft_unset(ecmd, info);
-		// 	// else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
-		// 	// 	ft_pwd(ecmd, info);
+			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
+				ft_pwd(ecmd, info);
+			else if (fork1() == 0)
+			{
+				signal(SIGQUIT, SIG_DFL);
+				execute(cmd, info->curr_env, info);
+			}
 		}
-		if (fork1() == 0)
+		else if (fork1() == 0)
 		{
 			signal(SIGQUIT, SIG_DFL);
 			execute(cmd, info->curr_env, info);

@@ -6,25 +6,23 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/03 18:03:49 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 13:24:49 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*var_to_equals(t_execcmd *ecmd, int k)
+char	*var_to_equals(t_execcmd *ecmd, int k, int i)
 {
-	int		i;
 	char	*needle;
 	char	*equal_pos;
 
-	i = 0;
 	equal_pos = ft_strchr(ecmd->argv[k], '=');
 	if (!equal_pos)
 		return (NULL);
 	else
 	{
-		needle = ft_calloc(equal_pos - ecmd->argv[k] + 2, 1); //this needed plus 2 because it might need an equals sign and it needs null termination
+		needle = ft_calloc(equal_pos - ecmd->argv[k] + 2, 1);
 		if (!needle)
 			return (NULL);
 		while (ecmd->argv[k][i] && ecmd->argv[k][i] != '=')
@@ -49,7 +47,7 @@ int	check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env)
 	char	*alt_needle;
 
 	i = 0;
-	needle = var_to_equals(ecmd, k);
+	needle = var_to_equals(ecmd, k, i);
 	if (!needle)
 	{
 		while (new_env[i] && ft_strncmp(new_env[i],
@@ -89,70 +87,72 @@ void	export_empty(t_info *info)
 	}
 }
 
+void	init_export(t_execcmd *ecmd, t_info *info, t_export *ex)
+{
+	ex->k = 1;
+	ex->curr_len = ft_matrix_len(info->curr_env);
+	//we need to somehow make this dependent 
+	//on whether it actually exists already or not
+	ex->target_len = ex->curr_len + ft_matrix_len(ecmd->argv);
+	ex->new_env = ft_calloc(sizeof(char *), ex->target_len + 1);
+	if (!ex->new_env)
+	{
+		ft_printf("malloc failure\n");
+		exit(1);
+	}
+	ex->i = 0;
+	while (info->curr_env[ex->i])
+	{
+		ex->new_env[ex->i] = info->curr_env[ex->i];
+		ex->i++;
+	}
+}
+int		export_validator(char *str)
+{
+	int i;
+
+	i = 0;
+	if (!ft_isalpha(str[0]))
+		return (0);
+	while (str[i])
+	{
+		if (str[i] == '=')
+			return (1);
+		if (!ft_isalnum(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
 void	ft_export(t_execcmd *ecmd, t_info *info)
 {
-	char	**new_env;
-	int		curr_len;
-	int		i;
-	int		k;
-	int		target_len;
+	t_export	ex;
 
 	if (ecmd->argv[1] == NULL)
 	{
 		export_empty(info);
 		return ;
 	}
-	k = 1;
-	curr_len = ft_matrix_len(info->curr_env);
-	//we need to somehow make this dependent 
-	//on whether it actually exists already or not
-	target_len = curr_len + ft_matrix_len(ecmd->argv);
-	new_env = ft_calloc(sizeof(char *), target_len + 1);
-	if (!new_env)
+	init_export(ecmd, info, &ex);
+	while (ecmd->argv[ex.k])
 	{
-		ft_printf("malloc failure\n");
-		exit(1);
-	}
-	i = 0;
-	while (info->curr_env[i])
-	{
-		new_env[i] = info->curr_env[i];
-		i++;
-	}
-	while (ecmd->argv[k])
-	{
-		i = check_matrix(ecmd, info, k, new_env);
-		if (ft_strchr(ecmd->argv[k], '=') || !new_env[i])
+		if (!export_validator(ecmd->argv[ex.k]))
 		{
-			new_env[i] = ft_strdup(ecmd->argv[k]);
+			ft_putstr_fd("export: ", 2);
+			ft_putstr_fd(ecmd->argv[ex.k], 2);
+			ft_putstr_fd(": not a a valid identifier\n", 2);
+			ex.k++;
+			continue;
 		}
-		i++;
-		k++;
+		ex.i = check_matrix(ecmd, info, ex.k, ex.new_env);
+		if (ft_strchr(ecmd->argv[ex.k], '=') || !ex.new_env[ex.i])
+		{
+			ex.new_env[ex.i] = ft_strdup(ecmd->argv[ex.k]);
+		}
+		ex.i++;
+		ex.k++;
 	}
-	new_env[target_len] = NULL;
+	ex.new_env[ex.target_len] = NULL;
 	free(info->curr_env);
-	info->curr_env = new_env;
+	info->curr_env = ex.new_env;
 }
-
-/* if exit code is provided as an argument, exits the shell with it.
-Otherwise exits with the last exit code provided by $? */
-void	ft_exit(t_execcmd *ecmd, t_info *info)
-{
-	char	*last_exit_code;
-	int		exit_code;
-	int		i;
-
-	i = 0;
-	//consider what happens if a non-int value is provided
-	if (ecmd->argv[1])
-		exit_code = ft_atoi(ecmd->argv[1]);
-	else
-	{
-		exit_code = info->exit_code;
-	}
-	free_2d(info->curr_env);
-	ft_printf("exit\n");
-	//consider freeing other stuff if required
-	exit(exit_code);
-}
-

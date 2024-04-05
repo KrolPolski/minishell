@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_handling.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 10:13:35 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 18:52:00 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:37:54 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@
 // 	{
 // 		eq_ptr = ft_strchr(env[i], '=');
 // 		if (ft_strlen(var) - 1 == eq_ptr - env[i])
-// 			if (ft_strnstr(env[i], var + 1, ft_strlen(var) - 1)) //offsets are to account for $
+// 			if (ft_strnstr(env[i], var + 1, ft_strlen(var) - 1)) 
+				//offsets are to account for $
 // 				return (env[i] + ft_strlen(var));//to get past VAR=
 // 		i++;
 // 	}
@@ -99,7 +100,8 @@
 // 		}
 // 		free(var);
 // 		beg_str = expand_string(beg_str, env);
-// 		 // this free was moved because var only gets allocated if we go inside this if block
+// 		 // this free was moved because var only gets 
+//		allocated if we go inside this if block
 // 	}
 // 	// else
 // 	// {

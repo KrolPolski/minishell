@@ -6,11 +6,12 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 09:19:48 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/19 11:34:39 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:14:17 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 void	free_2d(char **arr)
 {
 	int	i;
@@ -28,8 +29,8 @@ void	free_2d(char **arr)
 
 int	ft_matrix_len(char **str)
 {
-	int i;
-	
+	int	i;
+
 	i = 0;
 	while (str[i])
 		i++;

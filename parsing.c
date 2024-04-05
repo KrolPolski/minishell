@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/05 13:54:21 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 13:59:01 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -642,6 +642,11 @@ int	parsing(t_info *info)
 				ft_unset(ecmd, info);
 			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
 				ft_pwd(ecmd, info);
+			else if (fork1() == 0)
+			{
+				signal(SIGQUIT, SIG_DFL);
+				execute(cmd, info->curr_env, info);
+			}
 		}
 		else if (fork1() == 0)
 		{

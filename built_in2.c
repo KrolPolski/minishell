@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/05 10:37:10 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 13:24:49 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,23 @@ void	init_export(t_execcmd *ecmd, t_info *info, t_export *ex)
 		ex->i++;
 	}
 }
+int		export_validator(char *str)
+{
+	int i;
 
+	i = 0;
+	if (!ft_isalpha(str[0]))
+		return (0);
+	while (str[i])
+	{
+		if (str[i] == '=')
+			return (1);
+		if (!ft_isalnum(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
 void	ft_export(t_execcmd *ecmd, t_info *info)
 {
 	t_export	ex;
@@ -120,6 +136,14 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 	init_export(ecmd, info, &ex);
 	while (ecmd->argv[ex.k])
 	{
+		if (!export_validator(ecmd->argv[ex.k]))
+		{
+			ft_putstr_fd("export: ", 2);
+			ft_putstr_fd(ecmd->argv[ex.k], 2);
+			ft_putstr_fd(": not a a valid identifier\n", 2);
+			ex.k++;
+			continue;
+		}
 		ex.i = check_matrix(ecmd, info, ex.k, ex.new_env);
 		if (ft_strchr(ecmd->argv[ex.k], '=') || !ex.new_env[ex.i])
 		{

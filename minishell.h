@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/05 13:03:39 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 13:04:45 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ void		quote_handler(t_line_info *li, char **str, char **env);
 void		remove_quotes(char *begq, char *endq);
 char		*replace_name(t_line_info *li, char *var,
 				char *exp_var, char **str);
-				
+
 //heredoc.c
 
 char		*heredoc_builder(char *delimiter);

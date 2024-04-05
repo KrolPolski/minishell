@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/03 18:03:49 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:28:20 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,47 +91,43 @@ void	export_empty(t_info *info)
 
 void	ft_export(t_execcmd *ecmd, t_info *info)
 {
-	char	**new_env;
-	int		curr_len;
-	int		i;
-	int		k;
-	int		target_len;
+	t_export	ex;
 
 	if (ecmd->argv[1] == NULL)
 	{
 		export_empty(info);
 		return ;
 	}
-	k = 1;
-	curr_len = ft_matrix_len(info->curr_env);
+	ex.k = 1;
+	ex.curr_len = ft_matrix_len(info->curr_env);
 	//we need to somehow make this dependent 
 	//on whether it actually exists already or not
-	target_len = curr_len + ft_matrix_len(ecmd->argv);
-	new_env = ft_calloc(sizeof(char *), target_len + 1);
-	if (!new_env)
+	ex.target_len = ex.curr_len + ft_matrix_len(ecmd->argv);
+	ex.new_env = ft_calloc(sizeof(char *), ex.target_len + 1);
+	if (!ex.new_env)
 	{
 		ft_printf("malloc failure\n");
 		exit(1);
 	}
-	i = 0;
-	while (info->curr_env[i])
+	ex.i = 0;
+	while (info->curr_env[ex.i])
 	{
-		new_env[i] = info->curr_env[i];
-		i++;
+		ex.new_env[ex.i] = info->curr_env[ex.i];
+		ex.i++;
 	}
-	while (ecmd->argv[k])
+	while (ecmd->argv[ex.k])
 	{
-		i = check_matrix(ecmd, info, k, new_env);
-		if (ft_strchr(ecmd->argv[k], '=') || !new_env[i])
+		ex.i = check_matrix(ecmd, info, ex.k, ex.new_env);
+		if (ft_strchr(ecmd->argv[ex.k], '=') || !ex.new_env[ex.i])
 		{
-			new_env[i] = ft_strdup(ecmd->argv[k]);
+			ex.new_env[ex.i] = ft_strdup(ecmd->argv[ex.k]);
 		}
-		i++;
-		k++;
+		ex.i++;
+		ex.k++;
 	}
-	new_env[target_len] = NULL;
+	ex.new_env[ex.target_len] = NULL;
 	free(info->curr_env);
-	info->curr_env = new_env;
+	info->curr_env = ex.new_env;
 }
 
 /* if exit code is provided as an argument, exits the shell with it.

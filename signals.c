@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 11:55:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/14 19:01:38 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:15:14 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//currently save and restore cursor functions don't seem to work properly, but they might not be needed
+//currently save and restore cursor functions don't seem to work 
+//properly, but they might not be needed
 //if the signal() function does indeed take care of the CTRL-\ cursor issue.
 
 void	save_curs_pos(void)

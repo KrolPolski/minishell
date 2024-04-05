@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/05 10:20:40 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:40:58 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,15 @@ typedef struct s_export
 	int		k;
 	int		target_len;
 }	t_export;
+
+typedef struct t_unset
+{
+	int		k;
+	char	*str;
+	int		i;
+	char	curr_len;
+	char	**new_env;
+}	t_unset;
 
 void		free_2d(char **arr);
 void		set_signal_action(void);

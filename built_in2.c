@@ -6,25 +6,23 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/05 10:31:01 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:37:10 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*var_to_equals(t_execcmd *ecmd, int k)
+char	*var_to_equals(t_execcmd *ecmd, int k, int i)
 {
-	int		i;
 	char	*needle;
 	char	*equal_pos;
 
-	i = 0;
 	equal_pos = ft_strchr(ecmd->argv[k], '=');
 	if (!equal_pos)
 		return (NULL);
 	else
 	{
-		needle = ft_calloc(equal_pos - ecmd->argv[k] + 2, 1); //this needed plus 2 because it might need an equals sign and it needs null termination
+		needle = ft_calloc(equal_pos - ecmd->argv[k] + 2, 1);
 		if (!needle)
 			return (NULL);
 		while (ecmd->argv[k][i] && ecmd->argv[k][i] != '=')
@@ -49,7 +47,7 @@ int	check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env)
 	char	*alt_needle;
 
 	i = 0;
-	needle = var_to_equals(ecmd, k);
+	needle = var_to_equals(ecmd, k, i);
 	if (!needle)
 	{
 		while (new_env[i] && ft_strncmp(new_env[i],
@@ -88,6 +86,7 @@ void	export_empty(t_info *info)
 		free_2d(split_env);
 	}
 }
+
 void	init_export(t_execcmd *ecmd, t_info *info, t_export *ex)
 {
 	ex->k = 1;
@@ -108,6 +107,7 @@ void	init_export(t_execcmd *ecmd, t_info *info, t_export *ex)
 		ex->i++;
 	}
 }
+
 void	ft_export(t_execcmd *ecmd, t_info *info)
 {
 	t_export	ex;
@@ -132,26 +132,3 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 	free(info->curr_env);
 	info->curr_env = ex.new_env;
 }
-
-/* if exit code is provided as an argument, exits the shell with it.
-Otherwise exits with the last exit code provided by $? */
-void	ft_exit(t_execcmd *ecmd, t_info *info)
-{
-	char	*last_exit_code;
-	int		exit_code;
-	int		i;
-
-	i = 0;
-	//consider what happens if a non-int value is provided
-	if (ecmd->argv[1])
-		exit_code = ft_atoi(ecmd->argv[1]);
-	else
-	{
-		exit_code = info->exit_code;
-	}
-	free_2d(info->curr_env);
-	ft_printf("exit\n");
-	//consider freeing other stuff if required
-	exit(exit_code);
-}
-

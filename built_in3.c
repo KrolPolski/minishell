@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 15:54:15 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/03 16:20:10 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:43:37 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,45 +39,63 @@ char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 
 void	ft_unset(t_execcmd *ecmd, t_info *info)
 {
-	int		k;
-	char	*str;
-	int		i;
-	char	curr_len;
-	char	**new_env;
+	t_unset	un;
 
-	k = 1;
-	curr_len = ft_matrix_len(info->curr_env);
-	while (ecmd->argv[k])
+	un.k = 1;
+	un.curr_len = ft_matrix_len(info->curr_env);
+	while (ecmd->argv[un.k])
 	{
-		str = search_matrix(ecmd->argv[k], info->curr_env, &i, curr_len);
-		if (!str)
+		un.str = search_matrix(ecmd->argv[un.k], info->curr_env, &un.i, un.curr_len);
+		if (!un.str)
 		{
-			k++;
+			un.k++;
 		}
 		else
 		{
-			free(info->curr_env[i]);
-			info->curr_env[i] = NULL;
-			i = 0;
-			k++;
+			free(info->curr_env[un.i]);
+			info->curr_env[un.i] = NULL;
+			un.i = 0;
+			un.k++;
 		}
 	}
-	new_env = ft_calloc(sizeof(char *), (curr_len + 1));
-	if (!new_env)
+	un.new_env = ft_calloc(sizeof(char *), (un.curr_len + 1));
+	if (!un.new_env)
 		exit(1);
-	i = 0;
-	k = 0;
-	while (k < curr_len)
+	un.i = 0;
+	un.k = 0;
+	while (un.k < un.curr_len)
 	{
-		if (info->curr_env[k])
+		if (info->curr_env[un.k])
 		{
-			new_env[i] = info->curr_env[k];
-			i++;
+			un.new_env[un.i] = info->curr_env[un.k];
+			un.i++;
 		}
-		k++;
+		un.k++;
 	}
-	new_env[i] = NULL;
+	un.new_env[un.i] = NULL;
 	free(info->curr_env);
 	info->curr_env = NULL;
-	info->curr_env = new_env;
+	info->curr_env = un.new_env;
+}
+
+/* if exit code is provided as an argument, exits the shell with it.
+Otherwise exits with the last exit code provided by $? */
+void	ft_exit(t_execcmd *ecmd, t_info *info)
+{
+	char	*last_exit_code;
+	int		exit_code;
+	int		i;
+
+	i = 0;
+	//consider what happens if a non-int value is provided
+	if (ecmd->argv[1])
+		exit_code = ft_atoi(ecmd->argv[1]);
+	else
+	{
+		exit_code = info->exit_code;
+	}
+	free_2d(info->curr_env);
+	ft_printf("exit\n");
+	//consider freeing other stuff if required
+	exit(exit_code);
 }

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 15:54:15 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/05 10:43:37 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:46:41 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,27 @@ char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 	arg_plus = NULL;
 	return (NULL);
 }
+void	copy_unset(t_execcmd *ecmd, t_info *info, t_unset *un)
+{
+	un->new_env = ft_calloc(sizeof(char *), (un->curr_len + 1));
+	if (!un->new_env)
+		exit(1);
+	un->i = 0;
+	un->k = 0;
+	while (un->k < un->curr_len)
+	{
+		if (info->curr_env[un->k])
+		{
+			un->new_env[un->i] = info->curr_env[un->k];
+			un->i++;
+		}
+		un->k++;
+	}
+	un->new_env[un->i] = NULL;
+	free(info->curr_env);
+	info->curr_env = NULL;
+	info->curr_env = un->new_env;
+}
 
 void	ft_unset(t_execcmd *ecmd, t_info *info)
 {
@@ -45,7 +66,8 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 	un.curr_len = ft_matrix_len(info->curr_env);
 	while (ecmd->argv[un.k])
 	{
-		un.str = search_matrix(ecmd->argv[un.k], info->curr_env, &un.i, un.curr_len);
+		un.str = search_matrix(ecmd->argv[un.k],
+				info->curr_env, &un.i, un.curr_len);
 		if (!un.str)
 		{
 			un.k++;
@@ -58,24 +80,7 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 			un.k++;
 		}
 	}
-	un.new_env = ft_calloc(sizeof(char *), (un.curr_len + 1));
-	if (!un.new_env)
-		exit(1);
-	un.i = 0;
-	un.k = 0;
-	while (un.k < un.curr_len)
-	{
-		if (info->curr_env[un.k])
-		{
-			un.new_env[un.i] = info->curr_env[un.k];
-			un.i++;
-		}
-		un.k++;
-	}
-	un.new_env[un.i] = NULL;
-	free(info->curr_env);
-	info->curr_env = NULL;
-	info->curr_env = un.new_env;
+	copy_unset(ecmd, info, &un);
 }
 
 /* if exit code is provided as an argument, exits the shell with it.

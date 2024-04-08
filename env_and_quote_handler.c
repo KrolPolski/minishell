@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 18:25:13 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:22:26 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,9 +151,9 @@ char	*expand_env_remove_quotes(char *str, char **env)
 	init_line_info(&li, &str);
 	while (*str)
 	{
-		ft_printf("before quote handler str = '%s'\n", str);
+		//ft_printf("before quote handler str = '%s'\n", str);
 		quote_handler(&li, &str, env);
-		ft_printf("after quote_handler str = '%s'\n", str);
+		//ft_printf("after quote_handler str = '%s'\n", str);
 		if (li.endsq != NULL && (str == li.endsq))
 		{
 			//remove_quotes(li.begsq, li.endsq);
@@ -172,7 +172,7 @@ char	*expand_env_remove_quotes(char *str, char **env)
 		}
 		str++;
 	}
-	ft_printf("out of quote loop\n");
+	//ft_printf("out of quote loop\n");
 	free(li.symbols);
 	free(li.whitespace);
 	return (li.beg_str);

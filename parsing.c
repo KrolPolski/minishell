@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 19:03:50 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:21:51 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -677,18 +677,18 @@ int	parsing(t_info *info)
 		add_history(str);
 	//	ft_printf("Before quote expansion, checking leaks:\n");
 	//	system("leaks -q minishell");
-		ft_printf("End of pre-quote check\n");
+	//	ft_printf("End of pre-quote check\n");
 		expanded = expand_env_remove_quotes(str, info->curr_env);
 		if (expanded == ptr_parking)
 			exp_wants_freedom = 0;
 		else
 			exp_wants_freedom = 1;
-		ft_printf("Now after expansion expanded is '%s' and str is '%s'\n", expanded, str);
+	//	ft_printf("Now after expansion expanded is '%s' and str is '%s'\n", expanded, str);
 	//	system("leaks -q minishell");
 		cmd = parsecommand(expanded);
 		//print_tree(cmd);
-		ft_printf("Now after parsecommand\n");
-		system("leaks -q minishell");
+		//ft_printf("Now after parsecommand\n");
+	//	system("leaks -q minishell");
 		if (cmd->type == 1)
 		{
 			ecmd = (t_execcmd *)cmd;
@@ -728,18 +728,18 @@ int	parsing(t_info *info)
 			info->exit_code = WEXITSTATUS(status);
 			//ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
 		}
-		ft_printf("after setting exit code, but before frees\n");
+		//ft_printf("after setting exit code, but before frees\n");
 		//system("leaks -q minishell");
 		//print_tree(cmd);
 		if (tree_prisoner)
 		{
-			ft_printf("Our tree is oppressed\n");
+			//ft_printf("Our tree is oppressed\n");
 			free_tree(cmd);
 		}
 		else
 			free(cmd);
 		//we need a free_tree(cmd) function written and placed here.
-		ft_printf("before freedom rings str is '%s'\n", str);
+		//ft_printf("before freedom rings str is '%s'\n", str);
 		free(ptr_parking);
 		if (exp_wants_freedom)
 			free(expanded);

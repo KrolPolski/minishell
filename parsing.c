@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 11:44:54 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 12:28:29 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -682,7 +682,7 @@ int	parsing(t_info *info)
 		ft_printf("after setting exit code, but before frees\n");
 		system("leaks -q minishell");
 		//print_tree(cmd);
-		free(cmd);
+		//we need a free_tree(cmd) function written and placed here.
 		free(str);
 		ft_printf("after freeing stuff\n");
 		system("leaks -q minishell");

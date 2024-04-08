@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 11:10:29 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 11:44:54 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 		}
 		execute (rcmd->cmd, env, info);
 	}
+	free(cmd);
 	exit(info->exit_code);
 	//exit (0); //remember to manually free memory on all exits
 }
@@ -661,13 +662,15 @@ int	parsing(t_info *info)
 				signal(SIGQUIT, SIG_DFL);
 				execute(cmd, info->curr_env, info);
 			}
-			
+			//free(ecmd->argv);
 		}
 		else if (fork1() == 0)
 		{
 			signal(SIGQUIT, SIG_DFL);
 			execute(cmd, info->curr_env, info);
 		}
+		ft_printf("after fork, but in parent\n");
+		system("leaks -q minishell");
 		signal(SIGINT, SIG_IGN);
 		wait(&status);
 		set_signal_action();
@@ -676,9 +679,12 @@ int	parsing(t_info *info)
 			info->exit_code = WEXITSTATUS(status);
 			//ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
 		}
-		free(cmd);
+		ft_printf("after setting exit code, but before frees\n");
+		system("leaks -q minishell");
 		//print_tree(cmd);
+		free(cmd);
 		free(str);
+		ft_printf("after freeing stuff\n");
 		system("leaks -q minishell");
 		str = readline(info->prompt);
 	}

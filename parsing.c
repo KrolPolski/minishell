@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 12:28:29 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 16:11:24 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -390,16 +390,16 @@ t_cmd	*parseline(char **ps, char *es)
 	t_cmd		*cmd;
 	int			tok;
 	t_line_info	li;
-	t_cmd		*ptr_parking;
+	//t_cmd		*ptr_parking;
 
 	init_line_info(&li, ps);
 	cmd = parseexec(ps, es, &li);
 	if (peek(ps, es, "|"))
 	{
 		tok = gettoken(ps, 0, 0, &li);
-		ptr_parking = cmd;
+		//ptr_parking = cmd;
 		cmd = pipecmd(cmd, parseline(ps, es));
-		free(ptr_parking);
+		//free(ptr_parking);
 	}
 	free(li.symbols);
 	free(li.whitespace);
@@ -613,6 +613,44 @@ void	print_tree(t_cmd *cmd)
 	}
 }
 
+void	free_tree(t_cmd *cmd)
+{
+	t_execcmd	*ecmd;
+	t_pipecmd	*pcmd;
+	t_redircmd	*rcmd;
+
+	if (cmd->type == 1)
+	{
+		ecmd = (t_execcmd *)cmd;
+		printf("Found an exec node: \n\n");
+		print_exec(ecmd);
+		printf("Freeing exec node\n\n");
+		free(cmd);
+		printf("Successfully freed the exec node \n\n");
+	}
+	if (cmd->type == 2)
+	{
+		rcmd = (t_redircmd *)cmd;
+		//if (rcmd->cmd->type)
+		printf("Found a redir node: \n\n");
+		free_tree(rcmd->cmd);
+		printf("Freeing redir node: \n\n");
+		free(cmd);
+		printf("Successfully freed the redir node \n\n");
+	}
+	if (cmd->type == 3)
+	{
+		pcmd = (t_pipecmd *)cmd;
+		printf("Found a pipe node: \n\n");
+		
+		free_tree(pcmd->left);
+		free_tree(pcmd->right);
+		printf("Freeing pipe node: \n\n");
+		free(cmd);
+		printf("Successfully freed the pipe node \n\n");
+	}
+}
+
 int	parsing(t_info *info)
 {
 	int			fd;
@@ -642,6 +680,7 @@ int	parsing(t_info *info)
 		ft_printf("Now after expansion\n");
 		system("leaks -q minishell");
 		cmd = parsecommand(expanded);
+		//print_tree(cmd);
 		ft_printf("Now after parsecommand\n");
 		system("leaks -q minishell");
 		if (cmd->type == 1)
@@ -681,7 +720,8 @@ int	parsing(t_info *info)
 		}
 		ft_printf("after setting exit code, but before frees\n");
 		system("leaks -q minishell");
-		//print_tree(cmd);
+		print_tree(cmd);
+		free_tree(cmd);
 		//we need a free_tree(cmd) function written and placed here.
 		free(str);
 		ft_printf("after freeing stuff\n");

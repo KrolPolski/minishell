@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 18:20:27 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 18:25:13 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,8 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 		li->enddq = ft_strchr(li->begdq + 1, '\"');
 	}
 	free(var);
-//if (exp_var)
-//		free(exp_var);
+	//if (exp_var)
+	//	free(exp_var);
 	return (str);
 }
 

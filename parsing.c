@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 18:21:40 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 18:29:37 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -658,6 +658,7 @@ int	parsing(t_info *info)
 	t_execcmd	*ecmd;
 	char		*expanded;
 	int			tree_prisoner;
+	char		exp_wants_freedom;
 	char		*ptr_parking;
 
 	while ((fd = open("console", O_RDWR)) >= 0)
@@ -678,6 +679,10 @@ int	parsing(t_info *info)
 	//	system("leaks -q minishell");
 		ft_printf("End of pre-quote check\n");
 		expanded = expand_env_remove_quotes(str, info->curr_env);
+		if (expanded == ptr_parking)
+			exp_wants_freedom = 0;
+		else
+			exp_wants_freedom = 1;
 		ft_printf("Now after expansion expanded is '%s' and str is '%s'\n", expanded, str);
 	//	system("leaks -q minishell");
 		cmd = parsecommand(expanded);
@@ -734,6 +739,8 @@ int	parsing(t_info *info)
 		//we need a free_tree(cmd) function written and placed here.
 		ft_printf("before freedom rings str is '%s'\n", str);
 		free(ptr_parking);
+		if (exp_wants_freedom)
+			free(expanded);
 		//ft_printf("after freeing stuff\n");
 		system("leaks -q minishell");
 		str = readline(info->prompt);

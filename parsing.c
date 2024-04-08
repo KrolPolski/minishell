@@ -6,13 +6,10 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/04/08 16:11:24 by akovalev         ###   ########.fr       */
-=======
-/*   Updated: 2024/04/08 16:09:26 by rboudwin         ###   ########.fr       */
->>>>>>> 696b21e9516b1f43a3ccb983cf4fb96a538488bc
+/*   Updated: 2024/04/08 16:15:49 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minishell.h"
 #include <stdio.h>

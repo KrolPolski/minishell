@@ -6,9 +6,10 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/05 15:41:07 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 16:22:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minishell.h"
 #include <stdio.h>
@@ -129,13 +130,13 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 		if (WIFEXITED(status))
 		{
 			info->exit_code = WEXITSTATUS(status);
-			ft_printf("Exit code of pipe fork is %d\n", info->exit_code);
+			//ft_printf("Exit code of pipe fork is %d\n", info->exit_code);
 		}
 		wait(&status);
 		if (WIFEXITED(status))
 		{
 			info->exit_code = WEXITSTATUS(status);
-			ft_printf("Exit code of pipe fork2 is %d\n", info->exit_code);
+			//ft_printf("Exit code of pipe fork2 is %d\n", info->exit_code);
 		}
 	}
 	else if (cmd->type == EXEC)
@@ -168,6 +169,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 		}
 		execute (rcmd->cmd, env, info);
 	}
+	//free(cmd);
 	exit(info->exit_code);
 	//exit (0); //remember to manually free memory on all exits
 }
@@ -371,6 +373,8 @@ t_cmd	*parsecommand(char *str)
 	beg_str = str;
 	end_str = str + ft_strlen(str);
 	cmd = parseline(&str, end_str);
+	//ft_printf("After parseline\n");
+	//system("leaks -q minishell");
 	peek(&str, end_str, "");
 	if (str != end_str)
 	{
@@ -395,6 +399,8 @@ t_cmd	*parseline(char **ps, char *es)
 		tok = gettoken(ps, 0, 0, &li);
 		cmd = pipecmd(cmd, parseline(ps, es));
 	}
+	free(li.symbols);
+	free(li.whitespace);
 	return (cmd);
 }
 void	handle_quote_flags(t_line_info *li, bool	qflag)
@@ -605,6 +611,44 @@ void	print_tree(t_cmd *cmd)
 	}
 }
 
+void	free_tree(t_cmd *cmd)
+{
+	t_execcmd	*ecmd;
+	t_pipecmd	*pcmd;
+	t_redircmd	*rcmd;
+
+	if (cmd->type == 1)
+	{
+		ecmd = (t_execcmd *)cmd;
+		//printf("Found an exec node: \n\n");
+		//print_exec(ecmd);
+		//printf("Freeing exec node\n\n");
+		free(cmd);
+		//printf("Successfully freed the exec node \n\n");
+	}
+	if (cmd->type == 2)
+	{
+		rcmd = (t_redircmd *)cmd;
+		//if (rcmd->cmd->type)
+	//	printf("Found a redir node: \n\n");
+		free_tree(rcmd->cmd);
+	//	printf("Freeing redir node: \n\n");
+		free(cmd);
+	//	printf("Successfully freed the redir node \n\n");
+	}
+	if (cmd->type == 3)
+	{
+		pcmd = (t_pipecmd *)cmd;
+	//	printf("Found a pipe node: \n\n");
+		
+		free_tree(pcmd->left);
+		free_tree(pcmd->right);
+	//	printf("Freeing pipe node: \n\n");
+		free(cmd);
+	//	printf("Successfully freed the pipe node \n\n");
+	}
+}
+
 int	parsing(t_info *info)
 {
 	int			fd;
@@ -627,8 +671,16 @@ int	parsing(t_info *info)
 	while (str != NULL)
 	{
 		add_history(str);
+	//	ft_printf("Before quote expansion, checking leaks:\n");
+	//	system("leaks -q minishell");
+	//	ft_printf("End of pre-quote check\n");
 		expanded = expand_env_remove_quotes(str, info->curr_env);
+	//	ft_printf("Now after expansion\n");
+	//	system("leaks -q minishell");
 		cmd = parsecommand(expanded);
+		//print_tree(cmd);
+	//	ft_printf("Now after parsecommand\n");
+	//	system("leaks -q minishell");
 		if (cmd->type == 1)
 		{
 			ecmd = (t_execcmd *)cmd;
@@ -647,12 +699,15 @@ int	parsing(t_info *info)
 				signal(SIGQUIT, SIG_DFL);
 				execute(cmd, info->curr_env, info);
 			}
+			//free(ecmd->argv);
 		}
 		else if (fork1() == 0)
 		{
 			signal(SIGQUIT, SIG_DFL);
 			execute(cmd, info->curr_env, info);
 		}
+		//ft_printf("after fork, but in parent\n");
+		//system("leaks -q minishell");
 		signal(SIGINT, SIG_IGN);
 		wait(&status);
 		set_signal_action();
@@ -661,8 +716,14 @@ int	parsing(t_info *info)
 			info->exit_code = WEXITSTATUS(status);
 			//ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
 		}
+		//ft_printf("after setting exit code, but before frees\n");
+		//system("leaks -q minishell");
 		//print_tree(cmd);
-		//free(str);
+		free_tree(cmd);
+		//we need a free_tree(cmd) function written and placed here.
+		free(str);
+		//ft_printf("after freeing stuff\n");
+		system("leaks -q minishell");
 		str = readline(info->prompt);
 	}
 	return (0);

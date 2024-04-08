@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 11:55:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/05 10:15:14 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 10:32:16 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 //properly, but they might not be needed
 //if the signal() function does indeed take care of the CTRL-\ cursor issue.
 
-void	save_curs_pos(void)
+/*void	save_curs_pos(void)
 {
 	char	buf[1024];
 	char	*save_curs;
@@ -46,7 +46,7 @@ void	restore_curs_pos(void)
 		exit(1);
 	}
 	tputs(restore_curs, 1, putchar);
-}
+}*/
 
 void	sigint_handler(int signal)
 {
@@ -59,7 +59,7 @@ void	sigint_handler(int signal)
 	}
 	if (signal == SIGQUIT)
 	{
-		restore_curs_pos();
+		//restore_curs_pos();
 		//return ;
 	}
 }

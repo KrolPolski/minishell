@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/05 13:24:49 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:06:37 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,18 @@ int	check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env)
 		if (!ft_strncmp(new_env[i], needle, ft_strlen(needle) - 1)
 			&& new_env[i][ft_strlen(needle) - 1] == '\0')
 		{
+			free(needle);
+			needle=NULL;
+			free(alt_needle);
+			alt_needle=NULL;
 			return (i);
 		}
 		i++;
 	}
+	free(needle);
+	needle = NULL;
+	free(alt_needle);
+	alt_needle = NULL;
 	return (i);
 }
 

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/05 15:41:07 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 11:10:29 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -371,6 +371,8 @@ t_cmd	*parsecommand(char *str)
 	beg_str = str;
 	end_str = str + ft_strlen(str);
 	cmd = parseline(&str, end_str);
+	ft_printf("After parseline\n");
+	system("leaks -q minishell");
 	peek(&str, end_str, "");
 	if (str != end_str)
 	{
@@ -387,14 +389,19 @@ t_cmd	*parseline(char **ps, char *es)
 	t_cmd		*cmd;
 	int			tok;
 	t_line_info	li;
+	t_cmd		*ptr_parking;
 
 	init_line_info(&li, ps);
 	cmd = parseexec(ps, es, &li);
 	if (peek(ps, es, "|"))
 	{
 		tok = gettoken(ps, 0, 0, &li);
+		ptr_parking = cmd;
 		cmd = pipecmd(cmd, parseline(ps, es));
+		free(ptr_parking);
 	}
+	free(li.symbols);
+	free(li.whitespace);
 	return (cmd);
 }
 void	handle_quote_flags(t_line_info *li, bool	qflag)
@@ -627,8 +634,15 @@ int	parsing(t_info *info)
 	while (str != NULL)
 	{
 		add_history(str);
+		ft_printf("Before quote expansion, checking leaks:\n");
+		system("leaks -q minishell");
+		ft_printf("End of pre-quote check\n");
 		expanded = expand_env_remove_quotes(str, info->curr_env);
+		ft_printf("Now after expansion\n");
+		system("leaks -q minishell");
 		cmd = parsecommand(expanded);
+		ft_printf("Now after parsecommand\n");
+		system("leaks -q minishell");
 		if (cmd->type == 1)
 		{
 			ecmd = (t_execcmd *)cmd;
@@ -647,6 +661,7 @@ int	parsing(t_info *info)
 				signal(SIGQUIT, SIG_DFL);
 				execute(cmd, info->curr_env, info);
 			}
+			
 		}
 		else if (fork1() == 0)
 		{
@@ -661,8 +676,10 @@ int	parsing(t_info *info)
 			info->exit_code = WEXITSTATUS(status);
 			//ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
 		}
+		free(cmd);
 		//print_tree(cmd);
-		//free(str);
+		free(str);
+		system("leaks -q minishell");
 		str = readline(info->prompt);
 	}
 	return (0);

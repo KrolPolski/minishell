@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_and_quote_handler.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/04 14:15:40 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/08 10:53:55 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str)
 	old_vlen = ft_strlen(var);
 	new_vlen = ft_strlen(exp_var);
 	new_strlen = old_strlen + new_vlen - old_vlen;
-	upd_str = malloc(new_strlen + 1);
+	upd_str = ft_calloc(new_strlen + 1, 1);
 	if (upd_str == NULL)
 		return (NULL);
 	ft_memcpy(upd_str, li->beg_str, li->beg_var - li->beg_str);
@@ -84,6 +84,8 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 		li->enddq = ft_strchr(li->begdq + 1, '\"');
 	}
 	free(var);
+	if (exp_var)
+		free(exp_var);
 	return (str);
 }
 
@@ -168,5 +170,7 @@ char	*expand_env_remove_quotes(char *str, char **env)
 		}
 		str++;
 	}
+	free(li.symbols);
+	free(li.whitespace);
 	return (li.beg_str);
 }

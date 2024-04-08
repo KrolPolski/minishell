@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 16:22:30 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 18:21:40 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -657,6 +657,8 @@ int	parsing(t_info *info)
 	int			status;
 	t_execcmd	*ecmd;
 	char		*expanded;
+	int			tree_prisoner;
+	char		*ptr_parking;
 
 	while ((fd = open("console", O_RDWR)) >= 0)
 	{
@@ -668,18 +670,19 @@ int	parsing(t_info *info)
 	}
 	//save_curs_pos(); //currently unnecessary
 	str = readline(info->prompt);
+	ptr_parking = str;
 	while (str != NULL)
 	{
 		add_history(str);
 	//	ft_printf("Before quote expansion, checking leaks:\n");
 	//	system("leaks -q minishell");
-	//	ft_printf("End of pre-quote check\n");
+		ft_printf("End of pre-quote check\n");
 		expanded = expand_env_remove_quotes(str, info->curr_env);
-	//	ft_printf("Now after expansion\n");
+		ft_printf("Now after expansion expanded is '%s' and str is '%s'\n", expanded, str);
 	//	system("leaks -q minishell");
 		cmd = parsecommand(expanded);
 		//print_tree(cmd);
-	//	ft_printf("Now after parsecommand\n");
+		ft_printf("Now after parsecommand\n");
 	//	system("leaks -q minishell");
 		if (cmd->type == 1)
 		{
@@ -699,12 +702,14 @@ int	parsing(t_info *info)
 				signal(SIGQUIT, SIG_DFL);
 				execute(cmd, info->curr_env, info);
 			}
+			tree_prisoner = 0;
 			//free(ecmd->argv);
 		}
 		else if (fork1() == 0)
 		{
 			signal(SIGQUIT, SIG_DFL);
 			execute(cmd, info->curr_env, info);
+			tree_prisoner = 1;
 		}
 		//ft_printf("after fork, but in parent\n");
 		//system("leaks -q minishell");
@@ -716,15 +721,23 @@ int	parsing(t_info *info)
 			info->exit_code = WEXITSTATUS(status);
 			//ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
 		}
-		//ft_printf("after setting exit code, but before frees\n");
+		ft_printf("after setting exit code, but before frees\n");
 		//system("leaks -q minishell");
 		//print_tree(cmd);
-		free_tree(cmd);
+		if (tree_prisoner)
+		{
+			ft_printf("Our tree is oppressed\n");
+			free_tree(cmd);
+		}
+		else
+			free(cmd);
 		//we need a free_tree(cmd) function written and placed here.
-		free(str);
+		ft_printf("before freedom rings str is '%s'\n", str);
+		free(ptr_parking);
 		//ft_printf("after freeing stuff\n");
 		system("leaks -q minishell");
 		str = readline(info->prompt);
+		ptr_parking = str;
 	}
 	return (0);
 }

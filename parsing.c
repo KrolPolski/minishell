@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 12:28:29 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 16:09:26 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 		}
 		execute (rcmd->cmd, env, info);
 	}
-	free(cmd);
+	//free(cmd);
 	exit(info->exit_code);
 	//exit (0); //remember to manually free memory on all exits
 }
@@ -397,9 +397,9 @@ t_cmd	*parseline(char **ps, char *es)
 	if (peek(ps, es, "|"))
 	{
 		tok = gettoken(ps, 0, 0, &li);
-		ptr_parking = cmd;
+		//ptr_parking = cmd;
 		cmd = pipecmd(cmd, parseline(ps, es));
-		free(ptr_parking);
+		//free(ptr_parking);
 	}
 	free(li.symbols);
 	free(li.whitespace);
@@ -681,7 +681,8 @@ int	parsing(t_info *info)
 		}
 		ft_printf("after setting exit code, but before frees\n");
 		system("leaks -q minishell");
-		//print_tree(cmd);
+		print_tree(cmd);
+		free(cmd);
 		//we need a free_tree(cmd) function written and placed here.
 		free(str);
 		ft_printf("after freeing stuff\n");

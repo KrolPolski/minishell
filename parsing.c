@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 16:15:49 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/08 16:22:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,13 +130,13 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 		if (WIFEXITED(status))
 		{
 			info->exit_code = WEXITSTATUS(status);
-			ft_printf("Exit code of pipe fork is %d\n", info->exit_code);
+			//ft_printf("Exit code of pipe fork is %d\n", info->exit_code);
 		}
 		wait(&status);
 		if (WIFEXITED(status))
 		{
 			info->exit_code = WEXITSTATUS(status);
-			ft_printf("Exit code of pipe fork2 is %d\n", info->exit_code);
+			//ft_printf("Exit code of pipe fork2 is %d\n", info->exit_code);
 		}
 	}
 	else if (cmd->type == EXEC)
@@ -373,8 +373,8 @@ t_cmd	*parsecommand(char *str)
 	beg_str = str;
 	end_str = str + ft_strlen(str);
 	cmd = parseline(&str, end_str);
-	ft_printf("After parseline\n");
-	system("leaks -q minishell");
+	//ft_printf("After parseline\n");
+	//system("leaks -q minishell");
 	peek(&str, end_str, "");
 	if (str != end_str)
 	{
@@ -391,16 +391,13 @@ t_cmd	*parseline(char **ps, char *es)
 	t_cmd		*cmd;
 	int			tok;
 	t_line_info	li;
-	//t_cmd		*ptr_parking;
 
 	init_line_info(&li, ps);
 	cmd = parseexec(ps, es, &li);
 	if (peek(ps, es, "|"))
 	{
 		tok = gettoken(ps, 0, 0, &li);
-		//ptr_parking = cmd;
 		cmd = pipecmd(cmd, parseline(ps, es));
-		//free(ptr_parking);
 	}
 	free(li.symbols);
 	free(li.whitespace);
@@ -623,32 +620,32 @@ void	free_tree(t_cmd *cmd)
 	if (cmd->type == 1)
 	{
 		ecmd = (t_execcmd *)cmd;
-		printf("Found an exec node: \n\n");
-		print_exec(ecmd);
-		printf("Freeing exec node\n\n");
+		//printf("Found an exec node: \n\n");
+		//print_exec(ecmd);
+		//printf("Freeing exec node\n\n");
 		free(cmd);
-		printf("Successfully freed the exec node \n\n");
+		//printf("Successfully freed the exec node \n\n");
 	}
 	if (cmd->type == 2)
 	{
 		rcmd = (t_redircmd *)cmd;
 		//if (rcmd->cmd->type)
-		printf("Found a redir node: \n\n");
+	//	printf("Found a redir node: \n\n");
 		free_tree(rcmd->cmd);
-		printf("Freeing redir node: \n\n");
+	//	printf("Freeing redir node: \n\n");
 		free(cmd);
-		printf("Successfully freed the redir node \n\n");
+	//	printf("Successfully freed the redir node \n\n");
 	}
 	if (cmd->type == 3)
 	{
 		pcmd = (t_pipecmd *)cmd;
-		printf("Found a pipe node: \n\n");
+	//	printf("Found a pipe node: \n\n");
 		
 		free_tree(pcmd->left);
 		free_tree(pcmd->right);
-		printf("Freeing pipe node: \n\n");
+	//	printf("Freeing pipe node: \n\n");
 		free(cmd);
-		printf("Successfully freed the pipe node \n\n");
+	//	printf("Successfully freed the pipe node \n\n");
 	}
 }
 
@@ -674,16 +671,16 @@ int	parsing(t_info *info)
 	while (str != NULL)
 	{
 		add_history(str);
-		ft_printf("Before quote expansion, checking leaks:\n");
-		system("leaks -q minishell");
-		ft_printf("End of pre-quote check\n");
+	//	ft_printf("Before quote expansion, checking leaks:\n");
+	//	system("leaks -q minishell");
+	//	ft_printf("End of pre-quote check\n");
 		expanded = expand_env_remove_quotes(str, info->curr_env);
-		ft_printf("Now after expansion\n");
-		system("leaks -q minishell");
+	//	ft_printf("Now after expansion\n");
+	//	system("leaks -q minishell");
 		cmd = parsecommand(expanded);
 		//print_tree(cmd);
-		ft_printf("Now after parsecommand\n");
-		system("leaks -q minishell");
+	//	ft_printf("Now after parsecommand\n");
+	//	system("leaks -q minishell");
 		if (cmd->type == 1)
 		{
 			ecmd = (t_execcmd *)cmd;
@@ -709,8 +706,8 @@ int	parsing(t_info *info)
 			signal(SIGQUIT, SIG_DFL);
 			execute(cmd, info->curr_env, info);
 		}
-		ft_printf("after fork, but in parent\n");
-		system("leaks -q minishell");
+		//ft_printf("after fork, but in parent\n");
+		//system("leaks -q minishell");
 		signal(SIGINT, SIG_IGN);
 		wait(&status);
 		set_signal_action();
@@ -719,13 +716,13 @@ int	parsing(t_info *info)
 			info->exit_code = WEXITSTATUS(status);
 			//ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
 		}
-		ft_printf("after setting exit code, but before frees\n");
-		system("leaks -q minishell");
-		print_tree(cmd);
+		//ft_printf("after setting exit code, but before frees\n");
+		//system("leaks -q minishell");
+		//print_tree(cmd);
 		free_tree(cmd);
 		//we need a free_tree(cmd) function written and placed here.
 		free(str);
-		ft_printf("after freeing stuff\n");
+		//ft_printf("after freeing stuff\n");
 		system("leaks -q minishell");
 		str = readline(info->prompt);
 	}

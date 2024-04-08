@@ -6,7 +6,11 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/04/08 16:11:24 by akovalev         ###   ########.fr       */
+=======
+/*   Updated: 2024/04/08 16:09:26 by rboudwin         ###   ########.fr       */
+>>>>>>> 696b21e9516b1f43a3ccb983cf4fb96a538488bc
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +172,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 		}
 		execute (rcmd->cmd, env, info);
 	}
-	free(cmd);
+	//free(cmd);
 	exit(info->exit_code);
 	//exit (0); //remember to manually free memory on all exits
 }

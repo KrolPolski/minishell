@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 18:29:37 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/08 19:01:58 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -710,12 +710,14 @@ int	parsing(t_info *info)
 			tree_prisoner = 0;
 			//free(ecmd->argv);
 		}
-		else if (fork1() == 0)
-		{
+		else
+		{ 
+			if (fork1() == 0)
+			{
 			signal(SIGQUIT, SIG_DFL);
-			execute(cmd, info->curr_env, info);
-			tree_prisoner = 1;
-		}
+			execute(cmd, info->curr_env, info);	
+			}
+		tree_prisoner = 1;}
 		//ft_printf("after fork, but in parent\n");
 		//system("leaks -q minishell");
 		signal(SIGINT, SIG_IGN);

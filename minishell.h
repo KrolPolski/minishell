@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/09 13:01:10 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/09 15:16:09 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ typedef struct s_line_info
 {
 	bool	sfl;
 	bool	dfl;
+	bool	hdfl;
 	char	*endsq;
 	char	*enddq;
 	char	*begsq;
@@ -106,6 +107,7 @@ typedef struct s_line_info
 	bool	in_quotes;
 	char	*whitespace;
 	char	*symbols;
+	char	*heredoc_buff;
 }	t_line_info;
 
 typedef struct s_export
@@ -181,11 +183,12 @@ char		*ft_prompt(char *username, char *hostname, char *path);
 
 //parsing.c
 
+
+t_cmd		*parsecommand(char *str, t_line_info *li);
 char		*check_command(char *com, char **env);
 void		execute(t_cmd *cmd, char **env, t_info *info);
 void		free_tree(t_cmd *cmd);
 int			fork1(void);
-t_cmd		*parsecommand(char *str);
 char		**parse_paths(char **env);
 int			parsing(t_info *info);
 void		panic(char *s);

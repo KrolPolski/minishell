@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_and_quote_handler.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 19:22:26 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/09 15:01:01 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,7 @@ void	init_line_info(t_line_info *li, char **str)
 {
 	li->sfl = 0;
 	li->dfl = 0;
+	li->hdfl = 0;
 	li->endsq = NULL;
 	li->enddq = NULL;
 	li->begsq = NULL;
@@ -137,6 +138,7 @@ void	init_line_info(t_line_info *li, char **str)
 	li->in_quotes = 0;
 	li->whitespace = ft_strdup(" \t\r\n\v");
 	li->symbols = ft_strdup("<|>"); //need to free both of these
+	li->heredoc_buff = NULL;
 }
 
 //seems like instead of making a function that sets everything in the struct

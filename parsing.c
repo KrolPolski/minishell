@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/09 17:06:01 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/09 20:30:38 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,23 +165,18 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 		close (rcmd->fd);
 		if (rcmd->file == NULL)
 		{
-			//close(1);
-			//printf("Heredoc case\n");
-			if ((fd = open(".heredoctemp", O_CREAT | O_RDWR | O_TRUNC, 0666)) < 0)
-			// add handling for open failures
+			if (pipe(p) < 0)
 			{
-				printf("open .heredoctemp failed\n");
+				printf("Pipe creation failed\n");
 				exit(1);
 			}
-			//ft_printf("Assembled buffer is:\n%s", li->heredoc_buff);
-			write(fd, li->heredoc_buff, ft_strlen(li->heredoc_buff));
-			close(fd);
-			if ((fd = open(".heredoctemp", O_RDONLY, 0666)) < 0)
+			if (write(p[1], li->heredoc_buff, strlen(li->heredoc_buff)) < 0)
 			{
-				printf("open .heredoctemp failed\n");
+				printf("Writing to the pipe failed\n");
 				exit(1);
 			}
-			//close (rcmd->fd);
+			close(p[1]);
+			rcmd->fd = p[0];
 		}
 		else if (open(rcmd->file, rcmd->mode, 0666) < 0)
 		{
@@ -754,9 +749,10 @@ int	parsing(t_info *info)
 		free_tree(cmd);
 		//we need a free_tree(cmd) function written and placed here.
 		free(str);
-		//ft_printf("after freeing stuff\n");
+		if (li.heredoc_buff)
+			free(li.heredoc_buff);
+		//ft_printf("after freeing s;tuff\n")
 		system("leaks -q minishell");
-		unlink(".heredoctemp");
 		str = readline(info->prompt);
 	}
 	return (0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 12:23:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/09 17:51:52 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/09 20:26:49 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ char	*heredoc_builder(char *delimiter)
 {
 	char	*input;
 	char	*buffer;
-	char	*ptr_parking;
+	char	*parking_one;
+	char	*parking_two;
 
 	buffer = ft_strdup("");
 	while (true)
@@ -24,10 +25,13 @@ char	*heredoc_builder(char *delimiter)
 		input = readline("> ");
 		if (!ft_strncmp(input, delimiter, ft_strlen(delimiter)))
 			break ;
-		ptr_parking = buffer;
+		parking_one = buffer;
 		buffer = ft_strjoin(buffer, input);
+		parking_two = buffer;
+		buffer = ft_strjoin(buffer, "\n");
+		free(parking_one);
+		free(parking_two);
 		free(input);
-		free(ptr_parking);
 	}
 	free(input);
 	return (buffer);

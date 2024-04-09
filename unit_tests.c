@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 14:53:37 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/09 15:50:33 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/09 16:12:20 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	test(t_info *info)
 			//ft_printf("\nbash output:\n");
 			//system(bash_str);
 			
-			system("bash -c './test_input.sh > bash_output'");
+			system("bash -c './test_input > bash_output'");
 			//free(bash_str);
 			//free(bash_output);
 			//system("leaks -q minishell");

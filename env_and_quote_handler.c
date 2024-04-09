@@ -51,7 +51,7 @@ char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str)
 	ft_memcpy(upd_str + (li->beg_var - li->beg_str) + new_vlen, li->beg_var + \
 		old_vlen, old_strlen - (li->beg_var - li->beg_str) - old_vlen + 1);
 	*str = upd_str + (li->beg_var - li->beg_str) + new_vlen - 1;
-	free(li->beg_str);
+	//free(li->beg_str);
 	if (li->free_flag == 1)
 		free(exp_var);
 	li->free_flag = 0;
@@ -84,8 +84,8 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 		li->enddq = ft_strchr(li->begdq + 1, '\"');
 	}
 	free(var);
-	if (exp_var)
-		free(exp_var);
+	//if (exp_var)
+	//	free(exp_var);
 	return (str);
 }
 
@@ -153,7 +153,9 @@ char	*expand_env_remove_quotes(char *str, char **env)
 	init_line_info(&li, &str);
 	while (*str)
 	{
+		//ft_printf("before quote handler str = '%s'\n", str);
 		quote_handler(&li, &str, env);
+		//ft_printf("after quote_handler str = '%s'\n", str);
 		if (li.endsq != NULL && (str == li.endsq))
 		{
 			//remove_quotes(li.begsq, li.endsq);
@@ -172,6 +174,7 @@ char	*expand_env_remove_quotes(char *str, char **env)
 		}
 		str++;
 	}
+	//ft_printf("out of quote loop\n");
 	free(li.symbols);
 	free(li.whitespace);
 	return (li.beg_str);

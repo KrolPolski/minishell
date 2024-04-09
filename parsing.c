@@ -685,6 +685,10 @@ int	parsing(t_info *info)
 	char		*expanded;
 	t_line_info	li;
 
+	int			tree_prisoner;
+	char		exp_wants_freedom;
+	char		*ptr_parking;
+
 	while ((fd = open("console", O_RDWR)) >= 0)
 	{
 		if (fd >= 3)
@@ -695,6 +699,7 @@ int	parsing(t_info *info)
 	}
 	//save_curs_pos(); //currently unnecessary
 	str = readline(info->prompt);
+	ptr_parking = str;
 	while (str != NULL)
 	{
 		add_history(str);
@@ -702,11 +707,15 @@ int	parsing(t_info *info)
 	//	system("leaks -q minishell");
 	//	ft_printf("End of pre-quote check\n");
 		expanded = expand_env_remove_quotes(str, info->curr_env);
-	//	ft_printf("Now after expansion\n");
+		if (expanded == ptr_parking)
+			exp_wants_freedom = 0;
+		else
+			exp_wants_freedom = 1;
+	//	ft_printf("Now after expansion expanded is '%s' and str is '%s'\n", expanded, str);
 	//	system("leaks -q minishell");
 		cmd = parsecommand(expanded, &li);
 		//print_tree(cmd);
-	//	ft_printf("Now after parsecommand\n");
+		//ft_printf("Now after parsecommand\n");
 	//	system("leaks -q minishell");
 		if (cmd->type == 1)
 		{
@@ -726,12 +735,20 @@ int	parsing(t_info *info)
 				signal(SIGQUIT, SIG_DFL);
 				execute(cmd, info->curr_env, info, &li);
 			}
-			//free(ecmd->argv);
+			tree_prisoner = 0;
 		}
-		else if (fork1() == 0)
+		else
 		{
 			signal(SIGQUIT, SIG_DFL);
 			execute(cmd, info->curr_env, info, &li);
+
+			if (fork1() == 0)
+			{
+				signal(SIGQUIT, SIG_DFL);
+				execute(cmd, info->curr_env, info);	
+			}
+			tree_prisoner = 1;
+
 		}
 		//ft_printf("after fork, but in parent\n");
 		//system("leaks -q minishell");
@@ -746,14 +763,26 @@ int	parsing(t_info *info)
 		//ft_printf("after setting exit code, but before frees\n");
 		//system("leaks -q minishell");
 		//print_tree(cmd);
-		free_tree(cmd);
+		if (tree_prisoner)
+		{
+			//ft_printf("Our tree is oppressed\n");
+			free_tree(cmd);
+		}
+		else
+			free(cmd);
 		//we need a free_tree(cmd) function written and placed here.
 		free(str);
 		if (li.heredoc_buff)
 			free(li.heredoc_buff);
 		//ft_printf("after freeing s;tuff\n")
+		//ft_printf("before freedom rings str is '%s'\n", str);
+		free(ptr_parking);
+		if (exp_wants_freedom)
+			free(expanded);
+		//ft_printf("after freeing stuff\n");
 		system("leaks -q minishell");
 		str = readline(info->prompt);
+		ptr_parking = str;
 	}
 	return (0);
 }

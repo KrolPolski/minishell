@@ -183,7 +183,13 @@ char		*ft_prompt(char *username, char *hostname, char *path);
 
 //parsing.c
 
+
 t_cmd		*parsecommand(char *str, t_line_info *li);
+char		*check_command(char *com, char **env);
+void		execute(t_cmd *cmd, char **env, t_info *info);
+void		free_tree(t_cmd *cmd);
+int			fork1(void);
+char		**parse_paths(char **env);
 int			parsing(t_info *info);
 void		panic(char *s);
 int			peek(char **ps, char *es, char *tokens);
@@ -199,6 +205,9 @@ void		sigint_handler(int signal);
 void		free_2d(char **arr);
 int			ft_matrix_len(char **str);
 
+// unit_tests.c
+void		test(t_info *info);
+int			alt_parsing(t_info *info, char *str);
 //seems unused: char		*expand_string(char *str, char **env);
 //seems unused: char		*expand_env_var(char *var, char **env);
 

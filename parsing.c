@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/08 16:22:30 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/09 16:53:00 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ int fork1(void)
 	return (pid);
 }
 
-void	execute(t_cmd *cmd, char **env, t_info *info)
+void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 {
 	int			p[2];
 	t_execcmd	*ecmd;
@@ -88,6 +88,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 	char		*command;
 	char		*builtins[8];
 	int			i;
+	int fd;
 
 	i = 0;
 	builtins[0] = "cd";
@@ -114,7 +115,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 			dup(p[1]);
 			close(p[0]);
 			close(p[1]);
-			execute(pcmd->left, env, info);
+			execute(pcmd->left, env, info, li);
 		}
 		if (fork1() == 0)
 		{
@@ -122,7 +123,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 			dup(p[0]);
 			close(p[0]);
 			close(p[1]);
-			execute(pcmd->right, env, info);
+			execute(pcmd->right, env, info, li);
 		}
 		close(p[0]);
 		close(p[1]);
@@ -162,12 +163,31 @@ void	execute(t_cmd *cmd, char **env, t_info *info)
 	{
 		rcmd = (t_redircmd *)cmd;
 		close (rcmd->fd);
-		if (open(rcmd->file, rcmd->mode, 0666) < 0)
+		if (rcmd->file == NULL)
+		{
+			//close(1);
+			//printf("Heredoc case\n");
+			if ((fd = open(".heredoctemp", O_CREAT | O_RDWR | O_TRUNC, 0666)) < 0)
+			{
+				printf("open .heredoctemp failed\n");
+				exit(1);
+			}
+			//ft_printf("Assembled buffer is:\n%s", li->heredoc_buff);
+			write(fd, li->heredoc_buff, ft_strlen(li->heredoc_buff));
+			close(fd);
+			if ((fd = open(".heredoctemp", O_RDONLY, 0666)) < 0)
+			{
+				printf("open .heredoctemp failed\n");
+				exit(1);
+			}
+			//close (rcmd->fd);
+		}
+		else if (open(rcmd->file, rcmd->mode, 0666) < 0)
 		{
 			printf("open %s failed\n", rcmd->file);
 			exit(1);
 		}
-		execute (rcmd->cmd, env, info);
+		execute (rcmd->cmd, env, info, li);
 	}
 	//free(cmd);
 	exit(info->exit_code);
@@ -356,7 +376,7 @@ int	peek(char **ps, char *es, char *tokens)
 	free(whitespace);
 	return (*s && ft_strchr(tokens, *s));
 }
-t_cmd *parseline(char**, char*);
+t_cmd *parseline(char**, char*, t_line_info *li);
 t_cmd *parsepipe(char**, char*);
 t_cmd *parseexec(char**, char*, t_line_info *li);
 t_cmd *nullterminate(t_cmd *);
@@ -364,7 +384,7 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
 
 void	print_exec(t_execcmd *ecmd);
 
-t_cmd	*parsecommand(char *str)
+t_cmd	*parsecommand(char *str, t_line_info *li)
 {
 	char	*end_str;
 	char	*beg_str;
@@ -372,7 +392,7 @@ t_cmd	*parsecommand(char *str)
 
 	beg_str = str;
 	end_str = str + ft_strlen(str);
-	cmd = parseline(&str, end_str);
+	cmd = parseline(&str, end_str, li);
 	//ft_printf("After parseline\n");
 	//system("leaks -q minishell");
 	peek(&str, end_str, "");
@@ -386,21 +406,22 @@ t_cmd	*parsecommand(char *str)
 	return (cmd);
 }
 
-t_cmd	*parseline(char **ps, char *es)
+t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 {
 	t_cmd		*cmd;
 	int			tok;
-	t_line_info	li;
 
-	init_line_info(&li, ps);
-	cmd = parseexec(ps, es, &li);
+	init_line_info(li, ps);
+	cmd = parseexec(ps, es, li);
 	if (peek(ps, es, "|"))
 	{
-		tok = gettoken(ps, 0, 0, &li);
-		cmd = pipecmd(cmd, parseline(ps, es));
+		tok = gettoken(ps, 0, 0, li);
+		cmd = pipecmd(cmd, parseline(ps, es, li));
 	}
-	free(li.symbols);
-	free(li.whitespace);
+	if (li->symbols)
+		free(li->symbols);
+	if (li->whitespace)
+		free(li->whitespace);
 	return (cmd);
 }
 void	handle_quote_flags(t_line_info *li, bool	qflag)
@@ -497,7 +518,7 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	int		tok;
 	char	*q;
 	char	*eq;
-	char	*heredoc_buff;
+	int fd;
 
 	//printf("String is now at %s\n, and begq is %s\n and end is %s\n and the flags are: %d, %d\n", *ps, li->begdq, li->enddq, li->sfl, li->dfl);
 	if ((!li->in_quotes)) // && ((*ps > li->endsq && *ps < li->begsq) || (*ps > li->enddq && *ps < li->begdq))
@@ -506,14 +527,22 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 		{
 			tok = gettoken(ps, 0, 0, li);
 			if (gettoken(ps, &q, &eq, li) != 'a')
-				ft_putstr_fd("missing file for redirection\n", 2);
+				panic("missing file for redirection");
 			//printf("Redir was fould to be beginning and %s\nand ending at %s\n", q, eq);
 			if (tok == '<')
 				cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
 			else if (tok == '-')
 			{
-				heredoc_buff = heredoc_builder("EOF");
-				ft_printf("Assembled buffer is:\n%s", heredoc_buff);
+				//li->hdfl = 1;
+				*eq = 0;
+				//printf("The delimiter is %s\n", q);
+				//fd = open(q, 1, O_CREAT | O_RDWR);
+				cmd = redircmd(cmd, NULL, NULL, O_RDONLY, 0);
+				
+				//gettoken(ps, &q, &eq, li);
+				li->heredoc_buff = heredoc_builder(q);
+				//ft_printf("Assembled buffer is:\n%s", li->heredoc_buff);
+				//write(fd, li->heredoc_buff, ft_strlen(li->heredoc_buff));
 			}
 			else if (tok == '>')
 				cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_TRUNC, 1);
@@ -547,7 +576,8 @@ t_cmd	*nullterminate(t_cmd *cmd)
 	{
 		rcmd = (t_redircmd *)cmd;
 		nullterminate(rcmd->cmd);
-		*rcmd->efile = 0;
+		if (rcmd->efile)
+			*rcmd->efile = 0;
 	}
 	else if (cmd->type == PIPE)
 	{
@@ -657,6 +687,7 @@ int	parsing(t_info *info)
 	int			status;
 	t_execcmd	*ecmd;
 	char		*expanded;
+	t_line_info	li;
 
 	while ((fd = open("console", O_RDWR)) >= 0)
 	{
@@ -677,7 +708,7 @@ int	parsing(t_info *info)
 		expanded = expand_env_remove_quotes(str, info->curr_env);
 	//	ft_printf("Now after expansion\n");
 	//	system("leaks -q minishell");
-		cmd = parsecommand(expanded);
+		cmd = parsecommand(expanded, &li);
 		//print_tree(cmd);
 	//	ft_printf("Now after parsecommand\n");
 	//	system("leaks -q minishell");
@@ -697,14 +728,14 @@ int	parsing(t_info *info)
 			else if (fork1() == 0)
 			{
 				signal(SIGQUIT, SIG_DFL);
-				execute(cmd, info->curr_env, info);
+				execute(cmd, info->curr_env, info, &li);
 			}
 			//free(ecmd->argv);
 		}
 		else if (fork1() == 0)
 		{
 			signal(SIGQUIT, SIG_DFL);
-			execute(cmd, info->curr_env, info);
+			execute(cmd, info->curr_env, info, &li);
 		}
 		//ft_printf("after fork, but in parent\n");
 		//system("leaks -q minishell");
@@ -724,6 +755,7 @@ int	parsing(t_info *info)
 		free(str);
 		//ft_printf("after freeing stuff\n");
 		system("leaks -q minishell");
+		unlink(".heredoctemp");
 		str = readline(info->prompt);
 	}
 	return (0);

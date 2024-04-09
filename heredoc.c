@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 12:23:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/05 10:39:03 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/09 16:26:37 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,6 @@ char	*heredoc_builder(char *delimiter)
 		input = readline("> ");
 	//	free(old_buffer);
 	}
-	ft_printf("%s", old_buffer);
+	//ft_printf("%s", old_buffer);
 	return (old_buffer);
 }

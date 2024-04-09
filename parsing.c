@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/09 16:53:00 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/09 17:06:01 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 			//close(1);
 			//printf("Heredoc case\n");
 			if ((fd = open(".heredoctemp", O_CREAT | O_RDWR | O_TRUNC, 0666)) < 0)
+			// add handling for open failures
 			{
 				printf("open .heredoctemp failed\n");
 				exit(1);

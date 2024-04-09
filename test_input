@@ -1,0 +1,12 @@
+ls
+ls | grep main
+ls | grep main | cat -e
+ls | grep main | cat -e > output
+ls | grep main | cat -e >> append_output
+echo "append must be working" >> append_output
+export a=1 b=2 c d
+echo $a $b $USER
+unset a b c d
+echo "'$USER'"
+echo '$USER'
+echo '"$USER"'

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/05 13:04:45 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/09 13:01:10 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,12 @@ char		*ft_prompt(char *username, char *hostname, char *path);
 
 //parsing.c
 
+char		*check_command(char *com, char **env);
+void		execute(t_cmd *cmd, char **env, t_info *info);
+void		free_tree(t_cmd *cmd);
+int			fork1(void);
 t_cmd		*parsecommand(char *str);
+char		**parse_paths(char **env);
 int			parsing(t_info *info);
 void		panic(char *s);
 int			peek(char **ps, char *es, char *tokens);
@@ -197,6 +202,9 @@ void		sigint_handler(int signal);
 void		free_2d(char **arr);
 int			ft_matrix_len(char **str);
 
+// unit_tests.c
+void		test(t_info *info);
+int			alt_parsing(t_info *info, char *str);
 //seems unused: char		*expand_string(char *str, char **env);
 //seems unused: char		*expand_env_var(char *var, char **env);
 

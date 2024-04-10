@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_and_quote_handler.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/09 15:01:01 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/10 13:44:58 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,9 @@ char	*expand_env_remove_quotes(char *str, char **env)
 {
 	t_line_info	li;
 
+	ft_printf("entered expand_env_remove_quotes\n");
 	init_line_info(&li, &str);
+
 	while (*str)
 	{
 		//ft_printf("before quote handler str = '%s'\n", str);
@@ -177,5 +179,6 @@ char	*expand_env_remove_quotes(char *str, char **env)
 	//ft_printf("out of quote loop\n");
 	free(li.symbols);
 	free(li.whitespace);
+	ft_printf("exiting expand_env_remove_quotes\n");
 	return (li.beg_str);
 }

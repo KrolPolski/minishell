@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/10 13:35:46 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 13:57:16 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,13 +363,14 @@ int	peek(char **ps, char *es, char *tokens)
 {
 	char	*s;
 	char	*whitespace;
-
+	ft_printf("entered peek\n");
 	whitespace = ft_strdup(" \t\r\n\v");
 	s = *ps;
 	while (s < es && ft_strchr(whitespace, *s))
 		s++;
 	*ps = s;
 	free(whitespace);
+	ft_printf("exiting peek\n");
 	return (*s && ft_strchr(tokens, *s));
 }
 t_cmd *parseline(char**, char*, t_line_info *li);
@@ -386,10 +387,12 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 	char	*beg_str;
 	t_cmd	*cmd;
 
+	ft_printf("We have entered parsecommand\n");
 	beg_str = str;
 	end_str = str + ft_strlen(str);
 	cmd = parseline(&str, end_str, li);
-	//ft_printf("After parseline\n");
+	write(1, "After parseline", 15);
+	ft_printf("After parseline\n");
 	//system("leaks -q minishell");
 	peek(&str, end_str, "");
 	if (str != end_str)
@@ -399,6 +402,7 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 	}
 	nullterminate(cmd);
 	//print_exec(cmd);
+	ft_printf("exiting parsecommand\n");
 	return (cmd);
 }
 
@@ -407,6 +411,7 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	t_cmd		*cmd;
 	int			tok;
 
+	ft_printf("we entered parseline\n");
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
 	if (peek(ps, es, "|"))
@@ -414,10 +419,11 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 		tok = gettoken(ps, 0, 0, li);
 		cmd = pipecmd(cmd, parseline(ps, es, li));
 	}
-	if (li->symbols)
-		free(li->symbols);
-	if (li->whitespace)
-		free(li->whitespace);
+	//if (li->symbols)
+		//free(li->symbols);
+	//if (li->whitespace)
+		//free(li->whitespace);
+	ft_printf("we are about to exit parseline\n");
 	return (cmd);
 }
 void	handle_quote_flags(t_line_info *li, bool	qflag)
@@ -699,6 +705,7 @@ int	parsing(t_info *info)
 	}
 	//save_curs_pos(); //currently unnecessary
 	str = readline(info->prompt);
+	ft_printf("received first readline input of\n %s\n", str);
 	ptr_parking = str;
 	while (str != NULL)
 	{
@@ -739,8 +746,8 @@ int	parsing(t_info *info)
 		}
 		else
 		{
-			signal(SIGQUIT, SIG_DFL);
-			execute(cmd, info->curr_env, info, &li);
+			//signal(SIGQUIT, SIG_DFL);
+			//execute(cmd, info->curr_env, info, &li);
 
 			if (fork1() == 0)
 			{
@@ -758,28 +765,28 @@ int	parsing(t_info *info)
 		if (WIFEXITED(status))
 		{
 			info->exit_code = WEXITSTATUS(status);
-			//ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
+			ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
 		}
 		ft_printf("after setting exit code, but before frees\n");
 		//system("leaks -q minishell");
 		//print_tree(cmd);
 		if (tree_prisoner)
 		{
-			//ft_printf("Our tree is oppressed\n");
-			free_tree(cmd);
+			ft_printf("Our tree is oppressed\n");
+			//free_tree(cmd);
 		}
 		else
-			free(cmd);
+			//free(cmd);
 		//we need a free_tree(cmd) function written and placed here.
-		free(str);
+		//free(str);
 		//if (li.heredoc_buff)
 		//	free(li.heredoc_buff);
 		ft_printf("after freeing stuff\n");
-		//ft_printf("before freedom rings str is '%s'\n", str);
+		ft_printf("before freedom rings str is '%s'\n", str);
 		//free(ptr_parking);
-		if (exp_wants_freedom)
-			free(expanded);
-		//ft_printf("after freeing stuff\n");
+		//if (exp_wants_freedom)
+		//	free(expanded);
+		ft_printf("after freeing stuff\n");
 		system("leaks -q minishell");
 		str = readline(info->prompt);
 		ptr_parking = str;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/09 15:16:09 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/10 13:30:46 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,7 +186,7 @@ char		*ft_prompt(char *username, char *hostname, char *path);
 
 t_cmd		*parsecommand(char *str, t_line_info *li);
 char		*check_command(char *com, char **env);
-void		execute(t_cmd *cmd, char **env, t_info *info);
+void		execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li);
 void		free_tree(t_cmd *cmd);
 int			fork1(void);
 char		**parse_paths(char **env);

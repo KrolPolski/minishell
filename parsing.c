@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/09 20:30:38 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/10 13:35:46 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -715,7 +715,7 @@ int	parsing(t_info *info)
 	//	system("leaks -q minishell");
 		cmd = parsecommand(expanded, &li);
 		//print_tree(cmd);
-		//ft_printf("Now after parsecommand\n");
+		ft_printf("Now after parsecommand\n");
 	//	system("leaks -q minishell");
 		if (cmd->type == 1)
 		{
@@ -745,12 +745,12 @@ int	parsing(t_info *info)
 			if (fork1() == 0)
 			{
 				signal(SIGQUIT, SIG_DFL);
-				execute(cmd, info->curr_env, info);	
+				execute(cmd, info->curr_env, info, &li);	
 			}
 			tree_prisoner = 1;
 
 		}
-		//ft_printf("after fork, but in parent\n");
+		ft_printf("after fork, but in parent\n");
 		//system("leaks -q minishell");
 		signal(SIGINT, SIG_IGN);
 		wait(&status);
@@ -760,7 +760,7 @@ int	parsing(t_info *info)
 			info->exit_code = WEXITSTATUS(status);
 			//ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
 		}
-		//ft_printf("after setting exit code, but before frees\n");
+		ft_printf("after setting exit code, but before frees\n");
 		//system("leaks -q minishell");
 		//print_tree(cmd);
 		if (tree_prisoner)
@@ -772,11 +772,11 @@ int	parsing(t_info *info)
 			free(cmd);
 		//we need a free_tree(cmd) function written and placed here.
 		free(str);
-		if (li.heredoc_buff)
-			free(li.heredoc_buff);
-		//ft_printf("after freeing s;tuff\n")
+		//if (li.heredoc_buff)
+		//	free(li.heredoc_buff);
+		ft_printf("after freeing stuff\n");
 		//ft_printf("before freedom rings str is '%s'\n", str);
-		free(ptr_parking);
+		//free(ptr_parking);
 		if (exp_wants_freedom)
 			free(expanded);
 		//ft_printf("after freeing stuff\n");

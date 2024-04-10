@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/10 15:45:04 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 17:28:25 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ typedef struct s_line_info
 	char	*begsq;
 	char	*begdq;
 	char	*beg_str;
+	bool	beg_str_first_time;
 	char	*end_str;
 	char	*beg_var;
 	bool	free_flag;

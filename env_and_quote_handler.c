@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/10 16:04:10 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 17:27:16 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,9 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 	char	*var;
 	char	*exp_var;
 	int		diff;
+	char	*ptr_parking;
+
+	ptr_parking = NULL;
 
 	diff = li->begdq - li->beg_str;
 	li->end_str = li->beg_str + ft_strlen(li->beg_str);
@@ -77,7 +80,12 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 	exp_var = fetch_env_var(var, env);
 	if (exp_var == NULL)
 		li->free_flag = 1;
+	if (li->beg_str_first_time == FALSE)
+		ptr_parking = li->beg_str;
 	li->beg_str = replace_name(li, var, exp_var, &str);
+	li->beg_str_first_time = FALSE;
+	if (ptr_parking)
+		free(ptr_parking);
 	if (li->begdq && li->enddq)
 	{
 		li->begdq = li->beg_str + diff;
@@ -132,6 +140,7 @@ void	init_line_info(t_line_info *li, char **str)
 	li->begdq = NULL;
 	li->beg_var = NULL;
 	li->beg_str = *str;
+	li->beg_str_first_time = TRUE;
 	li->end_str = *str + ft_strlen(*str);
 	li->free_flag = 0;
 	li->flag_changed = 0;

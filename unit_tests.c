@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 14:53:37 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/10 13:32:41 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 17:17:01 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	alt_parsing(t_info *info, char *str)
 	t_line_info	li;
 
 	ptr_parking = str;
-	expanded = expand_env_remove_quotes(str, info->curr_env);
+	expanded = expand_env_remove_quotes(str, info->curr_env, &li);
 	if (expanded == ptr_parking)
 		exp_wants_freedom = 0;
 	else

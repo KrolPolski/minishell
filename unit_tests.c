@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 14:53:37 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/09 16:12:20 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 13:32:41 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ int	alt_parsing(t_info *info, char *str)
 	int			tree_prisoner;
 	char		exp_wants_freedom;
 	char		*ptr_parking;
+	t_line_info	li;
 
 	ptr_parking = str;
 	expanded = expand_env_remove_quotes(str, info->curr_env);
@@ -78,7 +79,7 @@ int	alt_parsing(t_info *info, char *str)
 		exp_wants_freedom = 0;
 	else
 		exp_wants_freedom = 1;
-	cmd = parsecommand(expanded);
+	cmd = parsecommand(expanded, &li);
 	if (cmd->type == 1)
 	{
 		ecmd = (t_execcmd *)cmd;
@@ -95,7 +96,7 @@ int	alt_parsing(t_info *info, char *str)
 		else if (fork1() == 0)
 		{
 			signal(SIGQUIT, SIG_DFL);
-			execute(cmd, info->curr_env, info);
+			execute(cmd, info->curr_env, info, &li);
 		}
 		tree_prisoner = 0;
 		}
@@ -104,7 +105,7 @@ int	alt_parsing(t_info *info, char *str)
 		if (fork1() == 0)
 		{
 			signal(SIGQUIT, SIG_DFL);
-			execute(cmd, info->curr_env, info);	
+			execute(cmd, info->curr_env, info, &li);	
 		}
 		tree_prisoner = 1;
 	}

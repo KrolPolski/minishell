@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/10 13:30:46 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 15:45:04 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ char		*search_matrix(char *arg, char **matrix, int *i, int curr_len);
 
 //env_and_quote_handler.c
 
-char		*expand_env_remove_quotes(char *str, char **env);
+char		*expand_env_remove_quotes(char *str, char **env, t_line_info *li);
 char		*expand_env(t_line_info *li, char *str, char **env);
 char		*fetch_env_var(char *var, char **env);
 void		init_line_info(t_line_info *li, char **str);

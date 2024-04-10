@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/10 14:55:14 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 15:52:57 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -388,6 +388,7 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 	t_cmd	*cmd;
 
 	ft_printf("We have entered parsecommand\n");
+	system("leaks -q minishell");
 	beg_str = str;
 	end_str = str + ft_strlen(str);
 	cmd = parseline(&str, end_str, li);
@@ -412,7 +413,18 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	int			tok;
 
 	ft_printf("we entered parseline\n");
-	if (li->symbols)
+	system("leaks -q minishell");
+	if (li->heredoc_buff)
+	{
+		free(li->heredoc_buff);
+		li->heredoc_buff = NULL;
+	}
+	init_line_info(li, ps);
+	cmd = parseexec(ps, es, li);
+	if (peek(ps, es, "|"))
+	{
+		tok = gettoken(ps, 0, 0, li);
+		if (li->symbols)
 	{
 		ft_printf("li->symbols must not be null so freedom time\n");
 		free(li->symbols);
@@ -424,11 +436,6 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 		free(li->whitespace);
 		li->whitespace = NULL;
 	}
-	init_line_info(li, ps);
-	cmd = parseexec(ps, es, li);
-	if (peek(ps, es, "|"))
-	{
-		tok = gettoken(ps, 0, 0, li);
 		cmd = pipecmd(cmd, parseline(ps, es, li));
 	}
 	if (li->symbols)
@@ -733,7 +740,7 @@ int	parsing(t_info *info)
 	//	ft_printf("Before quote expansion, checking leaks:\n");
 	//	system("leaks -q minishell");
 	//	ft_printf("End of pre-quote check\n");
-		expanded = expand_env_remove_quotes(str, info->curr_env);
+		expanded = expand_env_remove_quotes(str, info->curr_env, &li);
 		if (expanded == ptr_parking)
 			exp_wants_freedom = 0;
 		else
@@ -798,8 +805,8 @@ int	parsing(t_info *info)
 		free(str);
 		if (li.heredoc_buff)
 			free(li.heredoc_buff);
-		//free(li.whitespace);
-		//free(li.symbols);
+		free(li.whitespace);
+		free(li.symbols);
 		ft_printf("after freeing stuff\n");
 		ft_printf("before freedom rings str is '%s'\n", str);
 		//free(ptr_parking);

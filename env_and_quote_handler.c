@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/10 14:48:51 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 15:46:09 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,41 +146,39 @@ void	init_line_info(t_line_info *li, char **str)
 /*li = (t_line_info){};
 li.beg_str = str;*/
 
-char	*expand_env_remove_quotes(char *str, char **env)
+char	*expand_env_remove_quotes(char *str, char **env, t_line_info *li)
 {
-	t_line_info	li;
-
 	ft_printf("entered expand_env_remove_quotes\n");
-	init_line_info(&li, &str);
+	init_line_info(li, &str);
 
 	while (*str)
 	{
 		//ft_printf("before quote handler str = '%s'\n", str);
-		quote_handler(&li, &str, env);
+		quote_handler(li, &str, env);
 		//ft_printf("after quote_handler str = '%s'\n", str);
-		if (li.endsq != NULL && (str == li.endsq))
+		if (li->endsq != NULL && (str == li->endsq))
 		{
 			//remove_quotes(li.begsq, li.endsq);
-			li.sfl = 0;
-			li.endsq = NULL;
+			li->sfl = 0;
+			li->endsq = NULL;
 			//str--;
 			//str--;
 		}
-		if (li.enddq != NULL && (str == li.enddq))
+		if (li->enddq != NULL && (str == li->enddq))
 		{
 			//remove_quotes(li.begdq, li.enddq);
-			li.dfl = 0;
-			li.enddq = NULL;
+			li->dfl = 0;
+			li->enddq = NULL;
 			//str--;
 			//str--;
 		}
 		str++;
 	}
 	//ft_printf("out of quote loop\n");
-	free(li.symbols);
-	li.symbols = NULL;
-	free(li.whitespace);
-	li.whitespace = NULL;
+	free(li->symbols);
+	li->symbols = NULL;
+	free(li->whitespace);
+	li->whitespace = NULL;
 	ft_printf("exiting expand_env_remove_quotes\n");
-	return (li.beg_str);
+	return (li->beg_str);
 }

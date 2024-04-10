@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/10 13:44:58 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 14:48:51 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,9 @@ char	*expand_env_remove_quotes(char *str, char **env)
 	}
 	//ft_printf("out of quote loop\n");
 	free(li.symbols);
+	li.symbols = NULL;
 	free(li.whitespace);
+	li.whitespace = NULL;
 	ft_printf("exiting expand_env_remove_quotes\n");
 	return (li.beg_str);
 }

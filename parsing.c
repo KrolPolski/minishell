@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/10 13:57:16 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 14:55:14 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -393,7 +393,7 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 	cmd = parseline(&str, end_str, li);
 	write(1, "After parseline", 15);
 	ft_printf("After parseline\n");
-	//system("leaks -q minishell");
+	system("leaks -q minishell");
 	peek(&str, end_str, "");
 	if (str != end_str)
 	{
@@ -412,6 +412,18 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	int			tok;
 
 	ft_printf("we entered parseline\n");
+	if (li->symbols)
+	{
+		ft_printf("li->symbols must not be null so freedom time\n");
+		free(li->symbols);
+		li->symbols = NULL;
+	}
+	if (li->whitespace)
+	{
+		ft_printf("li->whitespace must not be null so freedom time\n");
+		free(li->whitespace);
+		li->whitespace = NULL;
+	}
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
 	if (peek(ps, es, "|"))
@@ -419,10 +431,18 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 		tok = gettoken(ps, 0, 0, li);
 		cmd = pipecmd(cmd, parseline(ps, es, li));
 	}
-	//if (li->symbols)
-		//free(li->symbols);
-	//if (li->whitespace)
-		//free(li->whitespace);
+	if (li->symbols)
+	{
+		ft_printf("li->symbols must not be null so freedom time\n");
+		free(li->symbols);
+		li->symbols = NULL;
+	}
+	if (li->whitespace)
+	{
+		ft_printf("li->whitespace must not be null so freedom time\n");
+		free(li->whitespace);
+		li->whitespace = NULL;
+	}
 	ft_printf("we are about to exit parseline\n");
 	return (cmd);
 }
@@ -719,11 +739,11 @@ int	parsing(t_info *info)
 		else
 			exp_wants_freedom = 1;
 	//	ft_printf("Now after expansion expanded is '%s' and str is '%s'\n", expanded, str);
-	//	system("leaks -q minishell");
+		system("leaks -q minishell");
 		cmd = parsecommand(expanded, &li);
 		//print_tree(cmd);
 		ft_printf("Now after parsecommand\n");
-	//	system("leaks -q minishell");
+		system("leaks -q minishell");
 		if (cmd->type == 1)
 		{
 			ecmd = (t_execcmd *)cmd;
@@ -746,9 +766,6 @@ int	parsing(t_info *info)
 		}
 		else
 		{
-			//signal(SIGQUIT, SIG_DFL);
-			//execute(cmd, info->curr_env, info, &li);
-
 			if (fork1() == 0)
 			{
 				signal(SIGQUIT, SIG_DFL);
@@ -758,7 +775,7 @@ int	parsing(t_info *info)
 
 		}
 		ft_printf("after fork, but in parent\n");
-		//system("leaks -q minishell");
+		system("leaks -q minishell");
 		signal(SIGINT, SIG_IGN);
 		wait(&status);
 		set_signal_action();
@@ -773,19 +790,21 @@ int	parsing(t_info *info)
 		if (tree_prisoner)
 		{
 			ft_printf("Our tree is oppressed\n");
-			//free_tree(cmd);
+			free_tree(cmd);
 		}
 		else
-			//free(cmd);
+			free(cmd);
 		//we need a free_tree(cmd) function written and placed here.
-		//free(str);
-		//if (li.heredoc_buff)
-		//	free(li.heredoc_buff);
+		free(str);
+		if (li.heredoc_buff)
+			free(li.heredoc_buff);
+		//free(li.whitespace);
+		//free(li.symbols);
 		ft_printf("after freeing stuff\n");
 		ft_printf("before freedom rings str is '%s'\n", str);
 		//free(ptr_parking);
-		//if (exp_wants_freedom)
-		//	free(expanded);
+		if (exp_wants_freedom)
+			free(expanded);
 		ft_printf("after freeing stuff\n");
 		system("leaks -q minishell");
 		str = readline(info->prompt);

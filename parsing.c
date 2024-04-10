@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/10 15:58:44 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 16:05:52 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -414,11 +414,11 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 
 	//ft_printf("we entered parseline\n");
 	//system("leaks -q minishell");
-	if (li->heredoc_buff)
+	/*if (li->heredoc_buff)
 	{
 		free(li->heredoc_buff);
 		li->heredoc_buff = NULL;
-	}
+	}*/
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
 	if (peek(ps, es, "|"))
@@ -737,6 +737,7 @@ int	parsing(t_info *info)
 	while (str != NULL)
 	{
 		add_history(str);
+		li.heredoc_buff = NULL;
 	//	ft_printf("Before quote expansion, checking leaks:\n");
 	//	system("leaks -q minishell");
 	//	ft_printf("End of pre-quote check\n");

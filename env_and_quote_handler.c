@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/10 15:56:18 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 16:04:10 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ void	init_line_info(t_line_info *li, char **str)
 	li->in_quotes = 0;
 	li->whitespace = ft_strdup(" \t\r\n\v");
 	li->symbols = ft_strdup("<|>"); //need to free both of these
-	li->heredoc_buff = NULL;
+	//li->heredoc_buff = NULL;
 }
 
 //seems like instead of making a function that sets everything in the struct

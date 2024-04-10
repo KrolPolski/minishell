@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/10 15:46:09 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/10 15:56:18 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ li.beg_str = str;*/
 
 char	*expand_env_remove_quotes(char *str, char **env, t_line_info *li)
 {
-	ft_printf("entered expand_env_remove_quotes\n");
+	//ft_printf("entered expand_env_remove_quotes\n");
 	init_line_info(li, &str);
 
 	while (*str)
@@ -179,6 +179,6 @@ char	*expand_env_remove_quotes(char *str, char **env, t_line_info *li)
 	li->symbols = NULL;
 	free(li->whitespace);
 	li->whitespace = NULL;
-	ft_printf("exiting expand_env_remove_quotes\n");
+	//ft_printf("exiting expand_env_remove_quotes\n");
 	return (li->beg_str);
 }

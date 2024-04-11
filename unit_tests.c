@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 14:53:37 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/11 14:50:05 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 14:54:40 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	test(t_info *info)
 	char *ptr_parking;
 	char *str_no_nl;
 
-	ft_printf("Wouldn't it be lovely to have some tests?\n");
+	ft_printf("Wouldn't it be lovely to have some automated tests?\n");
 	fd = open("test_input", O_RDONLY);
 	if (fd > 0)
 	{
@@ -53,12 +53,14 @@ void	test(t_info *info)
 			
 			//free(bash_str);
 			//free(bash_output);
-			//system("leaks -q minishell");
+			system("leaks -q minishell");
 			str = get_next_line(fd);
 		}
+		ft_printf("==== Now running test commands with bash ====\n");
 		system("bash -c './test_input > bash_output'");
-		ft_printf("\ndiff mini_output bash_output\n");
+		ft_printf("\n====diff mini_output bash_output====\n");
 		system("diff mini_output bash_output");
+		ft_printf("==== THE END ====");
 		ft_printf("\nif there is nothing above then that means we matched bash!\n");
 	}
 }

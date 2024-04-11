@@ -3,20 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   env_and_quote_handler.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/10 17:27:16 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 17:43:31 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*fetch_env_var(char *var, char **env)
+char	*fetch_env_var(char *var, char **env, t_line_info *li)
 {
 	int		i;
 	char	*eq_ptr;
 
+	if (!ft_strncmp(var, "$?", 3))
+	{
+		li->info->exit_code_ptr = ft_itoa(li->info->exit_code);
+		li->info->ecp_flag = 1;
+		return (li->info->exit_code_ptr);
+	}
+	// else if (!ft_strncmp(var, "$_", 3))
+	// 	return (li->info->path_to_the_command_that_Ryan_will_kindly_provide_me);
 	i = 0;
 	while (env[i])
 	{
@@ -72,12 +80,20 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 	li->beg_var = str;
 	if (*(str + 1) == ' ' || !*(str + 1))
 		return (str);
-	while (str++ < li->end_str && !ft_strchr(" \t\r\n\v\'\"|<>", *str))
-		if (*str == '$')
-			break ;
+	if (*(str + 1) == '?' || (*(str + 1) == '_'))
+	{
+		str++;
+		str++;
+	}
+	else
+	{
+		while (str++ < li->end_str && !ft_strchr(" \t\r\n\v\'\"|<>", *str))
+			if (*str == '$')
+				break ;
+	}
 	var = malloc(str - li->beg_var + 1);
 	ft_strlcpy(var, li->beg_var, str - li->beg_var + 1);
-	exp_var = fetch_env_var(var, env);
+	exp_var = fetch_env_var(var, env, li);
 	if (exp_var == NULL)
 		li->free_flag = 1;
 	if (li->beg_str_first_time == FALSE)
@@ -92,8 +108,11 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 		li->enddq = ft_strchr(li->begdq + 1, '\"');
 	}
 	free(var);
-	//if (exp_var)
-	//	free(exp_var);
+	if (li->info->ecp_flag == 1)
+	{
+		free (li->info->exit_code_ptr);
+		li->info->ecp_flag = 0;
+	}
 	return (str);
 }
 

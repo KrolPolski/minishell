@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/10 17:28:25 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 16:37:16 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ typedef struct s_info
 	char	**init_env;
 	int		exit_code;
 	char	**curr_env;
+
 }	t_info;
 
 typedef struct s_line_info
@@ -109,6 +110,7 @@ typedef struct s_line_info
 	char	*whitespace;
 	char	*symbols;
 	char	*heredoc_buff;
+	int		pid;
 }	t_line_info;
 
 typedef struct s_export

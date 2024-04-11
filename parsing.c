@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/11 15:47:05 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 16:39:02 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -556,7 +556,8 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 		{
 			tok = gettoken(ps, 0, 0, li);
 			if (gettoken(ps, &q, &eq, li) != 'a')
-				panic("missing file for redirection");
+				if (li->pid == 0)
+					panic("missing file for redirection");
 			//printf("Redir was fould to be beginning and %s\nand ending at %s\n", q, eq);
 			if (tok == '<')
 				cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
@@ -770,17 +771,21 @@ int	parsing(t_info *info)
 				ft_unset(ecmd, info);
 			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
 				ft_pwd(ecmd, info);
-			else if (fork1() == 0)
+			else
 			{
-				signal(SIGQUIT, SIG_DFL);
-				execute(cmd, info->curr_env, info, &li);
-			}
-			tree_prisoner = 0;
-			ft_printf("we must be a single command\n");
+				li.pid = fork1();
+				if (li.pid == 0)
+				{
+					signal(SIGQUIT, SIG_DFL);
+					execute(cmd, info->curr_env, info, &li);
+				}
+				tree_prisoner = 0;
+				ft_printf("we must be a single command\n");}
 		}
 		else
 		{
-			if (fork1() == 0)
+			li.pid = fork1();
+			if (li.pid == 0)
 			{
 				signal(SIGQUIT, SIG_DFL);
 				execute(cmd, info->curr_env, info, &li);	

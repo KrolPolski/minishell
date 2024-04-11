@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 14:53:37 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/11 14:45:33 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 14:50:05 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,14 @@ void	test(t_info *info)
 			//ft_printf("\nbash output:\n");
 			//system(bash_str);
 			
-			system("bash -c './test_input > bash_output'");
+			
 			//free(bash_str);
 			//free(bash_output);
 			//system("leaks -q minishell");
 			str = get_next_line(fd);
 		}
-		ft_printf("diff mini_output bash_output\n");
+		system("bash -c './test_input > bash_output'");
+		ft_printf("\ndiff mini_output bash_output\n");
 		system("diff mini_output bash_output");
 		ft_printf("\nif there is nothing above then that means we matched bash!\n");
 	}
@@ -143,7 +144,7 @@ int	alt_parsing(t_info *info, char *str)
 	if (exp_wants_freedom)
 		free(expanded);
 		//ft_printf("after freeing stuff\n");
-	system("leaks -q minishell");
+	//system("leaks -q minishell");
 	return (0);
 }
 /*int	alt_parsing(t_info *info, char *str)

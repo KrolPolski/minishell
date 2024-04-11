@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/08 19:06:37 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 14:22:07 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,18 +62,14 @@ int	check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env)
 		if (!ft_strncmp(new_env[i], needle, ft_strlen(needle) - 1)
 			&& new_env[i][ft_strlen(needle) - 1] == '\0')
 		{
-			free(needle);
-			needle=NULL;
-			free(alt_needle);
-			alt_needle=NULL;
+			free_and_null(needle);
+			free_and_null(alt_needle);
 			return (i);
 		}
 		i++;
 	}
-	free(needle);
-	needle = NULL;
-	free(alt_needle);
-	alt_needle = NULL;
+	free_and_null(needle);
+	free_and_null(alt_needle);
 	return (i);
 }
 
@@ -132,6 +128,7 @@ int		export_validator(char *str)
 	}
 	return (1);
 }
+
 void	ft_export(t_execcmd *ecmd, t_info *info)
 {
 	t_export	ex;
@@ -155,6 +152,8 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 		ex.i = check_matrix(ecmd, info, ex.k, ex.new_env);
 		if (ft_strchr(ecmd->argv[ex.k], '=') || !ex.new_env[ex.i])
 		{
+			if (ex.new_env[ex.i])
+				free_and_null(ex.new_env[ex.i]);
 			ex.new_env[ex.i] = ft_strdup(ecmd->argv[ex.k]);
 		}
 		ex.i++;

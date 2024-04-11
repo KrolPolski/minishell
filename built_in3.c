@@ -6,12 +6,29 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 15:54:15 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/05 12:08:24 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 14:23:07 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+int		unset_validator(char *str)
+{
+	int i;
+
+	i = 0;
+	if (!ft_isalpha(str[0]))
+		return (0);
+	while (str[i])
+	{
+		if (str[i] == '=')
+			return (0);
+		if (!ft_isalnum(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
 char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 {
 	char	*arg_plus;
@@ -67,6 +84,14 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 	un.curr_len = ft_matrix_len(info->curr_env);
 	while (ecmd->argv[un.k])
 	{
+		if (!unset_validator(ecmd->argv[un.k]))
+		{
+			ft_putstr_fd("unset: ", 2);
+			ft_putstr_fd(ecmd->argv[un.k], 2);
+			ft_putstr_fd(": not a a valid identifier\n", 2);
+			un.k++;
+			continue;
+		}
 		un.str = search_matrix(ecmd->argv[un.k],
 				info->curr_env, &un.i, un.curr_len);
 		if (!un.str)

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/11 13:57:17 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 14:06:18 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -810,7 +810,6 @@ int	parsing(t_info *info)
 			free(cmd);
 		//we need a free_tree(cmd) function written and placed here.
 		free(str);
-		//this free needs to be moved so we avoid leak issues with mulltiple heredocs.
 		if (li.heredoc_buff)
 			free(li.heredoc_buff);
 		free(li.whitespace);

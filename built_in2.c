@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/11 14:14:36 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 14:22:07 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,7 @@ int		export_validator(char *str)
 	}
 	return (1);
 }
+
 void	ft_export(t_execcmd *ecmd, t_info *info)
 {
 	t_export	ex;

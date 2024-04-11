@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/10 16:05:52 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 13:57:17 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -569,6 +569,11 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 				cmd = redircmd(cmd, NULL, NULL, O_RDONLY, 0);
 				
 				//gettoken(ps, &q, &eq, li);
+				if(li->heredoc_buff)
+				{
+					free(li->heredoc_buff);
+					li->heredoc_buff = NULL;
+				}
 				li->heredoc_buff = heredoc_builder(q);
 				//ft_printf("Assembled buffer is:\n%s", li->heredoc_buff);
 				//write(fd, li->heredoc_buff, ft_strlen(li->heredoc_buff));
@@ -771,6 +776,7 @@ int	parsing(t_info *info)
 				execute(cmd, info->curr_env, info, &li);
 			}
 			tree_prisoner = 0;
+			ft_printf("we must be a single command\n");
 		}
 		else
 		{
@@ -804,6 +810,7 @@ int	parsing(t_info *info)
 			free(cmd);
 		//we need a free_tree(cmd) function written and placed here.
 		free(str);
+		//this free needs to be moved so we avoid leak issues with mulltiple heredocs.
 		if (li.heredoc_buff)
 			free(li.heredoc_buff);
 		free(li.whitespace);

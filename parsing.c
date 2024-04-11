@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/11 14:06:18 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 15:47:05 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -824,5 +824,6 @@ int	parsing(t_info *info)
 		str = readline(info->prompt);
 		ptr_parking = str;
 	}
+	ft_printf("We bid you all a very fond farewell.\n");
 	return (0);
 }

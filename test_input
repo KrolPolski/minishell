@@ -10,3 +10,5 @@ unset a b c d
 echo "'$USER'"
 echo '$USER'
 echo '"$USER"'
+invalidcommand
+echo "Hello" | invalidcommand	

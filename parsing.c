@@ -170,7 +170,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 				printf("Pipe creation failed\n");
 				exit(1);
 			}
-			if (write(p[1], li->heredoc_buff, strlen(li->heredoc_buff)) < 0)
+			if (write(p[1], li->heredoc_buff, ft_strlen(li->heredoc_buff)) < 0)
 			{
 				printf("Writing to the pipe failed\n");
 				exit(1);

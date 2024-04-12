@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/11 16:39:02 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/11 16:45:12 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -740,6 +740,7 @@ int	parsing(t_info *info)
 	str = readline(info->prompt);
 	//ft_printf("received first readline input of\n %s\n", str);
 	ptr_parking = str;
+	li.info = info;
 	while (str != NULL)
 	{
 		add_history(str);

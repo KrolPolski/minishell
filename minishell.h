@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/04/11 16:37:16 by rboudwin         ###   ########.fr       */
+=======
+/*   Updated: 2024/04/11 17:12:53 by akovalev         ###   ########.fr       */
+>>>>>>> main
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +91,8 @@ typedef struct s_info
 	char	**argv;
 	char	**init_env;
 	int		exit_code;
+	char	*exit_code_ptr;
+	bool	ecp_flag;
 	char	**curr_env;
 
 }	t_info;
@@ -110,7 +116,11 @@ typedef struct s_line_info
 	char	*whitespace;
 	char	*symbols;
 	char	*heredoc_buff;
+<<<<<<< HEAD
 	int		pid;
+=======
+	t_info	*info;
+>>>>>>> main
 }	t_line_info;
 
 typedef struct s_export
@@ -164,7 +174,7 @@ char		*search_matrix(char *arg, char **matrix, int *i, int curr_len);
 
 char		*expand_env_remove_quotes(char *str, char **env, t_line_info *li);
 char		*expand_env(t_line_info *li, char *str, char **env);
-char		*fetch_env_var(char *var, char **env);
+char		*fetch_env_var(char *var, char **env, t_line_info *li);
 void		init_line_info(t_line_info *li, char **str);
 void		quote_handler(t_line_info *li, char **str, char **env);
 void		remove_quotes(char *begq, char *endq);

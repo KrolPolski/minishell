@@ -6,7 +6,11 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
+<<<<<<< HEAD
+/*   Updated: 2024/04/11 16:37:16 by rboudwin         ###   ########.fr       */
+=======
 /*   Updated: 2024/04/11 17:12:53 by akovalev         ###   ########.fr       */
+>>>>>>> main
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +94,7 @@ typedef struct s_info
 	char	*exit_code_ptr;
 	bool	ecp_flag;
 	char	**curr_env;
+
 }	t_info;
 
 typedef struct s_line_info
@@ -111,7 +116,11 @@ typedef struct s_line_info
 	char	*whitespace;
 	char	*symbols;
 	char	*heredoc_buff;
+<<<<<<< HEAD
+	int		pid;
+=======
 	t_info	*info;
+>>>>>>> main
 }	t_line_info;
 
 typedef struct s_export

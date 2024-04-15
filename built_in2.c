@@ -6,15 +6,15 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 15:54:15 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 13:21:03 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 14:31:36 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		unset_validator(char *str)
+int	unset_validator(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!ft_isalpha(str[0]))
@@ -29,6 +29,7 @@ int		unset_validator(char *str)
 	}
 	return (1);
 }
+
 char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 {
 	char	*arg_plus;
@@ -90,7 +91,7 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 			ft_putstr_fd(ecmd->argv[un.k], 2);
 			ft_putstr_fd(": not a a valid identifier\n", 2);
 			un.k++;
-			continue;
+			continue ;
 		}
 		un.str = search_matrix(ecmd->argv[un.k],
 				info->curr_env, &un.i, un.curr_len);
@@ -120,13 +121,25 @@ void	ft_exit(t_execcmd *ecmd, t_info *info)
 	i = 0;
 	//consider what happens if a non-int value is provided
 	if (ecmd->argv[1])
+	{
+		while (ecmd->argv[1][i])
+		{
+			if (!ft_isdigit(ecmd->argv[1][i]))
+			{
+				ft_putstr_fd("AR-Shell: ", 2);
+				ft_putstr_fd(ecmd->argv[1], 2);
+				ft_putstr_fd(": numeric argument required\n", 2);
+				return ;
+			}
+			i++;
+		}
 		exit_code = ft_atoi(ecmd->argv[1]);
+	}
 	else
 	{
 		exit_code = info->exit_code;
 	}
 	free_2d(info->curr_env);
 	ft_printf("exit\n");
-	//consider freeing other stuff if required
 	exit(exit_code);
 }

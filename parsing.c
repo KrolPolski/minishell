@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/15 16:07:12 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:15:12 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void	panic(char *s)
-{
-	printf("%s\n", s);
-	exit(1);
-}
+
 
 char	**parse_paths(char **env)
 {

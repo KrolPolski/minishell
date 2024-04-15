@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 09:19:48 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 15:18:46 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:16:27 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,11 @@ void	set_shell_level(t_info *info)
 		}
 		i++;
 	}
+}
+
+void	panic(char *s)
+{
+	ft_putstr_fd(s, 2);
+	ft_putchar_fd('\n', 2);
+	exit(1);
 }

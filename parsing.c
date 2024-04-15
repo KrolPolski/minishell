@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/11 16:45:12 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/15 12:29:59 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,22 @@ char	*check_command(char *com, char **env)
 
 	paths = parse_paths(env);
 	i = 0;
+	//ft_printf("We got inside check_command\n");
+	//ft_printf("com is '%s'\n", com);
 	if (ft_strchr(com, '/'))
 	{
-		if (access(command, X_OK != -1))
+		//ft_printf("slash detected\n");
+		if (access(com, X_OK) != -1)
 			return (ft_strdup(com));
 		else
+		{
+			//ft_printf("Nope");
+			ft_putstr_fd("AR-Shell: ", 2);
+			ft_putstr_fd(com, 2);
+			ft_putstr_fd(": ", 2);
+			perror("");
 			return (NULL);
+		}
 	}
 	while (paths[i])
 	{
@@ -64,6 +74,9 @@ char	*check_command(char *com, char **env)
 		i++;
 		free(command);
 	}
+	ft_putstr_fd("AR-Shell: ", 2);
+	ft_putstr_fd(com, 2);
+	ft_putstr_fd(": command not found\n", 2);
 	return (NULL);
 }
 
@@ -155,8 +168,10 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 			i++;
 		}
 		command = check_command(ecmd->argv[0], env);
-		execve(command, ecmd->argv, env);
-		printf("execve failed\n");
+		if (command)
+			execve(command, ecmd->argv, env);
+	//	ft_printf("return value of check command was '%s'\n", command);
+		//printf("execve failed\n");
 		exit(1);
 	}
 	else if (cmd->type == REDIR)
@@ -194,8 +209,7 @@ t_cmd	*execcmd(void)
 {
 	t_execcmd	*cmd;
 
-	cmd = malloc(sizeof(*cmd));
-	ft_memset(cmd, 0, sizeof(*cmd));
+	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = EXEC;
 	return ((t_cmd *)cmd);
 }
@@ -204,8 +218,7 @@ t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode, int fd)
 {
 	t_redircmd	*cmd;
 
-	cmd = malloc(sizeof(*cmd));
-	ft_memset(cmd, 0, sizeof(*cmd));
+	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = REDIR;
 	cmd->cmd = subcmd;
 	cmd->file = file;
@@ -219,8 +232,7 @@ t_cmd	*pipecmd(t_cmd *left, t_cmd *right)
 {
 	t_pipecmd	*cmd;
 
-	cmd = malloc(sizeof(*cmd));
-	ft_memset(cmd, 0, sizeof(*cmd));
+	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = PIPE;
 	cmd->left = left;
 	cmd->right = right;
@@ -231,8 +243,7 @@ t_cmd	*listcmd(t_cmd *left, t_cmd *right)
 {
 	t_listcmd	*cmd;
 
-	cmd = malloc(sizeof(*cmd));
-	ft_memset(cmd, 0, sizeof(*cmd));
+	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = LIST;
 	cmd->left = left;
 	cmd->right = right;
@@ -243,8 +254,7 @@ t_cmd	*backcmd(t_cmd *subcmd)
 {
 	t_backcmd	*cmd;
 
-	cmd = malloc(sizeof(*cmd));
-	ft_memset(cmd, 0, sizeof(*cmd));
+	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = BACK;
 	cmd->cmd = subcmd;
 	return ((t_cmd *)cmd);
@@ -414,41 +424,12 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 
 	//ft_printf("we entered parseline\n");
 	//system("leaks -q minishell");
-	/*if (li->heredoc_buff)
-	{
-		free(li->heredoc_buff);
-		li->heredoc_buff = NULL;
-	}*/
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
 	if (peek(ps, es, "|"))
 	{
 		tok = gettoken(ps, 0, 0, li);
-		if (li->symbols)
-	{
-		//ft_printf("li->symbols must not be null so freedom time\n");
-		free(li->symbols);
-		li->symbols = NULL;
-	}
-	if (li->whitespace)
-	{
-		//ft_printf("li->whitespace must not be null so freedom time\n");
-		free(li->whitespace);
-		li->whitespace = NULL;
-	}
 		cmd = pipecmd(cmd, parseline(ps, es, li));
-	}
-	if (li->symbols)
-	{
-		//ft_printf("li->symbols must not be null so freedom time\n");
-		free(li->symbols);
-		li->symbols = NULL;
-	}
-	if (li->whitespace)
-	{
-		//ft_printf("li->whitespace must not be null so freedom time\n");
-		free(li->whitespace);
-		li->whitespace = NULL;
 	}
 	//ft_printf("we are about to exit parseline\n");
 	return (cmd);
@@ -713,6 +694,11 @@ void	free_tree(t_cmd *cmd)
 	//	printf("Successfully freed the pipe node \n\n");
 	}
 }
+void	one_time_init(t_info *info, t_line_info *li)
+{
+	li->whitespace = ft_strdup(" \t\r\n\v");
+	li->symbols = ft_strdup("<|>");
+}
 
 int	parsing(t_info *info)
 {
@@ -741,6 +727,7 @@ int	parsing(t_info *info)
 	//ft_printf("received first readline input of\n %s\n", str);
 	ptr_parking = str;
 	li.info = info;
+	one_time_init(info, &li);
 	while (str != NULL)
 	{
 		add_history(str);
@@ -781,7 +768,8 @@ int	parsing(t_info *info)
 					execute(cmd, info->curr_env, info, &li);
 				}
 				tree_prisoner = 0;
-				ft_printf("we must be a single command\n");}
+				//ft_printf("we must be a single command\n");
+			}
 		}
 		else
 		{
@@ -818,8 +806,7 @@ int	parsing(t_info *info)
 		free(str);
 		if (li.heredoc_buff)
 			free(li.heredoc_buff);
-		free(li.whitespace);
-		free(li.symbols);
+		
 		//ft_printf("after freeing stuff\n");
 		//ft_printf("before freedom rings str is '%s'\n", str);
 		//free(ptr_parking);
@@ -830,6 +817,8 @@ int	parsing(t_info *info)
 		str = readline(info->prompt);
 		ptr_parking = str;
 	}
+	free_and_null(li.whitespace);
+	free_and_null(li.symbols);
 	ft_printf("We bid you all a very fond farewell.\n");
 	return (0);
 }

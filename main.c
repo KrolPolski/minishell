@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/09 12:31:57 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 12:34:37 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	populate_env_matrix(t_info *info)
 	i = 0;
 	while (info->init_env[i])
 		i++;
-	info->curr_env = malloc(sizeof(char *) * (i + 1));
+	info->curr_env = ft_calloc(sizeof(char *) * (i + 1), 1);
 	i = 0;
 	while (info->init_env[i])
 	{

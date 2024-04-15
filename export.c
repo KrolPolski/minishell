@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 16:10:48 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:52:07 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@ int	check_matrix_no_needle(t_execcmd *ecmd, char **new_env, int i, int k)
 	return (i);
 }
 
+/* Returns the position within the matrix of existing 
+environment variables, or a spot at the end if it doesn't yet
+exist*/
 int	check_matrix(t_execcmd *ecmd, int k, char **new_env)
 {
 	int		i;
@@ -47,7 +50,9 @@ int	check_matrix(t_execcmd *ecmd, int k, char **new_env)
 	free_and_null(alt_needle);
 	return (i);
 }
-
+/* Initializes various values in the struct to ensure we have
+sufficient memory for the array copy, then does a shallow copy
+from curr_env to new_env */
 void	init_export(t_execcmd *ecmd, t_info *info, t_export *ex)
 {
 	ex->k = 1;
@@ -66,7 +71,8 @@ void	init_export(t_execcmd *ecmd, t_info *info, t_export *ex)
 		ex->i++;
 	}
 }
-
+/* Ensures arguments are in appropriate format and finds the correct 
+position inside the array to place the new value */
 void	ft_export_handler(t_execcmd *ecmd, t_export *ex)
 {
 	while (ecmd->argv[ex->k])
@@ -90,7 +96,7 @@ void	ft_export_handler(t_execcmd *ecmd, t_export *ex)
 		ex->k++;
 	}
 }
-
+/* Built-in export command */
 void	ft_export(t_execcmd *ecmd, t_info *info)
 {
 	t_export	ex;

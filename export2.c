@@ -6,12 +6,14 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 13:18:47 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 13:44:08 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:55:27 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* rejects env variable names with special characters
+or that don't start with a letter */
 int	export_validator(char *str)
 {
 	int	i;
@@ -57,7 +59,8 @@ char	*var_to_equals(t_execcmd *ecmd, int k, int i)
 		return (needle);
 	}
 }
-
+/* prints out all existing environment variables
+in the same format as bash */
 void	export_empty(t_info *info)
 {
 	int		i;

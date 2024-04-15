@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 11:55:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/08 10:32:16 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 14:58:51 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,23 +54,17 @@ void	sigint_handler(int signal)
 	{
 		write(2, "\n", 1);
 		rl_replace_line("", 0);
-   		rl_on_new_line();
-    	rl_redisplay();
-	}
-	if (signal == SIGQUIT)
-	{
-		//restore_curs_pos();
-		//return ;
+		rl_on_new_line();
+		rl_redisplay();
 	}
 }
 
 void	set_signal_action(void)
 {
 	struct sigaction	act;
-	sigset_t			set;
+	//sigset_t			set;
 
 	ft_bzero(&act, sizeof(act));
 	act.sa_handler = &sigint_handler;
 	sigaction(SIGINT, &act, NULL);
-	//sigaction(SIGQUIT, &act, NULL);
 }

@@ -6,109 +6,11 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 15:54:15 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 14:31:36 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 14:40:53 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	unset_validator(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (!ft_isalpha(str[0]))
-		return (0);
-	while (str[i])
-	{
-		if (str[i] == '=')
-			return (0);
-		if (!ft_isalnum(str[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
-{
-	char	*arg_plus;
-
-	*i = 0;
-	arg_plus = ft_strjoin(arg, "=");
-	while (*i < curr_len)
-	{
-		if (!matrix[*i])
-			(*i)++;
-		else if (!ft_strncmp(matrix[*i], arg_plus, ft_strlen(arg_plus))
-			|| !ft_strncmp(matrix[*i], arg, ft_strlen(arg) + 1))
-		{
-			free(arg_plus);
-			arg_plus = NULL;
-			return (matrix[*i]);
-		}
-		else
-			(*i)++;
-	}
-	free(arg_plus);
-	arg_plus = NULL;
-	return (NULL);
-}
-
-void	copy_unset(t_execcmd *ecmd, t_info *info, t_unset *un)
-{
-	un->new_env = ft_calloc(sizeof(char *), (un->curr_len + 1));
-	if (!un->new_env)
-		exit(1);
-	un->i = 0;
-	un->k = 0;
-	while (un->k < un->curr_len)
-	{
-		if (info->curr_env[un->k])
-		{
-			un->new_env[un->i] = info->curr_env[un->k];
-			un->i++;
-		}
-		un->k++;
-	}
-	un->new_env[un->i] = NULL;
-	free(info->curr_env);
-	info->curr_env = NULL;
-	info->curr_env = un->new_env;
-}
-
-void	ft_unset(t_execcmd *ecmd, t_info *info)
-{
-	t_unset	un;
-
-	un.k = 1;
-	un.curr_len = ft_matrix_len(info->curr_env);
-	while (ecmd->argv[un.k])
-	{
-		if (!unset_validator(ecmd->argv[un.k]))
-		{
-			ft_putstr_fd("unset: ", 2);
-			ft_putstr_fd(ecmd->argv[un.k], 2);
-			ft_putstr_fd(": not a a valid identifier\n", 2);
-			un.k++;
-			continue ;
-		}
-		un.str = search_matrix(ecmd->argv[un.k],
-				info->curr_env, &un.i, un.curr_len);
-		if (!un.str)
-		{
-			un.k++;
-		}
-		else
-		{
-			free(info->curr_env[un.i]);
-			info->curr_env[un.i] = NULL;
-			un.i = 0;
-			un.k++;
-		}
-	}
-	copy_unset(ecmd, info, &un);
-}
 
 /* if exit code is provided as an argument, exits the shell with it.
 Otherwise exits with the last exit code provided by $? */
@@ -119,7 +21,6 @@ void	ft_exit(t_execcmd *ecmd, t_info *info)
 	int		i;
 
 	i = 0;
-	//consider what happens if a non-int value is provided
 	if (ecmd->argv[1])
 	{
 		while (ecmd->argv[1][i])
@@ -136,9 +37,7 @@ void	ft_exit(t_execcmd *ecmd, t_info *info)
 		exit_code = ft_atoi(ecmd->argv[1]);
 	}
 	else
-	{
 		exit_code = info->exit_code;
-	}
 	free_2d(info->curr_env);
 	ft_printf("exit\n");
 	exit(exit_code);

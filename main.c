@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 12:34:37 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 14:58:39 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ void	set_termios_settings(void)
 
 void	populate_env_matrix(t_info *info)
 {
-	char	*str;
-	int		line_count;
+	//char	*str;
+	//int		line_count;
 	int		i;
 
 	i = 0;
@@ -103,7 +103,7 @@ int	main(int argc, char **argv, char **env)
 {
 	t_info		info;
 	int			i;
-	HIST_ENTRY	*hist_entry;
+	//HIST_ENTRY	*hist_entry;
 
 	signal(SIGQUIT, SIG_IGN);
 	set_termios_settings();

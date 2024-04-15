@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/15 09:38:09 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 12:30:31 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 			if (*str == '$')
 				break ;
 	}
-	var = malloc(str - li->beg_var + 1);
+	var = ft_calloc(str - li->beg_var + 1, 1);
 	ft_strlcpy(var, li->beg_var, str - li->beg_var + 1);
 	exp_var = fetch_env_var(var, env, li);
 	if (exp_var == NULL)

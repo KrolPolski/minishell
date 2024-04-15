@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/15 12:00:24 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 12:29:59 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,8 +209,7 @@ t_cmd	*execcmd(void)
 {
 	t_execcmd	*cmd;
 
-	cmd = malloc(sizeof(*cmd));
-	ft_memset(cmd, 0, sizeof(*cmd));
+	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = EXEC;
 	return ((t_cmd *)cmd);
 }
@@ -219,8 +218,7 @@ t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode, int fd)
 {
 	t_redircmd	*cmd;
 
-	cmd = malloc(sizeof(*cmd));
-	ft_memset(cmd, 0, sizeof(*cmd));
+	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = REDIR;
 	cmd->cmd = subcmd;
 	cmd->file = file;
@@ -234,8 +232,7 @@ t_cmd	*pipecmd(t_cmd *left, t_cmd *right)
 {
 	t_pipecmd	*cmd;
 
-	cmd = malloc(sizeof(*cmd));
-	ft_memset(cmd, 0, sizeof(*cmd));
+	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = PIPE;
 	cmd->left = left;
 	cmd->right = right;
@@ -246,8 +243,7 @@ t_cmd	*listcmd(t_cmd *left, t_cmd *right)
 {
 	t_listcmd	*cmd;
 
-	cmd = malloc(sizeof(*cmd));
-	ft_memset(cmd, 0, sizeof(*cmd));
+	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = LIST;
 	cmd->left = left;
 	cmd->right = right;
@@ -258,8 +254,7 @@ t_cmd	*backcmd(t_cmd *subcmd)
 {
 	t_backcmd	*cmd;
 
-	cmd = malloc(sizeof(*cmd));
-	ft_memset(cmd, 0, sizeof(*cmd));
+	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = BACK;
 	cmd->cmd = subcmd;
 	return ((t_cmd *)cmd);

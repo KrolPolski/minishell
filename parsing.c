@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/15 09:39:01 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 12:00:24 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,22 @@ char	*check_command(char *com, char **env)
 
 	paths = parse_paths(env);
 	i = 0;
+	//ft_printf("We got inside check_command\n");
+	//ft_printf("com is '%s'\n", com);
 	if (ft_strchr(com, '/'))
 	{
-		if (access(command, X_OK != -1))
+		//ft_printf("slash detected\n");
+		if (access(com, X_OK) != -1)
 			return (ft_strdup(com));
 		else
+		{
+			//ft_printf("Nope");
+			ft_putstr_fd("AR-Shell: ", 2);
+			ft_putstr_fd(com, 2);
+			ft_putstr_fd(": ", 2);
+			perror("");
 			return (NULL);
+		}
 	}
 	while (paths[i])
 	{
@@ -64,6 +74,9 @@ char	*check_command(char *com, char **env)
 		i++;
 		free(command);
 	}
+	ft_putstr_fd("AR-Shell: ", 2);
+	ft_putstr_fd(com, 2);
+	ft_putstr_fd(": command not found\n", 2);
 	return (NULL);
 }
 
@@ -155,8 +168,10 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 			i++;
 		}
 		command = check_command(ecmd->argv[0], env);
-		execve(command, ecmd->argv, env);
-		printf("execve failed\n");
+		if (command)
+			execve(command, ecmd->argv, env);
+	//	ft_printf("return value of check command was '%s'\n", command);
+		//printf("execve failed\n");
 		exit(1);
 	}
 	else if (cmd->type == REDIR)
@@ -758,7 +773,8 @@ int	parsing(t_info *info)
 					execute(cmd, info->curr_env, info, &li);
 				}
 				tree_prisoner = 0;
-				ft_printf("we must be a single command\n");}
+				//ft_printf("we must be a single command\n");
+			}
 		}
 		else
 		{

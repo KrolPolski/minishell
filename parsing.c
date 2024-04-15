@@ -6,16 +6,13 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/15 16:15:12 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:25:31 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "minishell.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-
 
 char	**parse_paths(char **env)
 {
@@ -76,7 +73,6 @@ char	*check_command(char *com, char **env)
 	return (NULL);
 }
 
-
 int fork1(void)
 {
 	int	pid;
@@ -108,7 +104,6 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 	builtins[5] = "exit";
 	builtins[6] = "env";
 	builtins[7] = NULL;
-
 	if (cmd == NULL)
 		exit (1);
 	if (!cmd->type)
@@ -256,8 +251,6 @@ t_cmd	*backcmd(t_cmd *subcmd)
 	return ((t_cmd *)cmd);
 }
 
-void	check_quotes(char **ps, t_line_info *li);
-
 void	handle_quote_removal(char **str, t_line_info *li, bool qflag)
 {
 	if (qflag == 0)
@@ -379,11 +372,7 @@ int	peek(char **ps, char *es, char *tokens)
 	//ft_printf("exiting peek\n");
 	return (*s && ft_strchr(tokens, *s));
 }
-t_cmd *parseline(char**, char*, t_line_info *li);
-t_cmd *parsepipe(char**, char*);
-t_cmd *parseexec(char**, char*, t_line_info *li);
-t_cmd *nullterminate(t_cmd *);
-t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
+//t_cmd *parsepipe(char**, char*);
 
 void	print_exec(t_execcmd *ecmd);
 
@@ -430,7 +419,8 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	//ft_printf("we are about to exit parseline\n");
 	return (cmd);
 }
-void	handle_quote_flags(t_line_info *li, bool	qflag)
+
+void	handle_quote_flags(t_line_info *li, bool qflag)
 {
 	if (qflag == 0)
 	{

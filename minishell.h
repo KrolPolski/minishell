@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 16:11:34 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:25:06 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,8 +197,12 @@ void		free_tree(t_cmd *cmd);
 int			fork1(void);
 char		**parse_paths(char **env);
 int			parsing(t_info *info);
-void		panic(char *s);
 int			peek(char **ps, char *es, char *tokens);
+void		check_quotes(char **ps, t_line_info *li);
+t_cmd		*parseline(char **ps, char *es, t_line_info *li);
+t_cmd*		parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
+t_cmd		*nullterminate(t_cmd *cmd);
+t_cmd		*parseexec(char **ps, char *es, t_line_info *li);
 
 //signals.c
 
@@ -213,6 +217,7 @@ int			ft_matrix_len(char **str);
 int			export_validator(char *str);
 void		final_cleanup(t_info *info);
 void		set_shell_level(t_info *info);
+void		panic(char *str);
 // unit_tests.c
 void		test(t_info *info);
 int			alt_parsing(t_info *info, char *str);

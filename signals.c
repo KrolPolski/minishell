@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 11:55:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 15:18:55 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 18:31:27 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ void	restore_curs_pos(void)
 	tputs(restore_curs, 1, putchar);
 }*/
 
+/* redraws the prompt on ctrl-c */
 void	sigint_handler(int signal)
 {
 	if (signal == SIGINT)
@@ -59,6 +60,7 @@ void	sigint_handler(int signal)
 	}
 }
 
+/* Defines our custom handler function for sigint signals */
 void	set_signal_action(void)
 {
 	struct sigaction	act;

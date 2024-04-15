@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/17 15:45:06 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/03/25 15:03:53 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 18:28:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,29 +32,33 @@
 		c) make it work with redirects
 		d) make it work with multiple pipes and redirects
 	2. Dig deeply into readline and figure out:
-		a) how to implement ctrl-D detection properly. Particularly need to figure
-			out what are all the things that can cause readline to return a NULL
-			pointer. 
-			Except CTRL-D seems to be working already to log us out without us needing
-			to do anything.
-	3. implement all the required built in functions. Make sure that they modify the
-		prompt when the path changes, etc.
+		a) how to implement ctrl-D detection properly. Particularly need to 
+			figure out what are all the things that can cause readline to 
+			return a NULL pointer. 
+			Except CTRL-D seems to be working already to log us out without 
+			us needing to do anything.
+	3. implement all the required built in functions. 
+		Make sure that they modify the prompt when the path changes, etc.
 	4. get caught up on termcaps and figure out how to move the cursor.
 	5. implement history.
 	6. Start writing unit tests for the functionality above.		
 */
 /* Todos before we write any code:
  * 
- * Figure out how branches work in git and set things up so we have a main branch, 
- * and a separate branch for each of us to be working with ourselves. And then we can 
- * do pull requests to put stuff into the main branch after we have both reviewed 
+ * Figure out how branches work in git and set things up so we 
+ * have a main branch, and a separate branch for each of us to 
+ * be working with ourselves. And then we can  * do pull requests to put
+ *  stuff into the main branch after we have both reviewed 
  * all the changes. Andrey
  
- * Figure out what syntax trees are and why they would be useful for this project: Andrey
+ * Figure out what syntax trees are and why they would be 
+ useful for this project: Andrey
  
- * read up on signals processing, cover whatever we missed by not doing minitalk as a project - Ryan
+ * read up on signals processing, cover whatever we missed by 
+ not doing minitalk as a project - Ryan
 
- * read up on unit testing, make a plan for automated unit tests to grow as the project grows - Ryan
+ * read up on unit testing, make a plan for automated unit 
+ tests to grow as the project grows - Ryan
  
  * make a plan on how to divide the work to start with
 
@@ -74,8 +78,8 @@
 	tgetnum, tgetstr, tgoto, tputs
  */
 
-/*readline is keg-only, which means it was not symlinked into /Users/rboudwin/.brew,
-because macOS provides BSD libedit.
+/*readline is keg-only, which means it was not symlinked into
+ /Users/rboudwin/.brew, because macOS provides BSD libedit.
 
 For compilers to find readline you may need to set:
   export LDFLAGS="-L/Users/rboudwin/.brew/opt/readline/lib"
@@ -86,8 +90,9 @@ For compilers to find readline you may need to set:
 • Have a working history.
 • Search and launch the right executable (based on the PATH variable or using a
 relative or an absolute path).
-• Avoid using more than one global variable to indicate a received signal. Consider
-the implications: this approach ensures that your signal handler will not access your
+• Avoid using more than one global variable to indicate a 
+received signal. Consider the implications: this approach 
+ensures that your signal handler will not access your
 main data structures.
 Be careful. This global variable cannot provide any other
 information or data access than the number of a received signal.
@@ -95,10 +100,13 @@ Therefore, using "norm" type structures in the global scope is
 forbidden.
 5
 Minishell As beautiful as a shell
-• Not interpret unclosed quotes or special characters which are not required by the
-subject such as \ (backslash) or ; (semicolon).
-• Handle ’ (single quote) which should prevent the shell from interpreting the metacharacters in the quoted sequence.
-• Handle " (double quote) which should prevent the shell from interpreting the metacharacters in the quoted sequence except for $ (dollar sign).
+• Not interpret unclosed quotes or special characters which 
+are not required by the subject such as \ (backslash) or ; (semicolon).
+• Handle ’ (single quote) which should prevent the shell from 
+	interpreting the metacharacters in the quoted sequence.
+• Handle " (double quote) which should prevent the shell from 
+	interpreting the metacharacters in the quoted sequence
+		 except for $ (dollar sign).
 • Implement redirections:
 ◦ < should redirect input.
 ◦ > should redirect output.

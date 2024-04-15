@@ -6,12 +6,12 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 14:53:37 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 14:57:10 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 15:52:44 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
+/*
 void	test(t_info *info)
 {
 	int fd;
@@ -154,4 +154,4 @@ int	alt_parsing(t_info *info, char *str)
 	free_and_null(li.symbols);
 	//ft_printf("We bid you all a very fond farewell.\n");
 	return (0);
-}
+}*/

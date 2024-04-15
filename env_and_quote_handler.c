@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/15 12:30:31 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:09:06 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ char	*fetch_env_var(char *var, char **env, t_line_info *li)
 	while (env[i])
 	{
 		eq_ptr = ft_strchr(env[i], '=');
-		if (ft_strlen(var) - 1 == eq_ptr - env[i])
+		if ((long)ft_strlen(var) - 1 == eq_ptr - env[i])
 			if (ft_strnstr(env[i], var + 1, ft_strlen(var) - 1))
 				return (env[i] + ft_strlen(var));
 		i++;

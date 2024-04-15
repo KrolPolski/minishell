@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 13:43:37 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:10:48 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	check_matrix_no_needle(t_execcmd *ecmd, char **new_env, int i, int k)
 	return (i);
 }
 
-int	check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env)
+int	check_matrix(t_execcmd *ecmd, int k, char **new_env)
 {
 	int		i;
 	char	*needle;
@@ -67,7 +67,7 @@ void	init_export(t_execcmd *ecmd, t_info *info, t_export *ex)
 	}
 }
 
-void	ft_export_handler(t_execcmd *ecmd, t_info *info, t_export *ex)
+void	ft_export_handler(t_execcmd *ecmd, t_export *ex)
 {
 	while (ecmd->argv[ex->k])
 	{
@@ -79,7 +79,7 @@ void	ft_export_handler(t_execcmd *ecmd, t_info *info, t_export *ex)
 			ex->k++;
 			continue ;
 		}
-		ex->i = check_matrix(ecmd, info, ex->k, ex->new_env);
+		ex->i = check_matrix(ecmd, ex->k, ex->new_env);
 		if (ft_strchr(ecmd->argv[ex->k], '=') || !ex->new_env[ex->i])
 		{
 			if (ex->new_env[ex->i])
@@ -101,7 +101,7 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 		return ;
 	}
 	init_export(ecmd, info, &ex);
-	ft_export_handler(ecmd, info, &ex);
+	ft_export_handler(ecmd, &ex);
 	ex.new_env[ex.target_len] = NULL;
 	free(info->curr_env);
 	info->curr_env = ex.new_env;

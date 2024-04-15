@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 15:54:15 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 14:40:53 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:07:41 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 Otherwise exits with the last exit code provided by $? */
 void	ft_exit(t_execcmd *ecmd, t_info *info)
 {
-	char	*last_exit_code;
 	int		exit_code;
 	int		i;
 

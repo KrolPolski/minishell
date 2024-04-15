@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 14:53:37 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 09:39:28 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 12:52:43 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	test(t_info *info)
 			mini_output = ft_strjoin(str, " >> mini_output");
 			ft_printf("\ntest string:\n%s", str);
 			ft_printf("\nMinishell output:\n");
-			alt_parsing(info, str);
+			//alt_parsing(info, str);
 			alt_parsing(info, mini_output);
 			//ft_printf("\nbash output:\n");
 			//system(bash_str);
@@ -53,7 +53,10 @@ void	test(t_info *info)
 			
 			//free(bash_str);
 			//free(bash_output);
+			//free_and_null(str);
 			system("leaks -q minishell");
+			free(mini_output);
+			free(str);
 			str = get_next_line(fd);
 		}
 		ft_printf("==== Now running test commands with bash ====\n");
@@ -72,7 +75,6 @@ int	alt_parsing(t_info *info, char *str)
 	t_execcmd	*ecmd;
 	char		*expanded;
 	t_line_info	li;
-
 	int			tree_prisoner;
 	char		exp_wants_freedom;
 	char		*ptr_parking;
@@ -85,15 +87,24 @@ int	alt_parsing(t_info *info, char *str)
 			break ;
 		}
 	}
-	one_time_init(info, &li);
 	ptr_parking = str;
+	li.info = info;
+	one_time_init(info, &li);
 	li.heredoc_buff = NULL;
+	//	ft_printf("Before quote expansion, checking leaks:\n");
+	//	system("leaks -q minishell");
+	//	ft_printf("End of pre-quote check\n");
 	expanded = expand_env_remove_quotes(str, info->curr_env, &li);
 	if (expanded == ptr_parking)
 		exp_wants_freedom = 0;
 	else
 		exp_wants_freedom = 1;
+	//	ft_printf("Now after expansion expanded is '%s' and str is '%s'\n", expanded, str);
+		//system("leaks -q minishell");
 	cmd = parsecommand(expanded, &li);
+		//print_tree(cmd);
+		//ft_printf("Now after parsecommand\n");
+		//system("leaks -q minishell");
 	if (cmd->type == 1)
 	{
 		ecmd = (t_execcmd *)cmd;
@@ -107,30 +118,41 @@ int	alt_parsing(t_info *info, char *str)
 			ft_unset(ecmd, info);
 		else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
 			ft_pwd(ecmd, info);
-		else if (fork1() == 0)
+		else
 		{
-			signal(SIGQUIT, SIG_DFL);
-			execute(cmd, info->curr_env, info, &li);
+			li.pid = fork1();
+			if (li.pid == 0)
+			{
+				signal(SIGQUIT, SIG_DFL);
+				execute(cmd, info->curr_env, info, &li);
+			}
+			tree_prisoner = 0;
+			//ft_printf("we must be a single command\n");
 		}
-		tree_prisoner = 0;
-		ft_printf("we must be a single command\n");
 	}
 	else
 	{
-		if (fork1() == 0)
+		li.pid = fork1();
+		if (li.pid == 0)
 		{
 			signal(SIGQUIT, SIG_DFL);
 			execute(cmd, info->curr_env, info, &li);	
 		}
 		tree_prisoner = 1;
 	}
+		//ft_printf("after fork, but in parent\n");
+		//system("leaks -q minishell");
 	signal(SIGINT, SIG_IGN);
 	wait(&status);
 	set_signal_action();
 	if (WIFEXITED(status))
 	{
 		info->exit_code = WEXITSTATUS(status);
+		//ft_printf("EXECUTE HANDLER EXIT CODE IS %d\n", info->exit_code);
 	}
+	//ft_printf("after setting exit code, but before frees\n");
+	//system("leaks -q minishell");
+	//print_tree(cmd);
 	if (tree_prisoner)
 	{
 		//ft_printf("Our tree is oppressed\n");
@@ -138,81 +160,20 @@ int	alt_parsing(t_info *info, char *str)
 	}
 	else
 		free(cmd);
-	//we need a free_tree(cmd) function written and placed here.
-	free(str);
+		//we need a free_tree(cmd) function written and placed here.
+	//free(str);
 	if (li.heredoc_buff)
 		free(li.heredoc_buff);
-	free(li.whitespace);
-	free(li.symbols);
+	//ft_printf("after freeing stuff\n");
+	//ft_printf("before freedom rings str is '%s'\n", str);
+	//free(ptr_parking);
 	if (exp_wants_freedom)
 		free(expanded);
-		//ft_printf("after freeing stuff\n");
-	//system("leaks -q minishell");
+	//ft_printf("after freeing stuff\n");
+	system("leaks -q minishell");
+	ptr_parking = str;
+	free_and_null(li.whitespace);
+	free_and_null(li.symbols);
+	//ft_printf("We bid you all a very fond farewell.\n");
 	return (0);
 }
-/*int	alt_parsing(t_info *info, char *str)
-{
-	int			fd;
-	t_cmd		*cmd;
-	int			status;
-	t_execcmd	*ecmd;
-	char		*expanded;
-	int			tree_prisoner;
-	char		exp_wants_freedom;
-	char		*ptr_parking;
-	t_line_info	li;
-
-	ptr_parking = str;
-	expanded = expand_env_remove_quotes(str, info->curr_env, &li);
-	if (expanded == ptr_parking)
-		exp_wants_freedom = 0;
-	else
-		exp_wants_freedom = 1;
-	cmd = parsecommand(expanded, &li);
-	if (cmd->type == 1)
-	{
-		ecmd = (t_execcmd *)cmd;
-		if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "cd", 3) == 0)
-			ft_cd(ecmd, info);
-		else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "export", 7) == 0) // should it not have the last condition removed? otherwise it does not run in parent without args
-			ft_export(ecmd, info);
-		else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "exit", 5) == 0)
-			ft_exit(ecmd, info);
-		else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "unset", 6) == 0)
-			ft_unset(ecmd, info);
-		else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
-			ft_pwd(ecmd, info);
-		else if (fork1() == 0)
-		{
-			signal(SIGQUIT, SIG_DFL);
-			execute(cmd, info->curr_env, info, &li);
-		}
-		tree_prisoner = 0;
-		}
-		else
-		{
-		if (fork1() == 0)
-		{
-			signal(SIGQUIT, SIG_DFL);
-			execute(cmd, info->curr_env, info, &li);	
-		}
-		tree_prisoner = 1;
-	}
-	signal(SIGINT, SIG_IGN);
-	wait(&status);
-	set_signal_action();
-	if (WIFEXITED(status))
-	{
-		info->exit_code = WEXITSTATUS(status);
-	}
-	if (tree_prisoner)
-	{
-		free_tree(cmd);
-	}
-	else
-		free(cmd);
-	free(ptr_parking);
-	if (exp_wants_freedom)
-		free(expanded);
-	return (0);
-}*/

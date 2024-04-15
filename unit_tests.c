@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 14:53:37 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/11 14:54:40 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 09:39:28 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ int	alt_parsing(t_info *info, char *str)
 			break ;
 		}
 	}
+	one_time_init(info, &li);
 	ptr_parking = str;
 	li.heredoc_buff = NULL;
 	expanded = expand_env_remove_quotes(str, info->curr_env, &li);

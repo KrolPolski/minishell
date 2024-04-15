@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/11 16:45:12 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/15 09:39:01 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -414,41 +414,12 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 
 	//ft_printf("we entered parseline\n");
 	//system("leaks -q minishell");
-	/*if (li->heredoc_buff)
-	{
-		free(li->heredoc_buff);
-		li->heredoc_buff = NULL;
-	}*/
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
 	if (peek(ps, es, "|"))
 	{
 		tok = gettoken(ps, 0, 0, li);
-		if (li->symbols)
-	{
-		//ft_printf("li->symbols must not be null so freedom time\n");
-		free(li->symbols);
-		li->symbols = NULL;
-	}
-	if (li->whitespace)
-	{
-		//ft_printf("li->whitespace must not be null so freedom time\n");
-		free(li->whitespace);
-		li->whitespace = NULL;
-	}
 		cmd = pipecmd(cmd, parseline(ps, es, li));
-	}
-	if (li->symbols)
-	{
-		//ft_printf("li->symbols must not be null so freedom time\n");
-		free(li->symbols);
-		li->symbols = NULL;
-	}
-	if (li->whitespace)
-	{
-		//ft_printf("li->whitespace must not be null so freedom time\n");
-		free(li->whitespace);
-		li->whitespace = NULL;
 	}
 	//ft_printf("we are about to exit parseline\n");
 	return (cmd);
@@ -713,6 +684,11 @@ void	free_tree(t_cmd *cmd)
 	//	printf("Successfully freed the pipe node \n\n");
 	}
 }
+void	one_time_init(t_info *info, t_line_info *li)
+{
+	li->whitespace = ft_strdup(" \t\r\n\v");
+	li->symbols = ft_strdup("<|>");
+}
 
 int	parsing(t_info *info)
 {
@@ -741,6 +717,7 @@ int	parsing(t_info *info)
 	//ft_printf("received first readline input of\n %s\n", str);
 	ptr_parking = str;
 	li.info = info;
+	one_time_init(info, &li);
 	while (str != NULL)
 	{
 		add_history(str);
@@ -818,8 +795,7 @@ int	parsing(t_info *info)
 		free(str);
 		if (li.heredoc_buff)
 			free(li.heredoc_buff);
-		free(li.whitespace);
-		free(li.symbols);
+		
 		//ft_printf("after freeing stuff\n");
 		//ft_printf("before freedom rings str is '%s'\n", str);
 		//free(ptr_parking);
@@ -830,6 +806,8 @@ int	parsing(t_info *info)
 		str = readline(info->prompt);
 		ptr_parking = str;
 	}
+	free_and_null(li.whitespace);
+	free_and_null(li.symbols);
 	ft_printf("We bid you all a very fond farewell.\n");
 	return (0);
 }

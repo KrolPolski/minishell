@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_and_quote_handler.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/11 17:43:31 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/15 09:38:09 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,9 +164,6 @@ void	init_line_info(t_line_info *li, char **str)
 	li->free_flag = 0;
 	li->flag_changed = 0;
 	li->in_quotes = 0;
-	li->whitespace = ft_strdup(" \t\r\n\v");
-	li->symbols = ft_strdup("<|>"); //need to free both of these
-	//li->heredoc_buff = NULL;
 }
 
 //seems like instead of making a function that sets everything in the struct
@@ -203,10 +200,6 @@ char	*expand_env_remove_quotes(char *str, char **env, t_line_info *li)
 		str++;
 	}
 	//ft_printf("out of quote loop\n");
-	free(li->symbols);
-	li->symbols = NULL;
-	free(li->whitespace);
-	li->whitespace = NULL;
 	//ft_printf("exiting expand_env_remove_quotes\n");
 	return (li->beg_str);
 }

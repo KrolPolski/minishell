@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 13:06:02 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 15:11:31 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,11 +211,10 @@ void		sigint_handler(int signal);
 void		free_2d(char **arr);
 int			ft_matrix_len(char **str);
 int			export_validator(char *str);
-
+void		final_cleanup(t_info *info);
+void		set_shell_level(t_info *info);
 // unit_tests.c
 void		test(t_info *info);
 int			alt_parsing(t_info *info, char *str);
-//seems unused: char		*expand_string(char *str, char **env);
-//seems unused: char		*expand_env_var(char *var, char **env);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/08 10:49:39 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 13:05:29 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,7 @@ void	ft_cd(t_execcmd *ecmd, t_info *info)
 	char	buf[100];
 	char	*home_path;
 	char	*target_path;
-	//this is going to get weird if they change users, we don't yet have
-	//a mechanism to update the info->username field on user changes.
+
 	home_path = ft_strjoin("/Users/", info->username);
 	if (!ecmd->argv[1])
 	{

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 09:41:03 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 13:06:02 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,6 +210,7 @@ void		sigint_handler(int signal);
 // tools.c
 void		free_2d(char **arr);
 int			ft_matrix_len(char **str);
+int			export_validator(char *str);
 
 // unit_tests.c
 void		test(t_info *info);

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 19:52:06 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 19:59:31 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,6 @@ void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)
 		fork_and_execute(cmd, info, li, p);
 	parsing_signal_exit_codes(p, info);
 	parsing_cleanup(p, cmd, li);
-	system("leaks -q minishell");
-	p->str = readline(info->prompt);
-	p->ptr_parking = p->str;
 }
 
 int	parsing(t_info *info)
@@ -57,6 +54,9 @@ int	parsing(t_info *info)
 	while (p.str != NULL)
 	{
 		parsing_loop(&p, &li, info);
+		system("leaks -q minishell");
+		p.str = readline(info->prompt);
+		p.ptr_parking = p.str;
 	}
 	free_and_null(li.whitespace);
 	free_and_null(li.symbols);

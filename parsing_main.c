@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 19:07:59 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 19:52:06 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	null_command_handler(t_parsing *p)
 {
-	free(p->str);
+	free_and_null(p->str);
 	if (p->exp_wants_freedom)
-		free(p->expanded);
+		free_and_null(p->expanded);
 }
 
 void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)

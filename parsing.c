@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/16 15:43:28 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 16:08:58 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -510,43 +510,38 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 	cmd->eargv[argc] = 0;
 	return (ret);
 }
+/*a function that looks for redirect tokens and builds
+redirect nodes and also handles the heredoc case*/
+t_cmd	*build_heredoc_node(t_cmd *cmd, char *q, char *eq, t_line_info *li)
+{
+	*eq = 0;
+	cmd = redircmd(cmd, NULL, NULL, O_RDONLY, 0);
+	if (li->heredoc_buff)
+	{
+		free(li->heredoc_buff);
+		li->heredoc_buff = NULL;
+	}
+	li->heredoc_buff = heredoc_builder(q);
+	return (cmd);
+}
 
-t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
+t_cmd	*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 {
 	int		tok;
 	char	*q;
 	char	*eq;
-	//int fd;
 
-	//printf("String is now at %s\n, and begq is %s\n and end is %s\n and the flags are: %d, %d\n", *ps, li->begdq, li->enddq, li->sfl, li->dfl);
-	if ((!li->in_quotes)) // && ((*ps > li->endsq && *ps < li->begsq) || (*ps > li->enddq && *ps < li->begdq))
+	if ((!li->in_quotes))
 	{
 		while (peek(ps, es, "<>") && !li->in_quotes)
 		{
 			tok = gettoken(ps, 0, 0, li);
 			if (gettoken(ps, &q, &eq, li) != 'a')
 				ft_putstr_fd("missing file for redirection\n", 2);
-			//printf("Redir was fould to be beginning and %s\nand ending at %s\n", q, eq);
 			if (tok == '<')
 				cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
 			else if (tok == '-')
-			{
-				//li->hdfl = 1;
-				*eq = 0;
-				//printf("The delimiter is %s\n", q);
-				//fd = open(q, 1, O_CREAT | O_RDWR);
-				cmd = redircmd(cmd, NULL, NULL, O_RDONLY, 0);
-				
-				//gettoken(ps, &q, &eq, li);
-				if(li->heredoc_buff)
-				{
-					free(li->heredoc_buff);
-					li->heredoc_buff = NULL;
-				}
-				li->heredoc_buff = heredoc_builder(q);
-				//ft_printf("Assembled buffer is:\n%s", li->heredoc_buff);
-				//write(fd, li->heredoc_buff, ft_strlen(li->heredoc_buff));
-			}
+				cmd = build_heredoc_node(cmd, q, eq, li);
 			else if (tok == '>')
 				cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_TRUNC, 1);
 			else if (tok == '+')
@@ -555,26 +550,32 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	}
 	return (cmd);
 }
+/*a function that puts null terminators at the 
+end of each token in the parsed line*/
 
-t_cmd	*nullterminate(t_cmd *cmd)
+void	nullterminate_exec(t_cmd *cmd)
 {
 	int			i;
 	t_execcmd	*ecmd;
+
+	ecmd = (t_execcmd *)cmd;
+	i = 0;
+	while (ecmd->argv[i])
+	{
+		*ecmd->eargv[i] = 0;
+		i++;
+	}
+}
+
+t_cmd	*nullterminate(t_cmd *cmd)
+{
 	t_pipecmd	*pcmd;
 	t_redircmd	*rcmd;
 
 	if (cmd == 0)
 		return (0);
 	if (cmd->type == EXEC)
-	{
-		ecmd = (t_execcmd *)cmd;
-		i = 0;
-		while (ecmd->argv[i])
-		{
-			*ecmd->eargv[i] = 0;
-			i++;
-		}
-	}
+		nullterminate_exec(cmd);
 	else if (cmd->type == REDIR)
 	{
 		rcmd = (t_redircmd *)cmd;
@@ -590,60 +591,35 @@ t_cmd	*nullterminate(t_cmd *cmd)
 	}
 	return (cmd);
 }
-/*
-void runcmd(t_cmd *cmd)
-{
-	int			p[2];
-	t_backcmd	*bcmd;
-	t_execcmd	*ecmd;
-	t_listcmd	*lcmd;
-	t_pipecmd	*pcmd;
-	t_redircmd	*rcmd;
 
-	exit(0);
-}*/
+// void	print_tree(t_cmd *cmd)
+// {
+// 	t_execcmd	*ecmd;
+// 	t_pipecmd	*pcmd;
+// 	t_redircmd	*rcmd;
 
-void	print_exec(t_execcmd *ecmd)
-{
-	int	i;
+// 	if (cmd->type == 1)
+// 	{
+// 		ecmd = (t_execcmd *)cmd;
+// 		print_exec(ecmd);
+// 	}
+// 	if (cmd->type == 2)
+// 	{
+// 		printf("Redir node: \n\n");
+// 		rcmd = (t_redircmd *)cmd;
+// 		//if (rcmd->cmd->type)
+// 		print_tree(rcmd->cmd);
+// 	}
+// 	if (cmd->type == 3)
+// 	{
+// 		pcmd = (t_pipecmd *)cmd;
+// 		printf("Pipe node: \n\n");
+// 		print_tree(pcmd->left);
+// 		print_tree(pcmd->right);
+// 	}
+// }
 
-	i = 0;
-	printf("Exec node\n");
-	while (ecmd->argv[i])
-	{
-		printf("Arg[%d]: %s\n", i, ecmd->argv[i]);
-		i++;
-	}
-	printf("\n");
-}
-
-void	print_tree(t_cmd *cmd)
-{
-	t_execcmd	*ecmd;
-	t_pipecmd	*pcmd;
-	t_redircmd	*rcmd;
-
-	if (cmd->type == 1)
-	{
-		ecmd = (t_execcmd *)cmd;
-		print_exec(ecmd);
-	}
-	if (cmd->type == 2)
-	{
-		printf("Redir node: \n\n");
-		rcmd = (t_redircmd *)cmd;
-		//if (rcmd->cmd->type)
-		print_tree(rcmd->cmd);
-	}
-	if (cmd->type == 3)
-	{
-		pcmd = (t_pipecmd *)cmd;
-		printf("Pipe node: \n\n");
-		print_tree(pcmd->left);
-		print_tree(pcmd->right);
-	}
-}
-
+/*a function that frees the previously built syntax tree*/
 void	free_tree(t_cmd *cmd)
 {
 	t_execcmd	*ecmd;
@@ -653,32 +629,20 @@ void	free_tree(t_cmd *cmd)
 	if (cmd->type == 1)
 	{
 		ecmd = (t_execcmd *)cmd;
-		//printf("Found an exec node: \n\n");
-		//print_exec(ecmd);
-		//printf("Freeing exec node\n\n");
 		free(cmd);
-		//printf("Successfully freed the exec node \n\n");
 	}
 	if (cmd->type == 2)
 	{
 		rcmd = (t_redircmd *)cmd;
-		//if (rcmd->cmd->type)
-	//	printf("Found a redir node: \n\n");
 		free_tree(rcmd->cmd);
-	//	printf("Freeing redir node: \n\n");
 		free(cmd);
-	//	printf("Successfully freed the redir node \n\n");
 	}
 	if (cmd->type == 3)
 	{
-		pcmd = (t_pipecmd *)cmd;
-	//	printf("Found a pipe node: \n\n");
-		
+		pcmd = (t_pipecmd *)cmd;	
 		free_tree(pcmd->left);
 		free_tree(pcmd->right);
-	//	printf("Freeing pipe node: \n\n");
 		free(cmd);
-	//	printf("Successfully freed the pipe node \n\n");
 	}
 }
 void	one_time_init(t_line_info *li, t_parsing *p, t_info *info)

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 15:24:07 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 15:52:35 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,7 @@ char		*ft_prompt(char *username, char *hostname, char *path);
 
 //parsing.c
 
-void		one_time_init(t_line_info *li);
+void		one_time_init(t_line_info *li, t_parsing *p, t_info *info);
 t_cmd		*parsecommand(char *str, t_line_info *li);
 char		*check_command(char *com, char **env);
 void		execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li);
@@ -215,6 +215,14 @@ t_cmd*		parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
 t_cmd		*nullterminate(t_cmd *cmd);
 t_cmd		*parseexec(char **ps, char *es, t_line_info *li);
 
+//parsing2.c
+void		fork_and_execute(t_cmd *cmd, t_info *info,
+				t_line_info *li, t_parsing *p);
+void		parsing_cleanup(t_parsing *p, t_cmd *cmd, t_line_info *li);
+void		parsing_signal_exit_codes(t_parsing *p, t_info *info);
+void		single_command_handler(t_cmd *cmd, t_info *info,
+				t_parsing *p, t_line_info *li);
+				
 //signals.c
 
 void		set_signal_action(void);

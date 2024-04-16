@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 14:24:52 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 15:39:49 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 15:53:24 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,18 @@ void	single_command_handler(t_cmd *cmd, t_info *info,
 	}
 }
 
-void	fork_and_execute(t_cmd *cmd, t_info *info, t_line_info *li, t_parsing *p)
+void	fork_and_execute(t_cmd *cmd, t_info *info,
+			t_line_info *li, t_parsing *p)
 {
 	li->pid = fork1();
 	if (li->pid == 0)
 	{
 		signal(SIGQUIT, SIG_DFL);
-		execute(cmd, info->curr_env, info, li);	
+		execute(cmd, info->curr_env, info, li);
 	}
 	p->tree_prisoner = 1;
 }
+
 void	parsing_cleanup(t_parsing *p, t_cmd *cmd, t_line_info *li)
 {
 	if (p->tree_prisoner)
@@ -62,6 +64,7 @@ void	parsing_cleanup(t_parsing *p, t_cmd *cmd, t_line_info *li)
 	if (p->exp_wants_freedom)
 		free(p->expanded);
 }
+
 void	parsing_signal_exit_codes(t_parsing *p, t_info *info)
 {
 	signal(SIGINT, SIG_IGN);
@@ -69,39 +72,4 @@ void	parsing_signal_exit_codes(t_parsing *p, t_info *info)
 	set_signal_action();
 	if (WIFEXITED(p->status))
 		info->exit_code = WEXITSTATUS(p->status);
-}
-int	parsing(t_info *info)
-{
-	t_cmd		*cmd;
-	t_parsing	p;
-	t_line_info	li;
-
-	p.str = readline(info->prompt);
-	p.ptr_parking = p.str;
-	li.info = info;
-	one_time_init(&li);
-	while (p.str != NULL)
-	{
-		add_history(p.str);
-		li.heredoc_buff = NULL;
-		p.expanded = expand_env_remove_quotes(p.str, info->curr_env, &li);
-		if (p.expanded == p.ptr_parking)
-			p.exp_wants_freedom = 0;
-		else
-			p.exp_wants_freedom = 1;
-		cmd = parsecommand(p.expanded, &li);
-		if (cmd->type == EXEC)
-			single_command_handler(cmd, info, &p, &li);
-		else
-			fork_and_execute(cmd, info, &li, &p);
-		parsing_signal_exit_codes(&p, info);
-		parsing_cleanup(&p, cmd, &li);
-		system("leaks -q minishell");
-		p.str = readline(info->prompt);
-		p.ptr_parking = p.str;
-	}
-	free_and_null(li.whitespace);
-	free_and_null(li.symbols);
-	ft_printf("We bid you all a very fond farewell.\n");
-	return (0);
 }

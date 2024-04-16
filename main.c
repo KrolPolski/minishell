@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 11:44:59 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 15:42:00 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,4 +102,6 @@ int	main(int argc, char **argv, char **env)
 	//else
 		parsing(&info);
 	final_cleanup(&info);
+	ft_printf("We bid you all a very fond farewell.\n");
+	exit(0);
 }

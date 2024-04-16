@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 15:11:04 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 15:24:07 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,9 +132,9 @@ typedef struct s_parsing
 	int			status;
 	char		*expanded;
 	int			tree_prisoner;
-	int			exp_wants_freedom; // why is this a char and not an int?
+	int			exp_wants_freedom;
 	char		*ptr_parking;
-} t_parsing;
+}	t_parsing;
 
 typedef struct s_unset
 {

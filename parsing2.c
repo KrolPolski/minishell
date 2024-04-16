@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 14:24:52 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 15:23:05 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 15:30:56 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,20 @@ void	single_command_handler(t_cmd *cmd, t_info *info,
 	}
 }
 
+void	fork_and_execute(t_cmd *cmd, t_info *info, t_line_info *li, t_parsing *p)
+{
+	li->pid = fork1();
+	if (li->pid == 0)
+	{
+		signal(SIGQUIT, SIG_DFL);
+		execute(cmd, info->curr_env, info, li);	
+	}
+	p->tree_prisoner = 1;
+}
+
 int	parsing(t_info *info)
 {
 	t_cmd		*cmd;
-	//t_execcmd	*ecmd;
 	t_parsing	p;
 	t_line_info	li;
 
@@ -61,27 +71,15 @@ int	parsing(t_info *info)
 		else
 			p.exp_wants_freedom = 1;
 		cmd = parsecommand(p.expanded, &li);
-		if (cmd->type == EXEC) 
-		{
+		if (cmd->type == EXEC)
 			single_command_handler(cmd, info, &p, &li);
-		}
 		else
-		{
-			li.pid = fork1();
-			if (li.pid == 0)
-			{
-				signal(SIGQUIT, SIG_DFL);
-				execute(cmd, info->curr_env, info, &li);	
-			}
-			p.tree_prisoner = 1;
-		}
+			fork_and_execute(cmd, info, &li, &p);
 		signal(SIGINT, SIG_IGN);
 		wait(&p.status);
 		set_signal_action();
 		if (WIFEXITED(p.status))
-		{
 			info->exit_code = WEXITSTATUS(p.status);
-		}
 		if (p.tree_prisoner)
 			free_tree(cmd);
 		else

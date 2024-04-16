@@ -6,11 +6,18 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 15:53:31 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 19:59:31 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	null_command_handler(t_parsing *p)
+{
+	free_and_null(p->str);
+	if (p->exp_wants_freedom)
+		free_and_null(p->expanded);
+}
 
 void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)
 {
@@ -24,15 +31,17 @@ void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)
 	else
 		p->exp_wants_freedom = 1;
 	cmd = parsecommand(p->expanded, li);
+	if (!cmd)
+	{
+		null_command_handler(p);
+		return ;
+	}
 	if (cmd->type == EXEC)
 		single_command_handler(cmd, info, p, li);
 	else
 		fork_and_execute(cmd, info, li, p);
 	parsing_signal_exit_codes(p, info);
 	parsing_cleanup(p, cmd, li);
-	system("leaks -q minishell");
-	p->str = readline(info->prompt);
-	p->ptr_parking = p->str;
 }
 
 int	parsing(t_info *info)
@@ -45,6 +54,9 @@ int	parsing(t_info *info)
 	while (p.str != NULL)
 	{
 		parsing_loop(&p, &li, info);
+		system("leaks -q minishell");
+		p.str = readline(info->prompt);
+		p.ptr_parking = p.str;
 	}
 	free_and_null(li.whitespace);
 	free_and_null(li.symbols);

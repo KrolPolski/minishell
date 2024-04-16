@@ -6,7 +6,7 @@
 #    By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 13:42:54 by rboudwin          #+#    #+#              #
-#    Updated: 2024/04/15 15:57:41 by rboudwin         ###   ########.fr        #
+#    Updated: 2024/04/16 14:25:24 by rboudwin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME	:= minishell
 #CFLAGS	:= -Wextra -Wall -Werror -Wunreachable-code -Ofast 
 CFLAGS := -I /Users/$(USER)/.brew/opt/readline/include -Wextra -Wall -Werror -Wunreachable-code
 LDFLAGS := -L /Users/$(USER)/.brew/opt/readline/lib
-SRCS	:= main.c signals.c parsing.c env_handling.c tools.c built_in.c \
+SRCS	:= main.c signals.c parsing.c parsing2.c env_handling.c tools.c built_in.c \
 			built_in2.c env_and_quote_handler.c heredoc.c \
 			unit_tests.c export.c export2.c unset.c
 OBJS	:= ${SRCS:.c=.o} Libft/libft.a

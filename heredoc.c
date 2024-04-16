@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 12:23:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/09 20:26:49 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/16 11:44:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* uses readline to build a buffer to use for input for another 
+command to emulate the heredoc functionality in bash */
 char	*heredoc_builder(char *delimiter)
 {
 	char	*input;
@@ -35,29 +37,4 @@ char	*heredoc_builder(char *delimiter)
 	}
 	free(input);
 	return (buffer);
-	/*
-	input = readline("> ");
-	new_buffer = input;
-	//free(input);
-	while (ft_strncmp(input, delimiter, ft_strlen(delimiter)))
-	{
-		
-		//if (!ft_strncmp(input, delimiter, ft_strlen(delimiter)))
-		//	break ;
-		old_buffer = ft_strjoin(new_buffer, "\n");
-		//new_buffer = ft_strjoin(old_buffer, input);
-		free(input);
-		new_buffer = ft_strjoin(old_buffer, "\n");
-		free(old_buffer);
-		ft_printf("%s", new_buffer);
-		//free(new_buffer);
-		input = readline("> ");
-		//input = readline("> ");
-	//	free(old_buffer);
-	}
-	ft_printf("Inside heredoc builder check\n");
-	system("leaks -q minishell");
-	
-	
-	return (old_buffer);*/
 }

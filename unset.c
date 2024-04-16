@@ -1,20 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   built_in3.c                                        :+:      :+:    :+:   */
+/*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/03 15:54:15 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/11 14:23:07 by rboudwin         ###   ########.fr       */
+/*   Created: 2024/04/15 14:39:49 by rboudwin          #+#    #+#             */
+/*   Updated: 2024/04/16 11:50:31 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int		unset_validator(char *str)
+/* enforces proper formatting of unset arguments */
+int	unset_validator(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!ft_isalpha(str[0]))
@@ -29,6 +30,9 @@ int		unset_validator(char *str)
 	}
 	return (1);
 }
+
+/* searches through the existing matrix for a match, either of the arg 
+directly or arg=somevalue to ensure exact matches */
 char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 {
 	char	*arg_plus;
@@ -54,7 +58,9 @@ char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 	return (NULL);
 }
 
-void	copy_unset(t_execcmd *ecmd, t_info *info, t_unset *un)
+/* copies over all env variables that are still valid after 
+unset to the new_env matrix */
+void	copy_unset(t_info *info, t_unset *un)
 {
 	un->new_env = ft_calloc(sizeof(char *), (un->curr_len + 1));
 	if (!un->new_env)
@@ -76,6 +82,13 @@ void	copy_unset(t_execcmd *ecmd, t_info *info, t_unset *un)
 	info->curr_env = un->new_env;
 }
 
+void	print_unset_error(t_execcmd *ecmd, t_unset *un)
+{
+	ft_putstr_fd("unset: ", 2);
+	ft_putstr_fd(ecmd->argv[un->k], 2);
+	ft_putstr_fd(": not a a valid identifier\n", 2);
+}
+
 void	ft_unset(t_execcmd *ecmd, t_info *info)
 {
 	t_unset	un;
@@ -86,18 +99,14 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 	{
 		if (!unset_validator(ecmd->argv[un.k]))
 		{
-			ft_putstr_fd("unset: ", 2);
-			ft_putstr_fd(ecmd->argv[un.k], 2);
-			ft_putstr_fd(": not a a valid identifier\n", 2);
+			print_unset_error(ecmd, &un);
 			un.k++;
-			continue;
+			continue ;
 		}
 		un.str = search_matrix(ecmd->argv[un.k],
 				info->curr_env, &un.i, un.curr_len);
 		if (!un.str)
-		{
 			un.k++;
-		}
 		else
 		{
 			free(info->curr_env[un.i]);
@@ -106,27 +115,5 @@ void	ft_unset(t_execcmd *ecmd, t_info *info)
 			un.k++;
 		}
 	}
-	copy_unset(ecmd, info, &un);
-}
-
-/* if exit code is provided as an argument, exits the shell with it.
-Otherwise exits with the last exit code provided by $? */
-void	ft_exit(t_execcmd *ecmd, t_info *info)
-{
-	char	*last_exit_code;
-	int		exit_code;
-	int		i;
-
-	i = 0;
-	//consider what happens if a non-int value is provided
-	if (ecmd->argv[1])
-		exit_code = ft_atoi(ecmd->argv[1]);
-	else
-	{
-		exit_code = info->exit_code;
-	}
-	free_2d(info->curr_env);
-	ft_printf("exit\n");
-	//consider freeing other stuff if required
-	exit(exit_code);
+	copy_unset(info, &un);
 }

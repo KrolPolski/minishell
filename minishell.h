@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 09:41:03 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:25:06 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,15 +142,15 @@ extern void	rl_replace_line(const char *text, int clear_undo);
 //built_in.c
 
 void		ft_cd(t_execcmd *ecmd, t_info *info);
-void		ft_echo(t_execcmd *ecmd, t_info *info);
-void		ft_env(t_execcmd *ecmd, t_info *info);
-void		ft_pwd(t_execcmd *ecmd, t_info *info);
-void		handle_builtins(t_execcmd *ecmd, char **env,
+void		ft_echo(t_execcmd *ecmd);
+void		ft_env(t_info *info);
+void		ft_pwd(void);
+void		handle_builtins(t_execcmd *ecmd,
 				char *builtin_command, t_info *info);
 
 //built_in2.c
 
-int			check_matrix(t_execcmd *ecmd, t_info *info, int k, char **new_env);
+int			check_matrix(t_execcmd *ecmd, int k, char **new_env);
 void		ft_export(t_execcmd *ecmd, t_info *info);
 void		export_empty(t_info *info);
 void		init_export(t_execcmd *ecmd, t_info *info, t_export *ex);
@@ -160,7 +160,7 @@ char		*var_to_equals(t_execcmd *ecmd, int k, int i);
 
 void		ft_exit(t_execcmd *ecmd, t_info *info);
 void		ft_unset(t_execcmd *ecmd, t_info *info);
-void		copy_unset(t_execcmd *ecmd, t_info *info, t_unset *un);
+void		copy_unset(t_info *info, t_unset *un);
 char		*search_matrix(char *arg, char **matrix, int *i, int curr_len);
 
 //env_and_quote_handler.c
@@ -189,7 +189,7 @@ char		*ft_prompt(char *username, char *hostname, char *path);
 
 //parsing.c
 
-void		one_time_init(t_info *info, t_line_info *li);
+void		one_time_init(t_line_info *li);
 t_cmd		*parsecommand(char *str, t_line_info *li);
 char		*check_command(char *com, char **env);
 void		execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li);
@@ -197,8 +197,12 @@ void		free_tree(t_cmd *cmd);
 int			fork1(void);
 char		**parse_paths(char **env);
 int			parsing(t_info *info);
-void		panic(char *s);
 int			peek(char **ps, char *es, char *tokens);
+void		check_quotes(char **ps, t_line_info *li);
+t_cmd		*parseline(char **ps, char *es, t_line_info *li);
+t_cmd*		parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
+t_cmd		*nullterminate(t_cmd *cmd);
+t_cmd		*parseexec(char **ps, char *es, t_line_info *li);
 
 //signals.c
 
@@ -210,11 +214,12 @@ void		sigint_handler(int signal);
 // tools.c
 void		free_2d(char **arr);
 int			ft_matrix_len(char **str);
-
+int			export_validator(char *str);
+void		final_cleanup(t_info *info);
+void		set_shell_level(t_info *info);
+void		panic(char *str);
 // unit_tests.c
 void		test(t_info *info);
 int			alt_parsing(t_info *info, char *str);
-//seems unused: char		*expand_string(char *str, char **env);
-//seems unused: char		*expand_env_var(char *var, char **env);
 
 #endif

@@ -6,19 +6,19 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/08 10:49:39 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 18:32:19 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* changes directory and updates our custom prompt */
 void	ft_cd(t_execcmd *ecmd, t_info *info)
 {
 	char	buf[100];
 	char	*home_path;
 	char	*target_path;
-	//this is going to get weird if they change users, we don't yet have
-	//a mechanism to update the info->username field on user changes.
+
 	home_path = ft_strjoin("/Users/", info->username);
 	if (!ecmd->argv[1])
 	{
@@ -37,7 +37,7 @@ void	ft_cd(t_execcmd *ecmd, t_info *info)
 	home_path = NULL;
 }
 
-void	ft_pwd(t_execcmd *ecmd, t_info *info)
+void	ft_pwd(void)
 {
 	char	buf[100];
 
@@ -47,7 +47,8 @@ void	ft_pwd(t_execcmd *ecmd, t_info *info)
 		(printf("%s%s", buf, "\n"));
 }
 
-void	ft_env(t_execcmd *ecmd, t_info *info)
+/* prints all env variables with values defined */
+void	ft_env(t_info *info)
 {
 	int	i;
 
@@ -65,7 +66,7 @@ void	ft_env(t_execcmd *ecmd, t_info *info)
 	}
 }
 
-void	ft_echo(t_execcmd *ecmd, t_info *info)
+void	ft_echo(t_execcmd *ecmd)
 {
 	int	nl;
 	int	i;
@@ -88,17 +89,16 @@ void	ft_echo(t_execcmd *ecmd, t_info *info)
 		ft_putchar_fd('\n', 1);
 }
 
-void	handle_builtins(t_execcmd *ecmd, char **env,
-	char *builtin_command, t_info *info)
+void	handle_builtins(t_execcmd *ecmd, char *builtin_command, t_info *info)
 {
 	if (!ft_strncmp(builtin_command, "pwd", ft_strlen(builtin_command)))
-		ft_pwd(ecmd, info);
+		ft_pwd();
 	if (!ft_strncmp(builtin_command, "cd", ft_strlen(builtin_command)))
 		return ;
 	if (!ft_strncmp(builtin_command, "echo", ft_strlen(builtin_command)))
-		ft_echo(ecmd, info);
+		ft_echo(ecmd);
 	if (!ft_strncmp(builtin_command, "env", ft_strlen(builtin_command)))
-		ft_env(ecmd, info);
+		ft_env(info);
 	if (!ft_strncmp(builtin_command, "export", ft_strlen(builtin_command)))
 		ft_export(ecmd, info);
 	if (!ft_strncmp(builtin_command, "exit", ft_strlen(builtin_command)))

@@ -6,20 +6,13 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/15 12:29:59 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 16:25:31 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "minishell.h"
 #include <stdio.h>
 #include <stdlib.h>
-
-void	panic(char *s)
-{
-	printf("%s\n", s);
-	exit(1);
-}
 
 char	**parse_paths(char **env)
 {
@@ -80,7 +73,6 @@ char	*check_command(char *com, char **env)
 	return (NULL);
 }
 
-
 int fork1(void)
 {
 	int	pid;
@@ -101,7 +93,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 	char		*command;
 	char		*builtins[8];
 	int			i;
-	int fd;
+	//int fd;
 
 	i = 0;
 	builtins[0] = "cd";
@@ -112,7 +104,6 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 	builtins[5] = "exit";
 	builtins[6] = "env";
 	builtins[7] = NULL;
-
 	if (cmd == NULL)
 		exit (1);
 	if (!cmd->type)
@@ -162,7 +153,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 		{
 			if (ft_strlen(builtins[i]) == ft_strlen(ecmd->argv[0]) && !ft_strncmp(ecmd->argv[0], builtins[i], ft_strlen(builtins[i])))
 			{
-				handle_builtins(ecmd, env, builtins[i], info);
+				handle_builtins(ecmd, builtins[i], info);
 				exit(1);
 			}
 			i++;
@@ -260,9 +251,7 @@ t_cmd	*backcmd(t_cmd *subcmd)
 	return ((t_cmd *)cmd);
 }
 
-void	check_quotes(char **ps, t_line_info *li);
-
-void	handle_quote_removal(char **str, int *ret, t_line_info *li, bool qflag)
+void	handle_quote_removal(char **str, t_line_info *li, bool qflag)
 {
 	if (qflag == 0)
 	{
@@ -286,7 +275,7 @@ void	handle_quote_removal(char **str, int *ret, t_line_info *li, bool qflag)
 	}
 }
 
-void	handle_regular_chars(char **str, int *ret, t_line_info *li)
+void	handle_regular_chars(char **str, t_line_info *li)
 {
 	while (*str < li->end_str && (!(ft_strchr(li->whitespace, **str))) \
 		&& ((!(ft_strchr(li->symbols, **str)))))
@@ -297,7 +286,7 @@ void	handle_regular_chars(char **str, int *ret, t_line_info *li)
 			while (*str <= li->endsq)
 			{
 				if (li->sfl == 1 && *str == li->endsq)
-					handle_quote_removal(str, ret, li, 0);
+					handle_quote_removal(str, li, 0);
 				(*str)++;
 			}
 		}
@@ -306,7 +295,7 @@ void	handle_regular_chars(char **str, int *ret, t_line_info *li)
 			while (*str <= li->enddq)
 			{
 				if (li->dfl == 1 && *str == li->enddq)
-					handle_quote_removal(str, ret, li, 1);
+					handle_quote_removal(str, li, 1);
 				(*str)++;
 			}
 		}
@@ -344,7 +333,7 @@ void	handle_current_char(char **str, int *ret, t_line_info *li)
 	else if (**str != 0)
 	{
 		*ret = 'a';
-		handle_regular_chars(str, ret, li);
+		handle_regular_chars(str, li);
 	}
 }
 
@@ -383,11 +372,7 @@ int	peek(char **ps, char *es, char *tokens)
 	//ft_printf("exiting peek\n");
 	return (*s && ft_strchr(tokens, *s));
 }
-t_cmd *parseline(char**, char*, t_line_info *li);
-t_cmd *parsepipe(char**, char*);
-t_cmd *parseexec(char**, char*, t_line_info *li);
-t_cmd *nullterminate(t_cmd *);
-t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
+//t_cmd *parsepipe(char**, char*);
 
 void	print_exec(t_execcmd *ecmd);
 
@@ -434,7 +419,8 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	//ft_printf("we are about to exit parseline\n");
 	return (cmd);
 }
-void	handle_quote_flags(t_line_info *li, bool	qflag)
+
+void	handle_quote_flags(t_line_info *li, bool qflag)
 {
 	if (qflag == 0)
 	{
@@ -528,7 +514,7 @@ t_cmd*	parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	int		tok;
 	char	*q;
 	char	*eq;
-	int fd;
+	//int fd;
 
 	//printf("String is now at %s\n, and begq is %s\n and end is %s\n and the flags are: %d, %d\n", *ps, li->begdq, li->enddq, li->sfl, li->dfl);
 	if ((!li->in_quotes)) // && ((*ps > li->endsq && *ps < li->begsq) || (*ps > li->enddq && *ps < li->begdq))
@@ -603,7 +589,7 @@ t_cmd	*nullterminate(t_cmd *cmd)
 	}
 	return (cmd);
 }
-
+/*
 void runcmd(t_cmd *cmd)
 {
 	int			p[2];
@@ -614,7 +600,7 @@ void runcmd(t_cmd *cmd)
 	t_redircmd	*rcmd;
 
 	exit(0);
-}
+}*/
 
 void	print_exec(t_execcmd *ecmd)
 {
@@ -694,7 +680,7 @@ void	free_tree(t_cmd *cmd)
 	//	printf("Successfully freed the pipe node \n\n");
 	}
 }
-void	one_time_init(t_info *info, t_line_info *li)
+void	one_time_init(t_line_info *li)
 {
 	li->whitespace = ft_strdup(" \t\r\n\v");
 	li->symbols = ft_strdup("<|>");
@@ -727,7 +713,7 @@ int	parsing(t_info *info)
 	//ft_printf("received first readline input of\n %s\n", str);
 	ptr_parking = str;
 	li.info = info;
-	one_time_init(info, &li);
+	one_time_init(&li);
 	while (str != NULL)
 	{
 		add_history(str);
@@ -758,7 +744,7 @@ int	parsing(t_info *info)
 			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "unset", 6) == 0)
 				ft_unset(ecmd, info);
 			else if (ecmd->argv[0] && ft_strncmp(ecmd->argv[0], "pwd", 4) == 0)
-				ft_pwd(ecmd, info);
+				ft_pwd();
 			else
 			{
 				li.pid = fork1();

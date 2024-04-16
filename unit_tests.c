@@ -6,21 +6,17 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 14:53:37 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 12:52:43 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 15:52:44 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
+/*
 void	test(t_info *info)
 {
 	int fd;
 	char *str;
-	char *bash_str;
 	char *mini_output;
-	char *bash_output;
-	char *ptr_parking;
-	char *str_no_nl;
 
 	ft_printf("Wouldn't it be lovely to have some automated tests?\n");
 	fd = open("test_input", O_RDONLY);
@@ -31,29 +27,10 @@ void	test(t_info *info)
 		str = get_next_line(fd);
 		while (str)
 		{
-			//bash_str = ft_strjoin("bash -c '", str);
-			//ptr_parking = bash_str;
-			//bash_str = ft_strjoin(bash_str, "'");
-			//free(ptr_parking);
-			//str_no_nl = ft_strdup(str);
-			//str_no_nl[ft_strlen(str) - 1] = '\0';
-			//bash_output = ft_strjoin(str_no_nl, " >> bash_output");
-			///ft_printf("bash_output is '%s'\n", bash_output);
-			//ptr_parking = bash_output;
-			//bash_output = ft_strjoin("bash -c ", bash_output);
-			//free(ptr_parking);
 			mini_output = ft_strjoin(str, " >> mini_output");
 			ft_printf("\ntest string:\n%s", str);
 			ft_printf("\nMinishell output:\n");
-			//alt_parsing(info, str);
 			alt_parsing(info, mini_output);
-			//ft_printf("\nbash output:\n");
-			//system(bash_str);
-			
-			
-			//free(bash_str);
-			//free(bash_output);
-			//free_and_null(str);
 			system("leaks -q minishell");
 			free(mini_output);
 			free(str);
@@ -67,6 +44,7 @@ void	test(t_info *info)
 		ft_printf("\nif there is nothing above then that means we matched bash!\n");
 	}
 }
+
 int	alt_parsing(t_info *info, char *str)
 {
 	int			fd;
@@ -176,4 +154,4 @@ int	alt_parsing(t_info *info, char *str)
 	free_and_null(li.symbols);
 	//ft_printf("We bid you all a very fond farewell.\n");
 	return (0);
-}
+}*/

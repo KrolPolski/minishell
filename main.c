@@ -6,12 +6,13 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 12:34:37 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 11:44:59 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* builds a prompt that includes a username and current path */
 char	*ft_prompt(char *username, char *hostname, char *path)
 {
 	char	*prompt;
@@ -50,9 +51,7 @@ void	set_termios_settings(void)
 
 void	populate_env_matrix(t_info *info)
 {
-	char	*str;
-	int		line_count;
-	int		i;
+	int	i;
 
 	i = 0;
 	while (info->init_env[i])
@@ -67,43 +66,24 @@ void	populate_env_matrix(t_info *info)
 	info->curr_env[i] = NULL;
 }
 
-void	set_shell_level(t_info *info)
+void	set_username_dir(t_info *info)
 {
-	int		i;
-	int		lvl;
-	char	*lvlstr;
+	int	i;
 
 	i = 0;
-	while (info->curr_env[i])
+	while (info->curr_env[i] != NULL)
 	{
-		if (ft_strnstr(info->curr_env[i], "SHLVL=", 6))
-		{
-			lvl = ft_atoi(info->curr_env[i] + 6);
-			lvl++;
-			free(info->curr_env[i]);
-			lvlstr = ft_itoa(lvl);
-			info->curr_env[i] = ft_strjoin("SHLVL=", lvlstr);
-			free(lvlstr);
-			return ;
-		}
+		if (ft_strnstr(info->curr_env[i], "USER=", 5))
+			info->username = ft_strdup(info->curr_env[i] + 5);
+		else if (ft_strnstr(info->curr_env[i], "PWD=", 4))
+			info->init_dir = ft_strdup(info->curr_env[i] + 4);
 		i++;
 	}
-}
-
-void	final_cleanup(t_info *info)
-{
-	write_history(".shell_history");
-	free(info->username);
-	free(info->init_dir);
-	free(info->prompt);
-	free_2d(info->curr_env);
 }
 
 int	main(int argc, char **argv, char **env)
 {
 	t_info		info;
-	int			i;
-	HIST_ENTRY	*hist_entry;
 
 	signal(SIGQUIT, SIG_IGN);
 	set_termios_settings();
@@ -113,25 +93,13 @@ int	main(int argc, char **argv, char **env)
 	info.init_env = env;
 	populate_env_matrix(&info);
 	set_shell_level(&info);
-	i = 0;
-	while (info.curr_env[i] != NULL)
-	{
-		if (ft_strnstr(info.curr_env[i], "USER=", 5))
-			info.username = ft_strdup(info.curr_env[i] + 5);
-		else if (ft_strnstr(info.curr_env[i], "PWD=", 4))
-			info.init_dir = ft_strdup(info.curr_env[i] + 4);
-		i++;
-	}
+	set_username_dir(&info);
 	read_history(".shell_history");
 	info.prompt = ft_prompt(info.username, "AR-Shell", info.init_dir);
 	info.curr_dir = info.init_dir;
-	if (argv[1] && !ft_strncmp(argv[1], "test", 5))
-	{
-		test(&info);
-	}
-	else
-	{
+	//if (argv[1] && !ft_strncmp(argv[1], "test", 5))
+	//	test(&info);
+	//else
 		parsing(&info);
-	}
 	final_cleanup(&info);
 }

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 11:43:40 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 15:00:59 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ void	init_export(t_execcmd *ecmd, t_info *info, t_export *ex)
 		ex->i++;
 	}
 }
+
 /* Ensures arguments are in appropriate format and finds the correct 
 position inside the array to place the new value */
 void	ft_export_handler(t_execcmd *ecmd, t_export *ex)
@@ -99,6 +100,7 @@ void	ft_export_handler(t_execcmd *ecmd, t_export *ex)
 		ex->k++;
 	}
 }
+
 /* Built-in export command */
 void	ft_export(t_execcmd *ecmd, t_info *info)
 {

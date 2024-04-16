@@ -6,12 +6,13 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 09:19:48 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 16:16:27 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 11:46:50 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* frees all data for an array of strings */
 void	free_2d(char **arr)
 {
 	int	i;
@@ -27,6 +28,7 @@ void	free_2d(char **arr)
 	arr = NULL;
 }
 
+/* returns the number of items in a matrix */
 int	ft_matrix_len(char **str)
 {
 	int	i;
@@ -46,6 +48,8 @@ void	final_cleanup(t_info *info)
 	free_2d(info->curr_env);
 }
 
+/* increments the SHLVL environment variable by one each time
+minishell is launched */
 void	set_shell_level(t_info *info)
 {
 	int		i;

@@ -6,12 +6,14 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 12:23:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 14:41:51 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 11:44:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* uses readline to build a buffer to use for input for another 
+command to emulate the heredoc functionality in bash */
 char	*heredoc_builder(char *delimiter)
 {
 	char	*input;

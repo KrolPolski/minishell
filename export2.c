@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 13:18:47 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 16:55:27 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 11:41:02 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,9 @@ int	export_validator(char *str)
 	}
 	return (1);
 }
-
+/* isolates the variable name + equals sign to search the
+existing matrix; e.g. export VAR=somevalue becomes VAR=
+to ensure an exact match when we search */
 char	*var_to_equals(t_execcmd *ecmd, int k, int i)
 {
 	char	*needle;
@@ -60,7 +62,8 @@ char	*var_to_equals(t_execcmd *ecmd, int k, int i)
 	}
 }
 /* prints out all existing environment variables
-in the same format as bash */
+in the same format as bash when export is run with 
+no arguments*/
 void	export_empty(t_info *info)
 {
 	int		i;

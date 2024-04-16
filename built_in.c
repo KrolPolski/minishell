@@ -6,12 +6,13 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 16:06:13 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/15 18:32:19 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* changes directory and updates our custom prompt */
 void	ft_cd(t_execcmd *ecmd, t_info *info)
 {
 	char	buf[100];
@@ -46,6 +47,7 @@ void	ft_pwd(void)
 		(printf("%s%s", buf, "\n"));
 }
 
+/* prints all env variables with values defined */
 void	ft_env(t_info *info)
 {
 	int	i;

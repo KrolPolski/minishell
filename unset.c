@@ -6,12 +6,13 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 14:39:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 16:11:14 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 11:50:31 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* enforces proper formatting of unset arguments */
 int	unset_validator(char *str)
 {
 	int	i;
@@ -30,6 +31,8 @@ int	unset_validator(char *str)
 	return (1);
 }
 
+/* searches through the existing matrix for a match, either of the arg 
+directly or arg=somevalue to ensure exact matches */
 char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 {
 	char	*arg_plus;
@@ -55,6 +58,8 @@ char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 	return (NULL);
 }
 
+/* copies over all env variables that are still valid after 
+unset to the new_env matrix */
 void	copy_unset(t_info *info, t_unset *un)
 {
 	un->new_env = ft_calloc(sizeof(char *), (un->curr_len + 1));

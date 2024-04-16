@@ -6,12 +6,15 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 16:52:07 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 11:43:40 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/* handles searches through the matrix where a value was not provided in the
+export command. for example "export VAR" so there won't be an equals sign 
+to check */
 int	check_matrix_no_needle(t_execcmd *ecmd, char **new_env, int i, int k)
 {
 	while (new_env[i] && ft_strncmp(new_env[i],
@@ -21,7 +24,7 @@ int	check_matrix_no_needle(t_execcmd *ecmd, char **new_env, int i, int k)
 }
 
 /* Returns the position within the matrix of existing 
-environment variables, or a spot at the end if it doesn't yet
+environment variables, or a spot at the end of the matrix if it doesn't yet
 exist*/
 int	check_matrix(t_execcmd *ecmd, int k, char **new_env)
 {

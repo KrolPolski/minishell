@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/16 19:21:49 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 20:20:23 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,11 +309,7 @@ void	handle_regular_chars(char **str, t_line_info *li)
 void	handle_current_char(char **str, int *ret, t_line_info *li)
 {
 	if (**str == '|' && (!li->in_quotes))
-	{
 		(*str)++;
-		if (**str == '|')
-			panic("Multiple sequential pipes");
-	}
 	else if (**str == '>' && (!li->in_quotes))
 	{
 		(*str)++;
@@ -384,16 +380,11 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 	char	*beg_str;
 	t_cmd	*cmd;
 
-	//ft_printf("We have entered parsecommand\n");
-	//system("leaks -q minishell");
 	beg_str = str;
 	end_str = str + ft_strlen(str);
 	cmd = parseline(&str, end_str, li);
 	if (!cmd)
 		return (NULL);
-//	write(1, "After parseline", 15);
-	//ft_printf("After parseline\n");
-	//system("leaks -q minishell");
 	peek(&str, end_str, "");
 	if (str != end_str)
 	{
@@ -401,8 +392,6 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 		panic("syntax");
 	}
 	nullterminate(cmd);
-	//print_exec(cmd);
-	//ft_printf("exiting parsecommand\n");
 	return (cmd);
 }
 
@@ -411,8 +400,6 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	t_cmd		*cmd;
 	int			tok;
 
-	//ft_printf("we entered parseline\n");
-	//system("leaks -q minishell");
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
 	if (!cmd)
@@ -420,9 +407,14 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	if (peek(ps, es, "|"))
 	{
 		tok = gettoken(ps, 0, 0, li);
+		if (peek(ps, es, "|><"))
+		{
+			ft_putstr_fd("multiple operators\n", 2);
+			free(cmd);
+			return (NULL);
+		}
 		cmd = pipecmd(cmd, parseline(ps, es, li));
 	}
-	//ft_printf("we are about to exit parseline\n");
 	return (cmd);
 }
 
@@ -451,7 +443,8 @@ void	handle_quote_flags(t_line_info *li, bool qflag)
 		}
 	}
 }
-
+/*a function that looks for quotes and sets flags appropriately
+depending on whether the beginning or end of quotes is discovered*/
 void	check_quotes(char **ps, t_line_info *li)
 {
 	char		*str;
@@ -465,13 +458,11 @@ void	check_quotes(char **ps, t_line_info *li)
 		|| li->begdq == NULL)) && li->dfl != 1 && li->sfl == 0)
 	{
 		handle_quote_flags(li, 0);
-		//printf("Single quotes found starting at %s\nand ending at %s\n", li->begsq, li->endsq);
 	}
 	if ((!li->enddq) && (li->begdq) && ((li->begdq < li->begsq \
 		|| li->begsq == NULL)) && li->sfl != 1 && li->dfl == 0)
 	{
 		handle_quote_flags(li, 1);
-		//printf("Double quotes found starting at %s\nand ending at %s\n", li->begdq, li->enddq);
 	}
 	if (li->endsq && (*ps >= li->begsq && *ps <= li->endsq))
 		li->in_quotes = 1;
@@ -479,6 +470,9 @@ void	check_quotes(char **ps, t_line_info *li)
 		li->in_quotes = 1;
 }
 
+/*a function that parses the line for executables and 
+creates nodes accordingly. While looking for executables it also
+needs to consider encountering potential redirections*/
 t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 {
 	char		*q;
@@ -494,7 +488,6 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 	ret = parseredirs(ret, ps, es, li);
 	if (!ret)
 		return (NULL);
-	//check_quotes(ps, li);
 	while ((((**ps != '|') && (!li->in_quotes)) || (li->in_quotes)) && **ps)
 	{
 		if ((tok = gettoken(ps, &q, &eq, li)) == 0)
@@ -503,21 +496,14 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 			panic("syntax");
 		cmd->argv[argc] = q;
 		cmd->eargv[argc] = eq;
-		//printf("Current token's start and end: %s\n%s\n", q, eq);
 		argc++;
-		if (argc >= MAXARGS)
-		{
-			printf("argc: %d", argc);
-			panic("too many args");
-		}
 		ret = parseredirs(ret, ps, es, li);
 	}
 	cmd->argv[argc] = 0;
 	cmd->eargv[argc] = 0;
 	return (ret);
 }
-/*a function that looks for redirect tokens and builds
-redirect nodes and also handles the heredoc case*/
+
 t_cmd	*build_heredoc_node(t_cmd *cmd, char *q, char *eq, t_line_info *li)
 {
 	*eq = 0;
@@ -531,6 +517,8 @@ t_cmd	*build_heredoc_node(t_cmd *cmd, char *q, char *eq, t_line_info *li)
 	return (cmd);
 }
 
+/*a function that looks for redirect tokens and builds
+redirect nodes and also handles the heredoc case*/
 t_cmd	*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 {
 	int		tok;
@@ -560,8 +548,6 @@ t_cmd	*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	}
 	return (cmd);
 }
-/*a function that puts null terminators at the 
-end of each token in the parsed line*/
 
 void	nullterminate_exec(t_cmd *cmd)
 {
@@ -577,6 +563,8 @@ void	nullterminate_exec(t_cmd *cmd)
 	}
 }
 
+/*a function that puts null terminators at the 
+end of each token in the parsed line*/
 t_cmd	*nullterminate(t_cmd *cmd)
 {
 	t_pipecmd	*pcmd;
@@ -601,33 +589,6 @@ t_cmd	*nullterminate(t_cmd *cmd)
 	}
 	return (cmd);
 }
-
-// void	print_tree(t_cmd *cmd)
-// {
-// 	t_execcmd	*ecmd;
-// 	t_pipecmd	*pcmd;
-// 	t_redircmd	*rcmd;
-
-// 	if (cmd->type == 1)
-// 	{
-// 		ecmd = (t_execcmd *)cmd;
-// 		print_exec(ecmd);
-// 	}
-// 	if (cmd->type == 2)
-// 	{
-// 		printf("Redir node: \n\n");
-// 		rcmd = (t_redircmd *)cmd;
-// 		//if (rcmd->cmd->type)
-// 		print_tree(rcmd->cmd);
-// 	}
-// 	if (cmd->type == 3)
-// 	{
-// 		pcmd = (t_pipecmd *)cmd;
-// 		printf("Pipe node: \n\n");
-// 		print_tree(pcmd->left);
-// 		print_tree(pcmd->right);
-// 	}
-// }
 
 /*a function that frees the previously built syntax tree*/
 void	free_tree(t_cmd *cmd)
@@ -662,5 +623,3 @@ void	one_time_init(t_line_info *li, t_parsing *p, t_info *info)
 	li->whitespace = ft_strdup(" \t\r\n\v");
 	li->symbols = ft_strdup("<|>");
 }
-
-

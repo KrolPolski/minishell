@@ -6,11 +6,18 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 15:53:31 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 19:07:59 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	null_command_handler(t_parsing *p)
+{
+	free(p->str);
+	if (p->exp_wants_freedom)
+		free(p->expanded);
+}
 
 void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)
 {
@@ -24,6 +31,11 @@ void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)
 	else
 		p->exp_wants_freedom = 1;
 	cmd = parsecommand(p->expanded, li);
+	if (!cmd)
+	{
+		null_command_handler(p);
+		return ;
+	}
 	if (cmd->type == EXEC)
 		single_command_handler(cmd, info, p, li);
 	else

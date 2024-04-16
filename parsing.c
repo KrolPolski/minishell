@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/16 16:08:58 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/16 19:13:31 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -389,6 +389,8 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 	beg_str = str;
 	end_str = str + ft_strlen(str);
 	cmd = parseline(&str, end_str, li);
+	if (!cmd)
+		return (NULL);
 //	write(1, "After parseline", 15);
 	//ft_printf("After parseline\n");
 	//system("leaks -q minishell");
@@ -413,6 +415,8 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	//system("leaks -q minishell");
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
+	if (!cmd)
+		return (NULL);
 	if (peek(ps, es, "|"))
 	{
 		tok = gettoken(ps, 0, 0, li);
@@ -488,6 +492,8 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 	cmd = (t_execcmd *)ret;
 	argc = 0;
 	ret = parseredirs(ret, ps, es, li);
+	if (!ret)
+		return (NULL);
 	//check_quotes(ps, li);
 	while ((((**ps != '|') && (!li->in_quotes)) || (li->in_quotes)) && **ps)
 	{
@@ -537,7 +543,11 @@ t_cmd	*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 		{
 			tok = gettoken(ps, 0, 0, li);
 			if (gettoken(ps, &q, &eq, li) != 'a')
+			{
 				ft_putstr_fd("missing file for redirection\n", 2);
+				free(cmd);
+				return (NULL);
+			}
 			if (tok == '<')
 				cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
 			else if (tok == '-')

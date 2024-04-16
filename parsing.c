@@ -645,8 +645,10 @@ void	free_tree(t_cmd *cmd)
 		free(cmd);
 	}
 }
-void	one_time_init(t_line_info *li)
+void	one_time_init(t_line_info *li, t_parsing *p, t_info *info)
 {
+	p->ptr_parking = p->str;
+	li->info = info;
 	li->whitespace = ft_strdup(" \t\r\n\v");
 	li->symbols = ft_strdup("<|>");
 }

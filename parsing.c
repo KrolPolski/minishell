@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/16 14:58:10 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 15:43:28 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -681,8 +681,10 @@ void	free_tree(t_cmd *cmd)
 	//	printf("Successfully freed the pipe node \n\n");
 	}
 }
-void	one_time_init(t_line_info *li)
+void	one_time_init(t_line_info *li, t_parsing *p, t_info *info)
 {
+	p->ptr_parking = p->str;
+	li->info = info;
 	li->whitespace = ft_strdup(" \t\r\n\v");
 	li->symbols = ft_strdup("<|>");
 }

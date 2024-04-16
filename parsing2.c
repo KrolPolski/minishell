@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 14:24:52 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 15:36:47 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 15:39:49 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,14 @@ void	parsing_cleanup(t_parsing *p, t_cmd *cmd, t_line_info *li)
 	if (p->exp_wants_freedom)
 		free(p->expanded);
 }
+void	parsing_signal_exit_codes(t_parsing *p, t_info *info)
+{
+	signal(SIGINT, SIG_IGN);
+	wait(&p->status);
+	set_signal_action();
+	if (WIFEXITED(p->status))
+		info->exit_code = WEXITSTATUS(p->status);
+}
 int	parsing(t_info *info)
 {
 	t_cmd		*cmd;
@@ -86,11 +94,7 @@ int	parsing(t_info *info)
 			single_command_handler(cmd, info, &p, &li);
 		else
 			fork_and_execute(cmd, info, &li, &p);
-		signal(SIGINT, SIG_IGN);
-		wait(&p.status);
-		set_signal_action();
-		if (WIFEXITED(p.status))
-			info->exit_code = WEXITSTATUS(p.status);
+		parsing_signal_exit_codes(&p, info);
 		parsing_cleanup(&p, cmd, &li);
 		system("leaks -q minishell");
 		p.str = readline(info->prompt);

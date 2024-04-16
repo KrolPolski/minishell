@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 14:24:52 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 15:30:56 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/16 15:36:47 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,18 @@ void	fork_and_execute(t_cmd *cmd, t_info *info, t_line_info *li, t_parsing *p)
 	}
 	p->tree_prisoner = 1;
 }
-
+void	parsing_cleanup(t_parsing *p, t_cmd *cmd, t_line_info *li)
+{
+	if (p->tree_prisoner)
+		free_tree(cmd);
+	else
+		free(cmd);
+	free(p->str);
+	if (li->heredoc_buff)
+		free(li->heredoc_buff);
+	if (p->exp_wants_freedom)
+		free(p->expanded);
+}
 int	parsing(t_info *info)
 {
 	t_cmd		*cmd;
@@ -80,15 +91,7 @@ int	parsing(t_info *info)
 		set_signal_action();
 		if (WIFEXITED(p.status))
 			info->exit_code = WEXITSTATUS(p.status);
-		if (p.tree_prisoner)
-			free_tree(cmd);
-		else
-			free(cmd);
-		free(p.str);
-		if (li.heredoc_buff)
-			free(li.heredoc_buff);
-		if (p.exp_wants_freedom)
-			free(p.expanded);
+		parsing_cleanup(&p, cmd, &li);
 		system("leaks -q minishell");
 		p.str = readline(info->prompt);
 		p.ptr_parking = p.str;

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/17 17:23:33 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:26:34 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -539,6 +539,8 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 		cmd->eargv[argc] = eq;
 		argc++;
 		ret = parseredirs(ret, ps, es, li);
+		if (!ret)
+			return NULL;
 	}
 	cmd->argv[argc] = 0;
 	cmd->eargv[argc] = 0;

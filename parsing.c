@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/17 15:12:02 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:12:04 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -380,11 +380,16 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 	char	*beg_str;
 	t_cmd	*cmd;
 
+	ft_printf("we have entered parsecommand\n");
 	beg_str = str;
 	end_str = str + ft_strlen(str);
 	cmd = parseline(&str, end_str, li);
+	ft_printf("cmd pointer is currently %p\n", cmd);
 	if (!cmd)
+	{
+		ft_putstr_fd("parsecommand concludes we have an error somewhere(received a null pointer)\n", 2);
 		return (NULL);
+	}
 	peek(&str, end_str, "");
 	if (str != end_str)
 	{
@@ -419,6 +424,8 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	bool		pipe_syntax;
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
+
+	ft_printf("welcome to parseline, we hope you enjoy your stay with us\n");
 	if (!cmd)
 		return (NULL);
 	if (peek(ps, es, "|"))
@@ -427,9 +434,13 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 		pipe_syntax = check_pipe_syntax(*ps, li);
 		if (!pipe_syntax)
 		{
-			free_and_null(cmd);
-			return (NULL);
+			ft_printf("We are giving up on life, the universe, everything\n");
+			free(cmd);
+			cmd = NULL;
+			ft_printf("returning null from parseline\n, in theory. but cmd is actually:\n%p\n", cmd);
+			return (cmd);
 		}
+		ft_putstr_fd("Out of pipe_syntax\n", 1);
 		if (peek(ps, es, "|><"))
 		{
 			ft_putstr_fd("AR-Shell: syntax error: multiple redirect operators\n", 2);
@@ -505,6 +516,7 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 	t_execcmd	*cmd;
 	t_cmd		*ret;
 
+	ft_printf("All hail the mighty ParseExec\n");
 	ret = execcmd();
 	cmd = (t_execcmd *)ret;
 	argc = 0;
@@ -548,6 +560,7 @@ t_cmd	*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	char	*q;
 	char	*eq;
 
+	ft_printf("Behold the majesty of parseredirs\n");
 	if ((!li->in_quotes))
 	{
 		while (peek(ps, es, "<>") && !li->in_quotes)

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/17 17:12:04 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:23:33 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,6 +225,8 @@ t_cmd	*pipecmd(t_cmd *left, t_cmd *right)
 {
 	t_pipecmd	*cmd;
 
+	if (!right)
+		return NULL;
 	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = PIPE;
 	cmd->left = left;
@@ -422,6 +424,7 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	t_cmd		*cmd;
 	int			tok;
 	bool		pipe_syntax;
+	
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
 
@@ -438,7 +441,7 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 			free(cmd);
 			cmd = NULL;
 			ft_printf("returning null from parseline\n, in theory. but cmd is actually:\n%p\n", cmd);
-			return (cmd);
+			return (NULL);
 		}
 		ft_putstr_fd("Out of pipe_syntax\n", 1);
 		if (peek(ps, es, "|><"))
@@ -447,7 +450,10 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 			free(cmd);
 			return (NULL);
 		}
+		ft_printf("here comes a recursive parseline call\n");
 		cmd = pipecmd(cmd, parseline(ps, es, li));
+		if (!cmd)
+			return (NULL);
 	}
 	return (cmd);
 }

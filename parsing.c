@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/16 20:20:23 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/17 15:12:02 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -395,11 +395,28 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 	return (cmd);
 }
 
+bool	check_pipe_syntax(char *ps, t_line_info *li)
+{
+	int i;
+ 
+	//ft_printf("ps is '%s'\n and es is '%s'\n", *ps, es);
+	//ft_printf("li->beg_str is '%s'\n", li->beg_str);
+	i = 0;
+	while (ps[i])
+	{
+		if (!ft_strchr(li->whitespace, ps[i]))
+			return (TRUE);
+		i++;
+	}
+	ft_putstr_fd("AR-Shell: syntax error near unexpected token `|'\n", 2);
+	return (FALSE);
+}
+
 t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 {
 	t_cmd		*cmd;
 	int			tok;
-
+	bool		pipe_syntax;
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
 	if (!cmd)
@@ -407,9 +424,15 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	if (peek(ps, es, "|"))
 	{
 		tok = gettoken(ps, 0, 0, li);
+		pipe_syntax = check_pipe_syntax(*ps, li);
+		if (!pipe_syntax)
+		{
+			free_and_null(cmd);
+			return (NULL);
+		}
 		if (peek(ps, es, "|><"))
 		{
-			ft_putstr_fd("multiple operators\n", 2);
+			ft_putstr_fd("AR-Shell: syntax error: multiple redirect operators\n", 2);
 			free(cmd);
 			return (NULL);
 		}

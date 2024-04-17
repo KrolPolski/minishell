@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 15:00:59 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 16:12:26 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ int	check_matrix(t_execcmd *ecmd, int k, char **new_env)
 	free_and_null(alt_needle);
 	return (i);
 }
+
 /* Initializes various values in the struct to ensure we have
 sufficient memory for the array copy, then does a shallow copy
 from curr_env to new_env */

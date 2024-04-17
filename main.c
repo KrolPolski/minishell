@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 15:42:00 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 16:14:12 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,7 @@ int	main(int argc, char **argv, char **env)
 	read_history(".shell_history");
 	info.prompt = ft_prompt(info.username, "AR-Shell", info.init_dir);
 	info.curr_dir = info.init_dir;
-	//if (argv[1] && !ft_strncmp(argv[1], "test", 5))
-	//	test(&info);
-	//else
-		parsing(&info);
+	parsing(&info);
 	final_cleanup(&info);
 	ft_printf("We bid you all a very fond farewell.\n");
 	exit(0);

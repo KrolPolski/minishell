@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 18:08:49 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/18 15:58:44 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)
 	cmd = parsecommand(p->expanded, li);
 	if (!cmd)
 	{
-		ft_printf("We decided parsecommand result was null\n");
+		//ft_printf("We decided parsecommand result was null\n");
 		null_command_handler(p);
 		return ;
 	}

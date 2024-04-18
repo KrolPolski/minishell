@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/17 18:10:29 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/18 15:58:07 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -381,14 +381,14 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 	char	*beg_str;
 	t_cmd	*cmd;
 
-	ft_printf("we have entered parsecommand\n");
+	//ft_printf("we have entered parsecommand\n");
 	beg_str = str;
 	end_str = str + ft_strlen(str);
 	cmd = parseline(&str, end_str, li);
-	ft_printf("cmd pointer is currently %p\n", cmd);
+//	ft_printf("cmd pointer is currently %p\n", cmd);
 	if (!cmd)
 	{
-		ft_putstr_fd("parsecommand concludes we have an error somewhere(received a null pointer)\n", 2);
+	//	ft_putstr_fd("parsecommand concludes we have an error somewhere(received a null pointer)\n", 2);
 		return (NULL);
 	}
 	peek(&str, end_str, "");
@@ -427,7 +427,7 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
 
-	ft_printf("welcome to parseline, we hope you enjoy your stay with us\n");
+	//ft_printf("welcome to parseline, we hope you enjoy your stay with us\n");
 	if (!cmd)
 		return (NULL);
 	if (peek(ps, es, "|"))
@@ -436,19 +436,19 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 		pipe_syntax = check_pipe_syntax(*ps, li);
 		if (!pipe_syntax)
 		{
-			ft_printf("We are giving up on life, the universe, everything\n");
+			//ft_printf("We are giving up on life, the universe, everything\n");
 			free_and_null(cmd);
-			ft_printf("returning null from parseline\n, in theory. but cmd is actually:\n%p\n", cmd);
+		//	ft_printf("returning null from parseline\n, in theory. but cmd is actually:\n%p\n", cmd);
 			return (NULL);
 		}
-		ft_putstr_fd("Out of pipe_syntax\n", 1);
+		//ft_putstr_fd("Out of pipe_syntax\n", 1);
 		if (peek(ps, es, "|><"))
 		{
 			ft_putstr_fd("AR-Shell: syntax error: multiple redirect operators\n", 2);
 			free_and_null(cmd);
 			return (NULL);
 		}
-		ft_printf("here comes a recursive parseline call\n");
+		//ft_printf("here comes a recursive parseline call\n");
 		cmd = pipecmd(cmd, parseline(ps, es, li));
 		if (!cmd)
 			return (NULL);
@@ -520,7 +520,7 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 	t_execcmd	*cmd;
 	t_cmd		*ret;
 
-	ft_printf("All hail the mighty ParseExec\n");
+	//ft_printf("All hail the mighty ParseExec\n");
 	ret = execcmd();
 	cmd = (t_execcmd *)ret;
 	argc = 0;
@@ -565,7 +565,7 @@ t_cmd	*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	char	*q;
 	char	*eq;
 
-	ft_printf("Behold the majesty of parseredirs\n");
+	//ft_printf("Behold the majesty of parseredirs\n");
 	if ((!li->in_quotes))
 	{
 		while (peek(ps, es, "<>") && !li->in_quotes)
@@ -640,18 +640,18 @@ void	free_tree(t_cmd *cmd)
 
 	if (!cmd)
 		return ;
-	if (cmd->type == 1)
+	else if (cmd->type == 1)
 	{
 		ecmd = (t_execcmd *)cmd;
 		free_and_null(cmd);
 	}
-	if (cmd->type == 2)
+	else if (cmd->type == 2)
 	{
 		rcmd = (t_redircmd *)cmd;
 		free_tree(rcmd->cmd);
 		free_and_null(cmd);
 	}
-	if (cmd->type == 3)
+	else if (cmd->type == 3)
 	{
 		pcmd = (t_pipecmd *)cmd;	
 		free_tree(pcmd->left);
@@ -659,6 +659,7 @@ void	free_tree(t_cmd *cmd)
 		free_and_null(cmd);
 	}
 }
+
 void	one_time_init(t_line_info *li, t_parsing *p, t_info *info)
 {
 	p->ptr_parking = p->str;

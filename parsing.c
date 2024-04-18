@@ -174,7 +174,8 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 		}
 		else if (open(rcmd->file, rcmd->mode, 0666) < 0)
 		{
-			printf("open %s failed\n", rcmd->file);
+			ft_putstr_fd("AR-Shell: ", 2);
+			perror(rcmd->file);
 			exit(1);
 		}
 		execute (rcmd->cmd, env, info, li);

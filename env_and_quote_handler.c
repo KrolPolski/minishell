@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_and_quote_handler.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/17 17:53:15 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/18 18:26:12 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

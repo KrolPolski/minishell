@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/18 17:50:09 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/18 18:43:49 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,16 +39,12 @@ char	*check_command(char *com, char **env)
 
 	paths = parse_paths(env);
 	i = 0;
-	//ft_printf("We got inside check_command\n");
-	//ft_printf("com is '%s'\n", com);
 	if (ft_strchr(com, '/'))
 	{
-		//ft_printf("slash detected\n");
 		if (access(com, X_OK) != -1)
 			return (ft_strdup(com));
 		else
 		{
-			//ft_printf("Nope");
 			ft_putstr_fd("AR-Shell: ", 2);
 			ft_putstr_fd(com, 2);
 			ft_putstr_fd(": ", 2);
@@ -56,7 +52,7 @@ char	*check_command(char *com, char **env)
 			return (NULL);
 		}
 	}
-	while (paths[i])
+	while (paths && paths[i])
 	{
 		com_slash = ft_strjoin(paths[i], "/");
 		command = ft_strjoin(com_slash, com);
@@ -72,7 +68,7 @@ char	*check_command(char *com, char **env)
 	return (NULL);
 }
 
-int fork1(void)
+int	fork1(void)
 {
 	int	pid;
 
@@ -92,7 +88,6 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 	char		*command;
 	char		*builtins[8];
 	int			i;
-	//int fd;
 
 	i = 0;
 	builtins[0] = "cd";
@@ -134,16 +129,10 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 		close(p[1]);
 		wait(&status);
 		if (WIFEXITED(status))
-		{
 			info->exit_code = WEXITSTATUS(status);
-			//ft_printf("Exit code of pipe fork is %d\n", info->exit_code);
-		}
 		wait(&status);
 		if (WIFEXITED(status))
-		{
 			info->exit_code = WEXITSTATUS(status);
-			//ft_printf("Exit code of pipe fork2 is %d\n", info->exit_code);
-		}
 	}
 	else if (cmd->type == EXEC)
 	{
@@ -162,8 +151,6 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 		command = check_command(ecmd->argv[0], env);
 		if (command)
 			execve(command, ecmd->argv, env);
-	//	ft_printf("return value of check command was '%s'\n", command);
-		//printf("execve failed\n");
 		exit(1);
 	}
 	else if (cmd->type == REDIR)
@@ -193,9 +180,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 		}
 		execute (rcmd->cmd, env, info, li);
 	}
-	//free(cmd);
 	exit(info->exit_code);
-	//exit (0); //remember to manually free memory on all exits
 }
 
 t_cmd	*execcmd(void)
@@ -226,32 +211,11 @@ t_cmd	*pipecmd(t_cmd *left, t_cmd *right)
 	t_pipecmd	*cmd;
 
 	if (!right)
-		return NULL;
+		return (NULL);
 	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = PIPE;
 	cmd->left = left;
 	cmd->right = right;
-	return ((t_cmd *)cmd);
-}
-
-t_cmd	*listcmd(t_cmd *left, t_cmd *right)
-{
-	t_listcmd	*cmd;
-
-	cmd = ft_calloc(sizeof(*cmd), 1);
-	cmd->type = LIST;
-	cmd->left = left;
-	cmd->right = right;
-	return ((t_cmd *)cmd);
-}
-
-t_cmd	*backcmd(t_cmd *subcmd)
-{
-	t_backcmd	*cmd;
-
-	cmd = ft_calloc(sizeof(*cmd), 1);
-	cmd->type = BACK;
-	cmd->cmd = subcmd;
 	return ((t_cmd *)cmd);
 }
 
@@ -362,19 +326,15 @@ int	peek(char **ps, char *es, char *tokens)
 {
 	char	*s;
 	char	*whitespace;
-	//ft_printf("entered peek\n");
+
 	whitespace = ft_strdup(" \t\r\n\v");
 	s = *ps;
 	while (s < es && ft_strchr(whitespace, *s))
 		s++;
 	*ps = s;
 	free_and_null(whitespace);
-	//ft_printf("exiting peek\n");
 	return (*s && ft_strchr(tokens, *s));
 }
-//t_cmd *parsepipe(char**, char*);
-
-void	print_exec(t_execcmd *ecmd);
 
 t_cmd	*parsecommand(char *str, t_line_info *li)
 {
@@ -382,14 +342,11 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 	char	*beg_str;
 	t_cmd	*cmd;
 
-	//ft_printf("we have entered parsecommand\n");
 	beg_str = str;
 	end_str = str + ft_strlen(str);
 	cmd = parseline(&str, end_str, li);
-//	ft_printf("cmd pointer is currently %p\n", cmd);
 	if (!cmd)
 	{
-	//	ft_putstr_fd("parsecommand concludes we have an error somewhere(received a null pointer)\n", 2);
 		return (NULL);
 	}
 	peek(&str, end_str, "");
@@ -404,10 +361,8 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 
 bool	check_pipe_syntax(char *ps, t_line_info *li)
 {
-	int i;
- 
-	//ft_printf("ps is '%s'\n and es is '%s'\n", *ps, es);
-	//ft_printf("li->beg_str is '%s'\n", li->beg_str);
+	int	i;
+
 	i = 0;
 	while (ps[i])
 	{
@@ -428,8 +383,6 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
-
-	//ft_printf("welcome to parseline, we hope you enjoy your stay with us\n");
 	if (!cmd)
 		return (NULL);
 	if (peek(ps, es, "|"))
@@ -438,19 +391,15 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 		pipe_syntax = check_pipe_syntax(*ps, li);
 		if (!pipe_syntax)
 		{
-			//ft_printf("We are giving up on life, the universe, everything\n");
 			free_tree(cmd);
-		//	ft_printf("returning null from parseline\n, in theory. but cmd is actually:\n%p\n", cmd);
 			return (NULL);
 		}
-		//ft_putstr_fd("Out of pipe_syntax\n", 1);
 		if (peek(ps, es, "|><"))
 		{
 			ft_putstr_fd("AR-Shell: syntax error: multiple redirect operators\n", 2);
 			free_tree(cmd);
 			return (NULL);
 		}
-		//ft_printf("here comes a recursive parseline call\n");
 		ptr_parking = cmd;
 		cmd = pipecmd(cmd, parseline(ps, es, li));
 		if (!cmd)
@@ -517,16 +466,15 @@ void	check_quotes(char **ps, t_line_info *li)
 /*a function that parses the line for executables and 
 creates nodes accordingly. While looking for executables it also
 needs to consider encountering potential redirections*/
+
 t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 {
 	char		*q;
 	char		*eq;
-	int			tok;
 	int			argc;
 	t_execcmd	*cmd;
 	t_cmd		*ret;
 
-	//ft_printf("All hail the mighty ParseExec\n");
 	ret = execcmd();
 	cmd = (t_execcmd *)ret;
 	argc = 0;
@@ -535,16 +483,13 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 		return (NULL);
 	while ((((**ps != '|') && (!li->in_quotes)) || (li->in_quotes)) && **ps)
 	{
-		if ((tok = gettoken(ps, &q, &eq, li)) == 0)
-			break ;
-		if (tok != 'a')
-			panic("syntax");
+		gettoken(ps, &q, &eq, li);
 		cmd->argv[argc] = q;
 		cmd->eargv[argc] = eq;
 		argc++;
 		ret = parseredirs(ret, ps, es, li);
 		if (!ret)
-			return NULL;
+			return (NULL);
 	}
 	cmd->argv[argc] = 0;
 	cmd->eargv[argc] = 0;
@@ -571,7 +516,6 @@ t_cmd	*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	char	*q;
 	char	*eq;
 
-	//ft_printf("Behold the majesty of parseredirs\n");
 	if ((!li->in_quotes))
 	{
 		while (peek(ps, es, "<>") && !li->in_quotes)
@@ -659,7 +603,7 @@ void	free_tree(t_cmd *cmd)
 	}
 	else if (cmd->type == 3)
 	{
-		pcmd = (t_pipecmd *)cmd;	
+		pcmd = (t_pipecmd *)cmd;
 		free_tree(pcmd->left);
 		free_tree(pcmd->right);
 		free_and_null(cmd);

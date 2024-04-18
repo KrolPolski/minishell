@@ -6,17 +6,22 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/18 15:58:44 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/18 17:32:46 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	null_command_handler(t_parsing *p)
+void	null_command_handler(t_parsing *p, t_line_info *li)
 {
 	free_and_null(p->str);
 	if (p->exp_wants_freedom)
 		free_and_null(p->expanded);
+	if (li->heredoc_buff)
+	{
+		ft_printf("There must be a heredoc_buff that wants freedom\n");
+		free_and_null(li->heredoc_buff);
+	}
 }
 
 void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)
@@ -35,7 +40,7 @@ void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)
 	if (!cmd)
 	{
 		//ft_printf("We decided parsecommand result was null\n");
-		null_command_handler(p);
+		null_command_handler(p, li);
 		return ;
 	}
 	if (cmd->type == EXEC)
@@ -56,7 +61,7 @@ int	parsing(t_info *info)
 	while (p.str != NULL)
 	{
 		parsing_loop(&p, &li, info);
-		//system("leaks -q minishell");
+		system("leaks -q minishell");
 		p.str = readline(info->prompt);
 		p.ptr_parking = p.str;
 	}

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/18 15:58:07 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/18 17:50:09 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,8 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 		}
 		else if (open(rcmd->file, rcmd->mode, 0666) < 0)
 		{
-			printf("open %s failed\n", rcmd->file);
+			ft_putstr_fd("AR-Shell: ", 2);
+			perror(rcmd->file);
 			exit(1);
 		}
 		execute (rcmd->cmd, env, info, li);
@@ -423,7 +424,8 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	t_cmd		*cmd;
 	int			tok;
 	bool		pipe_syntax;
-	
+	t_cmd		*ptr_parking;
+
 	init_line_info(li, ps);
 	cmd = parseexec(ps, es, li);
 
@@ -437,7 +439,7 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 		if (!pipe_syntax)
 		{
 			//ft_printf("We are giving up on life, the universe, everything\n");
-			free_and_null(cmd);
+			free_tree(cmd);
 		//	ft_printf("returning null from parseline\n, in theory. but cmd is actually:\n%p\n", cmd);
 			return (NULL);
 		}
@@ -445,13 +447,17 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 		if (peek(ps, es, "|><"))
 		{
 			ft_putstr_fd("AR-Shell: syntax error: multiple redirect operators\n", 2);
-			free_and_null(cmd);
+			free_tree(cmd);
 			return (NULL);
 		}
 		//ft_printf("here comes a recursive parseline call\n");
+		ptr_parking = cmd;
 		cmd = pipecmd(cmd, parseline(ps, es, li));
 		if (!cmd)
+		{
+			free_tree(ptr_parking);
 			return (NULL);
+		}
 	}
 	return (cmd);
 }

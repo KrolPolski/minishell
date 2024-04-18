@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/18 17:40:04 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/18 17:50:09 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,8 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 		}
 		else if (open(rcmd->file, rcmd->mode, 0666) < 0)
 		{
-			printf("open %s failed\n", rcmd->file);
+			ft_putstr_fd("AR-Shell: ", 2);
+			perror(rcmd->file);
 			exit(1);
 		}
 		execute (rcmd->cmd, env, info, li);

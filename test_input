@@ -12,3 +12,5 @@ echo '$USER'
 echo '"$USER"'
 invalidcommand
 echo "Hello" | invalidcommand	
+ls | grep main |
+ls | grep main >

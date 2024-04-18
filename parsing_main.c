@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 17:02:18 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 18:08:49 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)
 {
 	t_cmd	*cmd;
 
+	cmd = NULL;
 	add_history(p->str);
 	li->heredoc_buff = NULL;
 	p->expanded = expand_env_remove_quotes(p->str, info->curr_env, li);

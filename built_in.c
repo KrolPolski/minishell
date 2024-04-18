@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 18:32:19 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:52:47 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,9 @@ void	ft_cd(t_execcmd *ecmd, t_info *info)
 	if (chdir(target_path) < 0)
 		printf("cannot cd %s\n", ecmd->argv[1]);
 	info->curr_dir = getcwd(buf, sizeof(buf));
-	free(info->prompt);
+	free_and_null(info->prompt);
 	info->prompt = ft_prompt(info->username, "AR-Shell", info->curr_dir);
-	free(home_path);
-	home_path = NULL;
+	free_and_null(home_path);
 }
 
 void	ft_pwd(void)

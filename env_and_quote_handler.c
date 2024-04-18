@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/15 16:09:06 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:53:15 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str)
 	*str = upd_str + (li->beg_var - li->beg_str) + new_vlen - 1;
 	//free(li->beg_str);
 	if (li->free_flag == 1)
-		free(exp_var);
+		free_and_null(exp_var);
 	li->free_flag = 0;
 	return (upd_str);
 }
@@ -101,13 +101,13 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 	li->beg_str = replace_name(li, var, exp_var, &str);
 	li->beg_str_first_time = FALSE;
 	if (ptr_parking)
-		free(ptr_parking);
+		free_and_null(ptr_parking);
 	if (li->begdq && li->enddq)
 	{
 		li->begdq = li->beg_str + diff;
 		li->enddq = ft_strchr(li->begdq + 1, '\"');
 	}
-	free(var);
+	free_and_null(var);
 	if (li->info->ecp_flag == 1)
 	{
 		free (li->info->exit_code_ptr);

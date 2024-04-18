@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/17 17:26:34 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 18:10:29 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,11 @@ char	*check_command(char *com, char **env)
 	{
 		com_slash = ft_strjoin(paths[i], "/");
 		command = ft_strjoin(com_slash, com);
-		free(com_slash);
-		com_slash = NULL;
+		free_and_null(com_slash);
 		if (access(command, X_OK) != -1)
 			return (command);
 		i++;
-		free(command);
+		free_and_null(command);
 	}
 	ft_putstr_fd("AR-Shell: ", 2);
 	ft_putstr_fd(com, 2);
@@ -368,7 +367,7 @@ int	peek(char **ps, char *es, char *tokens)
 	while (s < es && ft_strchr(whitespace, *s))
 		s++;
 	*ps = s;
-	free(whitespace);
+	free_and_null(whitespace);
 	//ft_printf("exiting peek\n");
 	return (*s && ft_strchr(tokens, *s));
 }
@@ -438,8 +437,7 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 		if (!pipe_syntax)
 		{
 			ft_printf("We are giving up on life, the universe, everything\n");
-			free(cmd);
-			cmd = NULL;
+			free_and_null(cmd);
 			ft_printf("returning null from parseline\n, in theory. but cmd is actually:\n%p\n", cmd);
 			return (NULL);
 		}
@@ -447,7 +445,7 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 		if (peek(ps, es, "|><"))
 		{
 			ft_putstr_fd("AR-Shell: syntax error: multiple redirect operators\n", 2);
-			free(cmd);
+			free_and_null(cmd);
 			return (NULL);
 		}
 		ft_printf("here comes a recursive parseline call\n");
@@ -553,8 +551,7 @@ t_cmd	*build_heredoc_node(t_cmd *cmd, char *q, char *eq, t_line_info *li)
 	cmd = redircmd(cmd, NULL, NULL, O_RDONLY, 0);
 	if (li->heredoc_buff)
 	{
-		free(li->heredoc_buff);
-		li->heredoc_buff = NULL;
+		free_and_null(li->heredoc_buff);
 	}
 	li->heredoc_buff = heredoc_builder(q);
 	return (cmd);
@@ -577,7 +574,7 @@ t_cmd	*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 			if (gettoken(ps, &q, &eq, li) != 'a')
 			{
 				ft_putstr_fd("missing file for redirection\n", 2);
-				free(cmd);
+				free_and_null(cmd);
 				return (NULL);
 			}
 			if (tok == '<')
@@ -641,23 +638,25 @@ void	free_tree(t_cmd *cmd)
 	t_pipecmd	*pcmd;
 	t_redircmd	*rcmd;
 
+	if (!cmd)
+		return ;
 	if (cmd->type == 1)
 	{
 		ecmd = (t_execcmd *)cmd;
-		free(cmd);
+		free_and_null(cmd);
 	}
 	if (cmd->type == 2)
 	{
 		rcmd = (t_redircmd *)cmd;
 		free_tree(rcmd->cmd);
-		free(cmd);
+		free_and_null(cmd);
 	}
 	if (cmd->type == 3)
 	{
 		pcmd = (t_pipecmd *)cmd;	
 		free_tree(pcmd->left);
 		free_tree(pcmd->right);
-		free(cmd);
+		free_and_null(cmd);
 	}
 }
 void	one_time_init(t_line_info *li, t_parsing *p, t_info *info)

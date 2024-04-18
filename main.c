@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 16:14:12 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:54:39 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,19 @@ char	*ft_prompt(char *username, char *hostname, char *path)
 	prompt = ft_strjoin("[", username);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, "@");
-	free(ptr_parking);
+	free_and_null(ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, hostname);
-	free(ptr_parking);
+	free_and_null(ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, " ");
-	free(ptr_parking);
+	free_and_null(ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, path);
-	free(ptr_parking);
+	free_and_null(ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, "]$ ");
-	free(ptr_parking);
+	free_and_null(ptr_parking);
 	return (prompt);
 }
 

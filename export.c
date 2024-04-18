@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 16:12:26 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:53:33 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,6 @@ void	ft_export(t_execcmd *ecmd, t_info *info)
 	init_export(ecmd, info, &ex);
 	ft_export_handler(ecmd, &ex);
 	ex.new_env[ex.target_len] = NULL;
-	free(info->curr_env);
+	free_and_null(info->curr_env);
 	info->curr_env = ex.new_env;
 }

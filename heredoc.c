@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 12:23:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 11:44:30 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:53:51 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ char	*heredoc_builder(char *delimiter)
 		buffer = ft_strjoin(buffer, input);
 		parking_two = buffer;
 		buffer = ft_strjoin(buffer, "\n");
-		free(parking_one);
-		free(parking_two);
-		free(input);
+		free_and_null(parking_one);
+		free_and_null(parking_two);
+		free_and_null(input);
 	}
-	free(input);
+	free_and_null(input);
 	return (buffer);
 }

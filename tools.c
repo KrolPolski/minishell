@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 09:19:48 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 11:46:50 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:57:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,9 @@ int	ft_matrix_len(char **str)
 void	final_cleanup(t_info *info)
 {
 	write_history(".shell_history");
-	free(info->username);
-	free(info->init_dir);
-	free(info->prompt);
+	free_and_null(info->username);
+	free_and_null(info->init_dir);
+	free_and_null(info->prompt);
 	free_2d(info->curr_env);
 }
 
@@ -63,10 +63,10 @@ void	set_shell_level(t_info *info)
 		{
 			lvl = ft_atoi(info->curr_env[i] + 6);
 			lvl++;
-			free(info->curr_env[i]);
+			free_and_null(info->curr_env[i]);
 			lvlstr = ft_itoa(lvl);
 			info->curr_env[i] = ft_strjoin("SHLVL=", lvlstr);
-			free(lvlstr);
+			free_and_null(lvlstr);
 			return ;
 		}
 		i++;

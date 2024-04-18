@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 14:24:52 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 15:53:24 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/17 18:07:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,15 @@ void	fork_and_execute(t_cmd *cmd, t_info *info,
 
 void	parsing_cleanup(t_parsing *p, t_cmd *cmd, t_line_info *li)
 {
-	if (p->tree_prisoner)
+	if (p->tree_prisoner && cmd)
 		free_tree(cmd);
 	else
-		free(cmd);
-	free(p->str);
+		free_and_null(cmd);
+	free_and_null(p->str);
 	if (li->heredoc_buff)
-		free(li->heredoc_buff);
+		free_and_null(li->heredoc_buff);
 	if (p->exp_wants_freedom)
-		free(p->expanded);
+		free_and_null(p->expanded);
 }
 
 void	parsing_signal_exit_codes(t_parsing *p, t_info *info)

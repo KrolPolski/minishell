@@ -6,14 +6,14 @@
 #    By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 13:42:54 by rboudwin          #+#    #+#              #
-#    Updated: 2024/04/17 17:59:38 by rboudwin         ###   ########.fr        #
+#    Updated: 2024/04/18 16:14:42 by rboudwin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	:= minishell 
 #CFLAGS	:= -Wextra -Wall -Werror -Wunreachable-code -Ofast 
-CFLAGS := -I /Users/$(USER)/.brew/opt/readline/include -Wextra -Wall -Werror -Wunreachable-code -fsanitize=address
-LDFLAGS := -L /Users/$(USER)/.brew/opt/readline/lib -fsanitize=address
+CFLAGS := -I /Users/$(USER)/.brew/opt/readline/include -Wextra -Wall -Werror -Wunreachable-code #-fsanitize=address
+LDFLAGS := -L /Users/$(USER)/.brew/opt/readline/lib #-fsanitize=address
 SRCS	:= main.c signals.c parsing.c parsing2.c env_handling.c tools.c built_in.c \
 			built_in2.c env_and_quote_handler.c heredoc.c \
 			export.c export2.c unset.c parsing_main.c

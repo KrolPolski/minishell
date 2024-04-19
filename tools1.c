@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 17:48:28 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 17:55:04 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/19 19:27:51 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,13 @@ char	*fetch_env_var(char *var, char **env, t_line_info *li)
 		i++;
 	}
 	return (NULL);
+}
+
+/*a function that initializes whitespace and symbols strings*/
+void	one_time_init(t_line_info *li, t_parsing *p, t_info *info)
+{
+	p->ptr_parking = p->str;
+	li->info = info;
+	li->whitespace = ft_strdup(" \t\r\n\v");
+	li->symbols = ft_strdup("<|>");
 }

@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/19 16:21:01 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/19 19:09:38 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,13 @@ typedef struct s_unset
 	char	curr_len;
 	char	**new_env;
 }	t_unset;
+
+typedef struct s_redir_node_info
+{
+	char	*q;
+	char	*eq;
+	bool	heredoc_flag;
+}	t_redir_node_info;
 
 //external from brew readline
 

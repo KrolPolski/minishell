@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 16:05:42 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/19 19:27:19 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*a function that populates the path array*/
 char	**parse_paths(char **env)
 {
 	int		i;
@@ -30,6 +31,8 @@ char	**parse_paths(char **env)
 	return (paths);
 }
 
+/*a function that checks the access to an absolute
+path command*/
 char	*check_absolute_path(char *com)
 {
 	if (access(com, X_OK) != -1)
@@ -44,6 +47,8 @@ char	*check_absolute_path(char *com)
 	}
 }
 
+/*a function that creates the paths array and looks for 
+the command based on that or an absolute path*/
 char	*check_command(char *com, char **env)
 {
 	char	*com_slash;
@@ -81,18 +86,119 @@ int	fork1(void)
 	return (pid);
 }
 
-void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
+void	handle_pipe_fds(int *p, int fd)
 {
-	int			p[2];
-	t_execcmd	*ecmd;
+	close(fd);
+	dup(p[fd]);
+	close(p[0]);
+	close(p[1]);
+}
+
+void	wait_and_set_exit_code(t_info *info)
+{
+	int	status;
+
+	wait(&status);
+	if (WIFEXITED(status))
+		info->exit_code = WEXITSTATUS(status);
+	wait(&status);
+	if (WIFEXITED(status))
+		info->exit_code = WEXITSTATUS(status);
+}
+
+/*a function that handles the pipe node*/
+void	handle_pipe_node(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
+{
 	t_pipecmd	*pcmd;
+	int			p[2];
+
+	pcmd = (t_pipecmd *)cmd;
+	if (pipe(p) < 0)
+		panic("pipe");
+	li->pid = fork1();
+	if (li->pid == 0)
+	{
+		handle_pipe_fds(p, 1);
+		execute(pcmd->left, env, info, li);
+	}
+	li->pid = fork1();
+	if (li->pid == 0)
+	{
+		handle_pipe_fds(p, 0);
+		execute(pcmd->right, env, info, li);
+	}
+	close(p[0]);
+	close(p[1]);
+	wait_and_set_exit_code(info);
+}
+
+/*a function that handles heredoc by piping the heredoc byffer*/
+void	handle_heredoc_case(t_line_info *li, t_redircmd *rcmd, int *p)
+{
+	if (pipe(p) < 0)
+	{
+		printf("Pipe creation failed\n");
+		exit(1);
+	}
+	if (write(p[1], li->heredoc_buff, ft_strlen(li->heredoc_buff)) < 0)
+	{
+		printf("Writing to the pipe failed\n");
+		exit(1);
+	}
+	close(p[1]);
+	rcmd->fd = p[0];
+}
+
+void	handle_redir_node(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
+{
 	t_redircmd	*rcmd;
-	int			status;
+	int			p[2];
+
+	rcmd = (t_redircmd *)cmd;
+	close (rcmd->fd);
+	if (rcmd->file == NULL)
+		handle_heredoc_case(li, rcmd, p);
+	else if (open(rcmd->file, rcmd->mode, 0666) < 0)
+	{
+		ft_putstr_fd("AR-Shell: ", 2);
+		perror(rcmd->file);
+		exit(1);
+	}
+	execute (rcmd->cmd, env, info, li);
+}
+
+/*a function that handles exec node and builtins*/
+void	handle_exec_node(t_cmd *cmd, char **env, t_info *info, char **builtins)
+{
+	t_execcmd	*ecmd;
 	char		*command;
-	char		*builtins[8];
 	int			i;
 
 	i = 0;
+	ecmd = (t_execcmd *)cmd;
+	if (ecmd->argv[0] == NULL)
+		exit(1);
+	while (builtins[i])
+	{
+		if (ft_strlen(builtins[i]) == ft_strlen(ecmd->argv[0]) && \
+			!ft_strncmp(ecmd->argv[0], builtins[i], ft_strlen(builtins[i])))
+		{
+			handle_builtins(ecmd, builtins[i], info);
+			exit(1);
+		}
+		i++;
+	}
+	command = check_command(ecmd->argv[0], env);
+	if (command)
+		execve(command, ecmd->argv, env);
+	exit(1);
+}
+
+/*main execute function that calls functions handling differend nodes*/
+void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
+{
+	char		*builtins[8];
+
 	builtins[0] = "cd";
 	builtins[1] = "pwd";
 	builtins[2] = "echo";
@@ -106,83 +212,11 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 	if (!cmd->type)
 		panic("execute");
 	if (cmd->type == PIPE)
-	{
-		pcmd = (t_pipecmd *)cmd;
-		if (pipe(p) < 0)
-			panic("pipe");
-		li->pid = fork1();
-		if (li->pid == 0)
-		{
-			close(1);
-			dup(p[1]);
-			close(p[0]);
-			close(p[1]);
-			execute(pcmd->left, env, info, li);
-		}
-		li->pid = fork1();
-		if (li->pid == 0)
-		{
-			close(0);
-			dup(p[0]);
-			close(p[0]);
-			close(p[1]);
-			execute(pcmd->right, env, info, li);
-		}
-		close(p[0]);
-		close(p[1]);
-		wait(&status);
-		if (WIFEXITED(status))
-			info->exit_code = WEXITSTATUS(status);
-		wait(&status);
-		if (WIFEXITED(status))
-			info->exit_code = WEXITSTATUS(status);
-	}
+		handle_pipe_node(cmd, env, info, li);
 	else if (cmd->type == EXEC)
-	{
-		ecmd = (t_execcmd *)cmd;
-		if (ecmd->argv[0] == NULL)
-			exit(1);
-		while (builtins[i])
-		{
-			if (ft_strlen(builtins[i]) == ft_strlen(ecmd->argv[0]) && !ft_strncmp(ecmd->argv[0], builtins[i], ft_strlen(builtins[i])))
-			{
-				handle_builtins(ecmd, builtins[i], info);
-				exit(1);
-			}
-			i++;
-		}
-		command = check_command(ecmd->argv[0], env);
-		if (command)
-			execve(command, ecmd->argv, env);
-		exit(1);
-	}
+		handle_exec_node(cmd, env, info, builtins);
 	else if (cmd->type == REDIR)
-	{
-		rcmd = (t_redircmd *)cmd;
-		close (rcmd->fd);
-		if (rcmd->file == NULL)
-		{
-			if (pipe(p) < 0)
-			{
-				printf("Pipe creation failed\n");
-				exit(1);
-			}
-			if (write(p[1], li->heredoc_buff, ft_strlen(li->heredoc_buff)) < 0)
-			{
-				printf("Writing to the pipe failed\n");
-				exit(1);
-			}
-			close(p[1]);
-			rcmd->fd = p[0];
-		}
-		else if (open(rcmd->file, rcmd->mode, 0666) < 0)
-		{
-			ft_putstr_fd("AR-Shell: ", 2);
-			perror(rcmd->file);
-			exit(1);
-		}
-		execute (rcmd->cmd, env, info, li);
-	}
+		handle_redir_node(cmd, env, info, li);
 	exit(info->exit_code);
 }
 
@@ -197,15 +231,23 @@ t_cmd	*execcmd(void)
 }
 
 /*a function that constructs a redirect node*/
-t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode, int fd)
+t_cmd	*redircmd(t_cmd *subcmd, t_redir_node_info *rni, int mode, int fd)
 {
 	t_redircmd	*cmd;
 
 	cmd = ft_calloc(sizeof(*cmd), 1);
 	cmd->type = REDIR;
 	cmd->cmd = subcmd;
-	cmd->file = file;
-	cmd->efile = efile;
+	if (rni->heredoc_flag == 0)
+	{
+		cmd->file = rni->q;
+		cmd->efile = rni->eq;
+	}
+	else
+	{
+		cmd->file = NULL;
+		rni->heredoc_flag = 0;
+	}
 	cmd->mode = mode;
 	cmd->fd = fd;
 	return ((t_cmd *)cmd);
@@ -520,15 +562,16 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 
 /*a function that builds a heredoc node. Nulls are passed as
 a workaround to trigger the heredoc case when the node is executed later*/
-t_cmd	*build_heredoc_node(t_cmd *cmd, char *q, char *eq, t_line_info *li)
+t_cmd	*build_heredoc_node(t_cmd *cmd, t_redir_node_info *rni, t_line_info *li)
 {
-	*eq = 0;
-	cmd = redircmd(cmd, NULL, NULL, O_RDONLY, 0);
+	*rni->eq = 0;
+	rni->heredoc_flag = 1;
+	cmd = redircmd(cmd, rni, O_RDONLY, 0);
 	if (li->heredoc_buff)
 	{
 		free_and_null(li->heredoc_buff);
 	}
-	li->heredoc_buff = heredoc_builder(q);
+	li->heredoc_buff = heredoc_builder(rni->q);
 	return (cmd);
 }
 
@@ -536,28 +579,28 @@ t_cmd	*build_heredoc_node(t_cmd *cmd, char *q, char *eq, t_line_info *li)
 redirect nodes and also handles the heredoc case*/
 t_cmd	*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 {
-	char	*q;
-	char	*eq;
+	t_redir_node_info	rni;
 
+	rni.heredoc_flag = 0;
 	if ((!li->in_quotes))
 	{
 		while (peek(ps, es, "<>") && !li->in_quotes)
 		{
 			li->redir_tok = gettoken(ps, 0, 0, li);
-			if (gettoken(ps, &q, &eq, li) != 'a')
+			if (gettoken(ps, &rni.q, &rni.eq, li) != 'a')
 			{
 				ft_putstr_fd("missing file for redirection\n", 2);
 				free_and_null(cmd);
 				return (NULL);
 			}
 			if (li->redir_tok == '<')
-				cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
+				cmd = redircmd(cmd, &rni, O_RDONLY, 0);
 			else if (li->redir_tok == '-')
-				cmd = build_heredoc_node(cmd, q, eq, li);
+				cmd = build_heredoc_node(cmd, &rni, li);
 			else if (li->redir_tok == '>')
-				cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_TRUNC, 1);
+				cmd = redircmd(cmd, &rni, O_WRONLY | O_CREAT | O_TRUNC, 1);
 			else if (li->redir_tok == '+')
-				cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_APPEND, 1);
+				cmd = redircmd(cmd, &rni, O_WRONLY | O_CREAT | O_APPEND, 1);
 		}
 	}
 	return (cmd);
@@ -633,10 +676,3 @@ void	free_tree(t_cmd *cmd)
 	}
 }
 
-void	one_time_init(t_line_info *li, t_parsing *p, t_info *info)
-{
-	p->ptr_parking = p->str;
-	li->info = info;
-	li->whitespace = ft_strdup(" \t\r\n\v");
-	li->symbols = ft_strdup("<|>");
-}

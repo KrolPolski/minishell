@@ -6,35 +6,15 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 16:20:56 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/19 17:57:19 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*fetch_env_var(char *var, char **env, t_line_info *li)
-{
-	int		i;
-	char	*eq_ptr;
-
-	if (!ft_strncmp(var, "$?", 3))
-	{
-		li->info->exit_code_ptr = ft_itoa(li->info->exit_code);
-		li->info->ecp_flag = 1;
-		return (li->info->exit_code_ptr);
-	}
-	i = 0;
-	while (env[i])
-	{
-		eq_ptr = ft_strchr(env[i], '=');
-		if ((long)ft_strlen(var) - 1 == eq_ptr - env[i])
-			if (ft_strnstr(env[i], var + 1, ft_strlen(var) - 1))
-				return (env[i] + ft_strlen(var));
-		i++;
-	}
-	return (NULL);
-}
-
+/*a function that uses memcpy to stich a new string replacing the string being
+parsed by removing the variable name and adding the expanded variable in 
+its place */
 char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str)
 {
 	size_t	old_vlen;
@@ -63,21 +43,47 @@ char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str)
 	return (upd_str);
 }
 
-char	*expand_env(t_line_info *li, char *str, char **env)
+/*a function that handles the fetching of the env variable from the array and
+putting it into the string if found, or, replacing it with empty string*/
+void	fetch_and_replace(t_line_info *li, char **str, char **env, int diff)
 {
 	char	*var;
 	char	*exp_var;
-	int		diff;
 	char	*ptr_parking;
 
 	ptr_parking = NULL;
+	var = ft_calloc(*str - li->beg_var + 1, 1);
+	ft_strlcpy(var, li->beg_var, *str - li->beg_var + 1);
+	exp_var = fetch_env_var(var, env, li);
+	if (exp_var == NULL)
+		li->free_flag = 1;
+	if (li->beg_str_first_time == FALSE)
+		ptr_parking = li->beg_str;
+	li->beg_str = replace_name(li, var, exp_var, str);
+	li->beg_str_first_time = FALSE;
+	if (ptr_parking)
+		free_and_null(ptr_parking);
+	if (li->begdq && li->enddq)
+	{
+		li->begdq = li->beg_str + diff;
+		li->enddq = ft_strchr(li->begdq + 1, '\"');
+	}
+	free_and_null(var);
+}
+
+/*a function that determines the variable to be replaced and handles
+the special ? case, returning position in the string after the replaced
+variable*/
+char	*expand_env(t_line_info *li, char *str, char **env)
+{
+	int		diff;
 
 	diff = li->begdq - li->beg_str;
 	li->end_str = li->beg_str + ft_strlen(li->beg_str);
 	li->beg_var = str;
 	if (*(str + 1) == ' ' || !*(str + 1))
 		return (str);
-	if (*(str + 1) == '?' || (*(str + 1) == '_'))
+	if (*(str + 1) == '?')
 	{
 		str++;
 		str++;
@@ -88,23 +94,7 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 			if (*str == '$')
 				break ;
 	}
-	var = ft_calloc(str - li->beg_var + 1, 1);
-	ft_strlcpy(var, li->beg_var, str - li->beg_var + 1);
-	exp_var = fetch_env_var(var, env, li);
-	if (exp_var == NULL)
-		li->free_flag = 1;
-	if (li->beg_str_first_time == FALSE)
-		ptr_parking = li->beg_str;
-	li->beg_str = replace_name(li, var, exp_var, &str);
-	li->beg_str_first_time = FALSE;
-	if (ptr_parking)
-		free_and_null(ptr_parking);
-	if (li->begdq && li->enddq)
-	{
-		li->begdq = li->beg_str + diff;
-		li->enddq = ft_strchr(li->begdq + 1, '\"');
-	}
-	free_and_null(var);
+	fetch_and_replace(li, &str, env, diff);
 	if (li->info->ecp_flag == 1)
 	{
 		free (li->info->exit_code_ptr);
@@ -113,12 +103,8 @@ char	*expand_env(t_line_info *li, char *str, char **env)
 	return (str);
 }
 
-void	remove_quotes(char *begq, char *endq)
-{
-	ft_memmove(begq, begq + 1, ft_strlen(begq));
-	ft_memmove(endq - 1, endq, ft_strlen(endq - 1));
-}
-
+/*a function that looks for quotes in the line and sets the quote flags,
+calling the expand_env function when appropriate*/
 void	quote_handler(t_line_info *li, char **str, char **env)
 {
 	if (**str == '\'' && li->dfl != 1 && li->sfl == 0)
@@ -145,24 +131,8 @@ void	quote_handler(t_line_info *li, char **str, char **env)
 	}
 }
 
-void	init_line_info(t_line_info *li, char **str)
-{
-	li->sfl = 0;
-	li->dfl = 0;
-	li->hdfl = 0;
-	li->endsq = NULL;
-	li->enddq = NULL;
-	li->begsq = NULL;
-	li->begdq = NULL;
-	li->beg_var = NULL;
-	li->beg_str = *str;
-	li->beg_str_first_time = TRUE;
-	li->end_str = *str + ft_strlen(*str);
-	li->free_flag = 0;
-	li->flag_changed = 0;
-	li->in_quotes = 0;
-}
-
+/*main expander function that goes through the line received from readline
+and expands the environmental variables if these are found*/
 char	*expand_main(char *str, char **env, t_line_info *li)
 {
 	init_line_info(li, &str);

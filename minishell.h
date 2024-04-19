@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/18 18:27:18 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/19 16:21:01 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ typedef struct s_line_info
 	char	*symbols;
 	char	*heredoc_buff;
 	int		pid;
+	int		redir_tok;
 	t_info	*info;
 }	t_line_info;
 
@@ -176,7 +177,7 @@ char		*search_matrix(char *arg, char **matrix, int *i, int curr_len);
 
 //env_and_quote_handler.c
 
-char		*expand_env_remove_quotes(char *str, char **env, t_line_info *li);
+char		*expand_main(char *str, char **env, t_line_info *li);
 char		*expand_env(t_line_info *li, char *str, char **env);
 char		*fetch_env_var(char *var, char **env, t_line_info *li);
 void		init_line_info(t_line_info *li, char **str);
@@ -211,7 +212,7 @@ int			parsing(t_info *info);
 int			peek(char **ps, char *es, char *tokens);
 void		check_quotes(char **ps, t_line_info *li);
 t_cmd		*parseline(char **ps, char *es, t_line_info *li);
-t_cmd*		parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
+t_cmd		*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
 t_cmd		*nullterminate(t_cmd *cmd);
 t_cmd		*parseexec(char **ps, char *es, t_line_info *li);
 
@@ -222,7 +223,6 @@ void		parsing_cleanup(t_parsing *p, t_cmd *cmd, t_line_info *li);
 void		parsing_signal_exit_codes(t_parsing *p, t_info *info);
 void		single_command_handler(t_cmd *cmd, t_info *info,
 				t_parsing *p, t_line_info *li);
-				
 //signals.c
 
 void		set_signal_action(void);

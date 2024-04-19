@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/18 18:43:49 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/19 16:05:42 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,20 @@ char	**parse_paths(char **env)
 	return (paths);
 }
 
+char	*check_absolute_path(char *com)
+{
+	if (access(com, X_OK) != -1)
+		return (ft_strdup(com));
+	else
+	{
+		ft_putstr_fd("AR-Shell: ", 2);
+		ft_putstr_fd(com, 2);
+		ft_putstr_fd(": ", 2);
+		perror("");
+		return (NULL);
+	}
+}
+
 char	*check_command(char *com, char **env)
 {
 	char	*com_slash;
@@ -40,18 +54,7 @@ char	*check_command(char *com, char **env)
 	paths = parse_paths(env);
 	i = 0;
 	if (ft_strchr(com, '/'))
-	{
-		if (access(com, X_OK) != -1)
-			return (ft_strdup(com));
-		else
-		{
-			ft_putstr_fd("AR-Shell: ", 2);
-			ft_putstr_fd(com, 2);
-			ft_putstr_fd(": ", 2);
-			perror("");
-			return (NULL);
-		}
-	}
+		return (check_absolute_path(com));
 	while (paths && paths[i])
 	{
 		com_slash = ft_strjoin(paths[i], "/");
@@ -183,6 +186,7 @@ void	execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 	exit(info->exit_code);
 }
 
+/*a function that constructs an exec node*/
 t_cmd	*execcmd(void)
 {
 	t_execcmd	*cmd;
@@ -192,6 +196,7 @@ t_cmd	*execcmd(void)
 	return ((t_cmd *)cmd);
 }
 
+/*a function that constructs a redirect node*/
 t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode, int fd)
 {
 	t_redircmd	*cmd;
@@ -206,6 +211,7 @@ t_cmd	*redircmd(t_cmd *subcmd, char *file, char *efile, int mode, int fd)
 	return ((t_cmd *)cmd);
 }
 
+/*a function that constructs a pipe node*/
 t_cmd	*pipecmd(t_cmd *left, t_cmd *right)
 {
 	t_pipecmd	*cmd;
@@ -219,6 +225,7 @@ t_cmd	*pipecmd(t_cmd *left, t_cmd *right)
 	return ((t_cmd *)cmd);
 }
 
+/*a fucntion handling quote removal and setting of quote flags back to 0*/
 void	handle_quote_removal(char **str, t_line_info *li, bool qflag)
 {
 	if (qflag == 0)
@@ -243,6 +250,8 @@ void	handle_quote_removal(char **str, t_line_info *li, bool qflag)
 	}
 }
 
+/*a function that handles the tokens that are not special characters
+and makes sure that the quotes are handled and removed appropriately*/
 void	handle_regular_chars(char **str, t_line_info *li)
 {
 	while (*str < li->end_str && (!(ft_strchr(li->whitespace, **str))) \
@@ -272,6 +281,8 @@ void	handle_regular_chars(char **str, t_line_info *li)
 	}
 }
 
+/*a function that sets the return value to the type of encountered token
+and moves the string pointer to the character past the end of the token*/
 void	handle_current_char(char **str, int *ret, t_line_info *li)
 {
 	if (**str == '|' && (!li->in_quotes))
@@ -301,6 +312,8 @@ void	handle_current_char(char **str, int *ret, t_line_info *li)
 	}
 }
 
+/*a fucntion that fetches the type of the current token and sets its
+beginning and end at q and eq respectively while moving the string pointer*/
 int	gettoken(char **pstr, char **q, char **eq, t_line_info *li)
 {
 	char	*str;
@@ -322,6 +335,8 @@ int	gettoken(char **pstr, char **q, char **eq, t_line_info *li)
 	return (ret);
 }
 
+/*a fucntion that checks what token is upcoming next in the parsed
+line and whether it is a specific character*/
 int	peek(char **ps, char *es, char *tokens)
 {
 	char	*s;
@@ -336,6 +351,9 @@ int	peek(char **ps, char *es, char *tokens)
 	return (*s && ft_strchr(tokens, *s));
 }
 
+/*a function that begins the parsing and after the line is parsed puts
+null terminators after each token in it. Not sure if the leftovers check is 
+needed anymore*/
 t_cmd	*parsecommand(char *str, t_line_info *li)
 {
 	char	*end_str;
@@ -359,11 +377,18 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 	return (cmd);
 }
 
-bool	check_pipe_syntax(char *ps, t_line_info *li)
+/*a function that makes sure that there are no multiple sequential
+operators in the parsed string or lone pipes at the end of it*/
+bool	check_pipe_syntax(char *ps, char *es, t_line_info *li)
 {
 	int	i;
 
 	i = 0;
+	if (peek(&ps, es, "|><"))
+	{
+		ft_putstr_fd("AR-Shell: syntax error: multiple operators\n", 2);
+		return (FALSE);
+	}
 	while (ps[i])
 	{
 		if (!ft_strchr(li->whitespace, ps[i]))
@@ -374,11 +399,12 @@ bool	check_pipe_syntax(char *ps, t_line_info *li)
 	return (FALSE);
 }
 
+/*a function that parses the line for executables and pipes, 
+creating pipe nodes when appropriate*/
 t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 {
 	t_cmd		*cmd;
 	int			tok;
-	bool		pipe_syntax;
 	t_cmd		*ptr_parking;
 
 	init_line_info(li, ps);
@@ -388,15 +414,8 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	if (peek(ps, es, "|"))
 	{
 		tok = gettoken(ps, 0, 0, li);
-		pipe_syntax = check_pipe_syntax(*ps, li);
-		if (!pipe_syntax)
+		if (!check_pipe_syntax(*ps, es, li))
 		{
-			free_tree(cmd);
-			return (NULL);
-		}
-		if (peek(ps, es, "|><"))
-		{
-			ft_putstr_fd("AR-Shell: syntax error: multiple redirect operators\n", 2);
 			free_tree(cmd);
 			return (NULL);
 		}
@@ -411,6 +430,8 @@ t_cmd	*parseline(char **ps, char *es, t_line_info *li)
 	return (cmd);
 }
 
+/*a fucntion that sets appropriate flags based on whether
+there are single or double quotes to be encountered*/
 void	handle_quote_flags(t_line_info *li, bool qflag)
 {
 	if (qflag == 0)
@@ -436,6 +457,7 @@ void	handle_quote_flags(t_line_info *li, bool qflag)
 		}
 	}
 }
+
 /*a function that looks for quotes and sets flags appropriately
 depending on whether the beginning or end of quotes is discovered*/
 void	check_quotes(char **ps, t_line_info *li)
@@ -496,6 +518,8 @@ t_cmd	*parseexec(char **ps, char *es, t_line_info *li)
 	return (ret);
 }
 
+/*a function that builds a heredoc node. Nulls are passed as
+a workaround to trigger the heredoc case when the node is executed later*/
 t_cmd	*build_heredoc_node(t_cmd *cmd, char *q, char *eq, t_line_info *li)
 {
 	*eq = 0;
@@ -512,7 +536,6 @@ t_cmd	*build_heredoc_node(t_cmd *cmd, char *q, char *eq, t_line_info *li)
 redirect nodes and also handles the heredoc case*/
 t_cmd	*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 {
-	int		tok;
 	char	*q;
 	char	*eq;
 
@@ -520,20 +543,20 @@ t_cmd	*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li)
 	{
 		while (peek(ps, es, "<>") && !li->in_quotes)
 		{
-			tok = gettoken(ps, 0, 0, li);
+			li->redir_tok = gettoken(ps, 0, 0, li);
 			if (gettoken(ps, &q, &eq, li) != 'a')
 			{
 				ft_putstr_fd("missing file for redirection\n", 2);
 				free_and_null(cmd);
 				return (NULL);
 			}
-			if (tok == '<')
+			if (li->redir_tok == '<')
 				cmd = redircmd(cmd, q, eq, O_RDONLY, 0);
-			else if (tok == '-')
+			else if (li->redir_tok == '-')
 				cmd = build_heredoc_node(cmd, q, eq, li);
-			else if (tok == '>')
+			else if (li->redir_tok == '>')
 				cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_TRUNC, 1);
-			else if (tok == '+')
+			else if (li->redir_tok == '+')
 				cmd = redircmd(cmd, q, eq, O_WRONLY | O_CREAT | O_APPEND, 1);
 		}
 	}

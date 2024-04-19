@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/18 18:26:12 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/19 16:20:56 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@ char	*fetch_env_var(char *var, char **env, t_line_info *li)
 		li->info->ecp_flag = 1;
 		return (li->info->exit_code_ptr);
 	}
-	// else if (!ft_strncmp(var, "$_", 3))
-	// 	return (li->info->path_to_the_command_that_Ryan_will_kindly_provide_me);
 	i = 0;
 	while (env[i])
 	{
@@ -59,7 +57,6 @@ char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str)
 	ft_memcpy(upd_str + (li->beg_var - li->beg_str) + new_vlen, li->beg_var + \
 		old_vlen, old_strlen - (li->beg_var - li->beg_str) - old_vlen + 1);
 	*str = upd_str + (li->beg_var - li->beg_str) + new_vlen - 1;
-	//free(li->beg_str);
 	if (li->free_flag == 1)
 		free_and_null(exp_var);
 	li->free_flag = 0;
@@ -166,40 +163,23 @@ void	init_line_info(t_line_info *li, char **str)
 	li->in_quotes = 0;
 }
 
-//seems like instead of making a function that sets everything in the struct
-//to null you can typecast it like this after declaration:
-/*li = (t_line_info){};
-li.beg_str = str;*/
-
-char	*expand_env_remove_quotes(char *str, char **env, t_line_info *li)
+char	*expand_main(char *str, char **env, t_line_info *li)
 {
-	//ft_printf("entered expand_env_remove_quotes\n");
 	init_line_info(li, &str);
-
 	while (*str)
 	{
-		//ft_printf("before quote handler str = '%s'\n", str);
 		quote_handler(li, &str, env);
-		//ft_printf("after quote_handler str = '%s'\n", str);
 		if (li->endsq != NULL && (str == li->endsq))
 		{
-			//remove_quotes(li.begsq, li.endsq);
 			li->sfl = 0;
 			li->endsq = NULL;
-			//str--;
-			//str--;
 		}
 		if (li->enddq != NULL && (str == li->enddq))
 		{
-			//remove_quotes(li.begdq, li.enddq);
 			li->dfl = 0;
 			li->enddq = NULL;
-			//str--;
-			//str--;
 		}
 		str++;
 	}
-	//ft_printf("out of quote loop\n");
-	//ft_printf("exiting expand_env_remove_quotes\n");
 	return (li->beg_str);
 }

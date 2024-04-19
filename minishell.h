@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/19 19:09:38 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/19 20:14:31 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,29 +169,65 @@ void		handle_builtins(t_execcmd *ecmd,
 
 //built_in2.c
 
-int			check_matrix(t_execcmd *ecmd, int k, char **new_env);
-void		ft_export(t_execcmd *ecmd, t_info *info);
-void		export_empty(t_info *info);
-void		init_export(t_execcmd *ecmd, t_info *info, t_export *ex);
-char		*var_to_equals(t_execcmd *ecmd, int k, int i);
-
-//built_in3.c
-
 void		ft_exit(t_execcmd *ecmd, t_info *info);
-void		ft_unset(t_execcmd *ecmd, t_info *info);
-void		copy_unset(t_info *info, t_unset *un);
-char		*search_matrix(char *arg, char **matrix, int *i, int curr_len);
+
+//constructors.c
+
+t_cmd		*execcmd(void);
+t_cmd		*redircmd(t_cmd *subcmd, t_redir_node_info *rni, int mode, int fd);
+t_cmd		*pipecmd(t_cmd *left, t_cmd *right);
+t_cmd		*build_heredoc_node(t_cmd *cmd, \
+				t_redir_node_info *rni, t_line_info *li);
 
 //env_and_quote_handler.c
 
 char		*expand_main(char *str, char **env, t_line_info *li);
-char		*expand_env(t_line_info *li, char *str, char **env);
-char		*fetch_env_var(char *var, char **env, t_line_info *li);
-void		init_line_info(t_line_info *li, char **str);
 void		quote_handler(t_line_info *li, char **str, char **env);
-void		remove_quotes(char *begq, char *endq);
-char		*replace_name(t_line_info *li, char *var,
-				char *exp_var, char **str);
+void		fetch_and_replace(t_line_info *li, \
+				char **str, char **env, int diff);
+char		*expand_env(t_line_info *li, char *str, char **env);
+char		*replace_name(t_line_info *li, \
+				char *var, char *exp_var, char **str);
+
+//execute_tools.c
+
+int			fork1(void);
+void		handle_pipe_fds(int *p, int fd);
+void		wait_and_set_exit_code(t_info *info);
+
+//execute.c
+
+void		handle_pipe_node(t_cmd *cmd, \
+				char **env, t_info *info, t_line_info *li);
+void		handle_heredoc_case(t_line_info *li, t_redircmd *rcmd, int *p);
+void		handle_redir_node(t_cmd *cmd, \
+				char **env, t_info *info, t_line_info *li);
+void		handle_exec_node(t_cmd *cmd, \
+				char **env, t_info *info, char **builtins);
+void		execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li);
+
+//export.c
+
+int			check_matrix_no_needle(t_execcmd *ecmd, \
+				char **new_env, int i, int k);
+int			check_matrix(t_execcmd *ecmd, int k, char **new_env);
+void		init_export(t_execcmd *ecmd, t_info *info, t_export *ex);
+void		ft_export_handler(t_execcmd *ecmd, t_export *ex);
+void		ft_export(t_execcmd *ecmd, t_info *info);
+
+//export2.c
+
+int			export_validator(char *str);
+char		*var_to_equals(t_execcmd *ecmd, int k, int i);
+void		export_empty(t_info *info);
+
+//friends_of_gettoken.c
+
+void		handle_quote_removal(char **str, t_line_info *li, bool qflag);
+void		handle_regular_chars(char **str, t_line_info *li);
+void		handle_current_char(char **str, int *ret, t_line_info *li);
+void		handle_quote_flags(t_line_info *li, bool qflag);
+void		check_quotes(char **ps, t_line_info *li);
 
 //heredoc.c
 
@@ -199,29 +235,39 @@ char		*heredoc_builder(char *delimiter);
 
 //main.c
 
-void		final_cleanup(t_info *info);
+void		set_username_dir(t_info *info);
 int			main(int argc, char **argv, char **env);
 void		populate_env_matrix(t_info *info);
 void		set_shell_level(t_info *info);
-void		set_termios_settings(void);
 char		*ft_prompt(char *username, char *hostname, char *path);
+
+//parsing_main.c
+
+void		null_command_handler(t_parsing *p, t_line_info *li);
+void		parsing_loop(t_parsing *p, t_line_info *li, t_info *info);
+int			parsing(t_info *info);
+
+//parsing_tools_command
+
+char		**parse_paths(char **env);
+char		*check_absolute_path(char *com);
+char		*check_command(char *com, char **env);
+
+//parsing_tools.c
+
+void		nullterminate_exec(t_cmd *cmd);
+t_cmd		*nullterminate(t_cmd *cmd);
+void		free_tree(t_cmd *cmd);
+bool		check_pipe_syntax(char *ps, char *es, t_line_info *li);
+int			peek(char **ps, char *es, char *tokens);
 
 //parsing.c
 
-void		one_time_init(t_line_info *li, t_parsing *p, t_info *info);
+int			gettoken(char **pstr, char **q, char **eq, t_line_info *li);
 t_cmd		*parsecommand(char *str, t_line_info *li);
-char		*check_command(char *com, char **env);
-void		execute(t_cmd *cmd, char **env, t_info *info, t_line_info *li);
-void		free_tree(t_cmd *cmd);
-int			fork1(void);
-char		**parse_paths(char **env);
-int			parsing(t_info *info);
-int			peek(char **ps, char *es, char *tokens);
-void		check_quotes(char **ps, t_line_info *li);
 t_cmd		*parseline(char **ps, char *es, t_line_info *li);
-t_cmd		*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
-t_cmd		*nullterminate(t_cmd *cmd);
 t_cmd		*parseexec(char **ps, char *es, t_line_info *li);
+t_cmd		*parseredirs(t_cmd *cmd, char **ps, char *es, t_line_info *li);
 
 //parsing2.c
 void		fork_and_execute(t_cmd *cmd, t_info *info,
@@ -233,19 +279,32 @@ void		single_command_handler(t_cmd *cmd, t_info *info,
 //signals.c
 
 void		set_signal_action(void);
-void		restore_curs_pos(void);
-void		save_curs_pos(void);
 void		sigint_handler(int signal);
 
 // tools.c
 void		free_2d(char **arr);
 int			ft_matrix_len(char **str);
-int			export_validator(char *str);
 void		final_cleanup(t_info *info);
 void		set_shell_level(t_info *info);
 void		panic(char *str);
+
+//tools1.c
+
+void		init_line_info(t_line_info *li, char **str);
+void		remove_quotes(char *begq, char *endq);
+char		*fetch_env_var(char *var, char **env, t_line_info *li);
+void		one_time_init(t_line_info *li, t_parsing *p, t_info *info);
+
 // unit_tests.c
 void		test(t_info *info);
 int			alt_parsing(t_info *info, char *str);
+
+//unset.c
+
+int			unset_validator(char *str);
+char		*search_matrix(char *arg, char **matrix, int *i, int curr_len);
+void		copy_unset(t_info *info, t_unset *un);
+void		print_unset_error(t_execcmd *ecmd, t_unset *un);
+void		ft_unset(t_execcmd *ecmd, t_info *info);
 
 #endif

@@ -14,3 +14,11 @@ invalidcommand
 echo "Hello" | invalidcommand	
 ls | grep main |
 ls | grep main >
+echo "hello" 'there' '"$USER"' ''$USERR'' "$HOMEE" '$PATH' '"$HOME"'
+echo $USE $US
+echo hi there "|cat lol.c |> cat >> lol.c" hello there 'hi hi | hi hi' "|yes > hello<"
+echo "'"hi"'"
+echo ''"'"hi"'"''
+"l""s"
+"l"s "-""l"'a'
+e'c'"h"'o' "h"i

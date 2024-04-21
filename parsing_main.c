@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_main.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/18 17:32:46 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/19 19:26:53 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)
 	cmd = NULL;
 	add_history(p->str);
 	li->heredoc_buff = NULL;
-	p->expanded = expand_env_remove_quotes(p->str, info->curr_env, li);
+	p->expanded = expand_main(p->str, info->curr_env, li);
 	if (p->expanded == p->ptr_parking)
 		p->exp_wants_freedom = 0;
 	else
@@ -39,7 +39,6 @@ void	parsing_loop(t_parsing *p, t_line_info *li, t_info *info)
 	cmd = parsecommand(p->expanded, li);
 	if (!cmd)
 	{
-		//ft_printf("We decided parsecommand result was null\n");
 		null_command_handler(p, li);
 		return ;
 	}

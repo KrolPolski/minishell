@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_main.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/19 19:26:53 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:23:06 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	parsing(t_info *info)
 	while (p.str != NULL)
 	{
 		parsing_loop(&p, &li, info);
-		system("leaks -q minishell");
+		//system("leaks -q minishell");
 		p.str = readline(info->prompt);
 		p.ptr_parking = p.str;
 	}

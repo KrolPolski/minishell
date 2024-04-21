@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_tools.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 19:29:52 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 19:48:19 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:29:27 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ int	peek(char **ps, char *es, char *tokens)
 	char	*whitespace;
 
 	whitespace = ft_strdup(" \t\r\n\v");
+	check_malloc_failure(whitespace);
 	s = *ps;
 	while (s < es && ft_strchr(whitespace, *s))
 		s++;

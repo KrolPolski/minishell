@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 09:19:48 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 17:57:30 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:32:25 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void	set_shell_level(t_info *info)
 			lvl++;
 			free_and_null(info->curr_env[i]);
 			lvlstr = ft_itoa(lvl);
+			check_malloc_failure(lvlstr);
 			info->curr_env[i] = ft_strjoin("SHLVL=", lvlstr);
 			free_and_null(lvlstr);
 			return ;

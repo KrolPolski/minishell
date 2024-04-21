@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 19:32:24 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/21 15:27:22 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:28:58 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,9 @@ char	*check_command(char *com, char **env)
 	while (paths && paths[i])
 	{
 		com_slash = ft_strjoin(paths[i], "/");
+		check_malloc_failure(com_slash);
 		command = ft_strjoin(com_slash, com);
+		check_malloc_failure(command);
 		free_and_null(com_slash);
 		if (access(command, X_OK) != -1)
 			return (command);

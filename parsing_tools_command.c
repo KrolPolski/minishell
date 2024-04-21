@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_tools_command.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 19:32:24 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 19:48:20 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:27:22 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,10 @@ char	**parse_paths(char **env)
 	while (env[i])
 	{
 		if (ft_strnstr(env[i], "PATH=", 5))
+		{
 			paths = ft_split(env[i] + 5, ':');
+			check_malloc_failure(paths);
+		}
 		i++;
 	}
 	return (paths);
@@ -33,8 +36,14 @@ char	**parse_paths(char **env)
 path command*/
 char	*check_absolute_path(char *com)
 {
+	char *dup;
+
 	if (access(com, X_OK) != -1)
-		return (ft_strdup(com));
+	{
+		dup = ft_strdup(com);
+		check_malloc_failure(dup);
+		return (dup);
+	}
 	else
 	{
 		ft_putstr_fd("AR-Shell: ", 2);

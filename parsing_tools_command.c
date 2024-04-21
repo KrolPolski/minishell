@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 19:32:24 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/21 15:28:58 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 16:03:18 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ char	**parse_paths(char **env)
 path command*/
 char	*check_absolute_path(char *com)
 {
-	char *dup;
+	char	*dup;
 
 	if (access(com, X_OK) != -1)
 	{

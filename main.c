@@ -6,13 +6,11 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/21 15:22:18 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 16:03:05 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
 
 /* builds a prompt that includes a username and current path */
 char	*ft_prompt(char *username, char *hostname, char *path)

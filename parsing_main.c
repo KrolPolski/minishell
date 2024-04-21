@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/21 15:23:06 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:59:02 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	null_command_handler(t_parsing *p, t_line_info *li)
 		free_and_null(p->expanded);
 	if (li->heredoc_buff)
 	{
-		ft_printf("There must be a heredoc_buff that wants freedom\n");
 		free_and_null(li->heredoc_buff);
 	}
 }
@@ -60,7 +59,7 @@ int	parsing(t_info *info)
 	while (p.str != NULL)
 	{
 		parsing_loop(&p, &li, info);
-		//system("leaks -q minishell");
+		system("leaks -q minishell");
 		p.str = readline(info->prompt);
 		p.ptr_parking = p.str;
 	}

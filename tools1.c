@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tools1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 17:48:28 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 19:27:51 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/21 14:55:07 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,14 @@ void	one_time_init(t_line_info *li, t_parsing *p, t_info *info)
 	li->info = info;
 	li->whitespace = ft_strdup(" \t\r\n\v");
 	li->symbols = ft_strdup("<|>");
+}
+
+void	check_malloc_failure(void *ptr)
+{
+	if (!ptr)
+	{
+		panic("AR-Shell: Memory allocation failure");
+	}
+	else
+		return ;
 }

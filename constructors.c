@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   constructors.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 19:36:48 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 19:48:26 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/21 14:59:11 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ t_cmd	*execcmd(void)
 	t_execcmd	*cmd;
 
 	cmd = ft_calloc(sizeof(*cmd), 1);
+	check_malloc_failure(cmd);
 	cmd->type = EXEC;
 	return ((t_cmd *)cmd);
 }
@@ -28,6 +29,7 @@ t_cmd	*redircmd(t_cmd *subcmd, t_redir_node_info *rni, int mode, int fd)
 	t_redircmd	*cmd;
 
 	cmd = ft_calloc(sizeof(*cmd), 1);
+	check_malloc_failure(cmd);
 	cmd->type = REDIR;
 	cmd->cmd = subcmd;
 	if (rni->heredoc_flag == 0)
@@ -53,6 +55,7 @@ t_cmd	*pipecmd(t_cmd *left, t_cmd *right)
 	if (!right)
 		return (NULL);
 	cmd = ft_calloc(sizeof(*cmd), 1);
+	check_malloc_failure(cmd);
 	cmd->type = PIPE;
 	cmd->left = left;
 	cmd->right = right;

@@ -6,11 +6,13 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 17:54:39 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:12:26 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+
 
 /* builds a prompt that includes a username and current path */
 char	*ft_prompt(char *username, char *hostname, char *path)
@@ -19,21 +21,22 @@ char	*ft_prompt(char *username, char *hostname, char *path)
 	char	*ptr_parking;
 
 	prompt = ft_strjoin("[", username);
+	check_malloc_failure(prompt);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, "@");
-	free_and_null(ptr_parking);
+	check_and_free(prompt, ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, hostname);
-	free_and_null(ptr_parking);
+	check_and_free(prompt, ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, " ");
-	free_and_null(ptr_parking);
+	check_and_free(prompt, ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, path);
-	free_and_null(ptr_parking);
+	check_and_free(prompt, ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, "]$ ");
-	free_and_null(ptr_parking);
+	check_and_free(prompt, ptr_parking);
 	return (prompt);
 }
 

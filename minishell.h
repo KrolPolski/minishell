@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/19 20:14:31 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:13:16 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,6 +294,10 @@ void		init_line_info(t_line_info *li, char **str);
 void		remove_quotes(char *begq, char *endq);
 char		*fetch_env_var(char *var, char **env, t_line_info *li);
 void		one_time_init(t_line_info *li, t_parsing *p, t_info *info);
+void		check_malloc_failure(void *ptr);
+
+//tools2.c
+void		check_and_free(char *prompt, char *ptr_parking);
 
 // unit_tests.c
 void		test(t_info *info);

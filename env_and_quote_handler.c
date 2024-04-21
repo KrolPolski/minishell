@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_and_quote_handler.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:49:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 17:57:19 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:02:38 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,13 @@ char	*replace_name(t_line_info *li, char *var, char *exp_var, char **str)
 
 	if (exp_var == NULL)
 		exp_var = ft_strdup("");
+	check_malloc_failure(exp_var);
 	old_strlen = ft_strlen(li->beg_str);
 	old_vlen = ft_strlen(var);
 	new_vlen = ft_strlen(exp_var);
 	new_strlen = old_strlen + new_vlen - old_vlen;
 	upd_str = ft_calloc(new_strlen + 1, 1);
-	if (upd_str == NULL)
-		return (NULL);
+	check_malloc_failure(upd_str);
 	ft_memcpy(upd_str, li->beg_str, li->beg_var - li->beg_str);
 	ft_memcpy(upd_str + (li->beg_var - li->beg_str), exp_var, new_vlen);
 	ft_memcpy(upd_str + (li->beg_var - li->beg_str) + new_vlen, li->beg_var + \
@@ -53,6 +53,7 @@ void	fetch_and_replace(t_line_info *li, char **str, char **env, int diff)
 
 	ptr_parking = NULL;
 	var = ft_calloc(*str - li->beg_var + 1, 1);
+	check_malloc_failure(var);
 	ft_strlcpy(var, li->beg_var, *str - li->beg_var + 1);
 	exp_var = fetch_env_var(var, env, li);
 	if (exp_var == NULL)

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 12:23:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 17:53:51 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:08:03 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ char	*heredoc_builder(char *delimiter)
 	char	*parking_two;
 
 	buffer = ft_strdup("");
+	check_malloc_failure(buffer);
 	while (true)
 	{
 		input = readline("> ");
@@ -29,8 +30,10 @@ char	*heredoc_builder(char *delimiter)
 			break ;
 		parking_one = buffer;
 		buffer = ft_strjoin(buffer, input);
+		check_malloc_failure(buffer);
 		parking_two = buffer;
 		buffer = ft_strjoin(buffer, "\n");
+		check_malloc_failure(buffer);
 		free_and_null(parking_one);
 		free_and_null(parking_two);
 		free_and_null(input);

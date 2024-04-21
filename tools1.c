@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tools1.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 17:48:28 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 19:27:51 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:32:44 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ char	*fetch_env_var(char *var, char **env, t_line_info *li)
 	if (!ft_strncmp(var, "$?", 3))
 	{
 		li->info->exit_code_ptr = ft_itoa(li->info->exit_code);
+		check_malloc_failure(li->info->exit_code_ptr);
 		li->info->ecp_flag = 1;
 		return (li->info->exit_code_ptr);
 	}
@@ -69,5 +70,17 @@ void	one_time_init(t_line_info *li, t_parsing *p, t_info *info)
 	p->ptr_parking = p->str;
 	li->info = info;
 	li->whitespace = ft_strdup(" \t\r\n\v");
+	check_malloc_failure(li->whitespace);
 	li->symbols = ft_strdup("<|>");
+	check_malloc_failure(li->symbols);
+}
+
+void	check_malloc_failure(void *ptr)
+{
+	if (!ptr)
+	{
+		panic("AR-Shell: Memory allocation failure");
+	}
+	else
+		return ;
 }

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 14:39:49 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/16 11:50:31 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:33:36 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ char	*search_matrix(char *arg, char **matrix, int *i, int curr_len)
 
 	*i = 0;
 	arg_plus = ft_strjoin(arg, "=");
+	check_malloc_failure(arg_plus);
 	while (*i < curr_len)
 	{
 		if (!matrix[*i])
@@ -63,8 +64,7 @@ unset to the new_env matrix */
 void	copy_unset(t_info *info, t_unset *un)
 {
 	un->new_env = ft_calloc(sizeof(char *), (un->curr_len + 1));
-	if (!un->new_env)
-		exit(1);
+	check_malloc_failure(un->new_env);
 	un->i = 0;
 	un->k = 0;
 	while (un->k < un->curr_len)

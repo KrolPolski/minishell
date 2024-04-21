@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 11:30:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 17:53:33 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:04:07 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,7 @@ void	init_export(t_execcmd *ecmd, t_info *info, t_export *ex)
 	ex->curr_len = ft_matrix_len(info->curr_env);
 	ex->target_len = ex->curr_len + ft_matrix_len(ecmd->argv);
 	ex->new_env = ft_calloc(sizeof(char *), ex->target_len + 1);
-	if (!ex->new_env)
-	{
-		ft_printf("malloc failure\n");
-		exit(1);
-	}
+	check_malloc_failure(ex->new_env);
 	ex->i = 0;
 	while (info->curr_env[ex->i])
 	{

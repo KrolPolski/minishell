@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 17:52:47 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 14:57:12 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void	ft_cd(t_execcmd *ecmd, t_info *info)
 	char	*target_path;
 
 	home_path = ft_strjoin("/Users/", info->username);
+	check_malloc_failure(home_path);
 	if (!ecmd->argv[1])
 	{
 		target_path = home_path;

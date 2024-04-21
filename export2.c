@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 13:18:47 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 16:12:44 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:05:16 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,7 @@ char	*var_to_equals(t_execcmd *ecmd, int k, int i)
 	else
 	{
 		needle = ft_calloc(equal_pos - ecmd->argv[k] + 2, 1);
-		if (!needle)
-			return (NULL);
+		check_malloc_failure(needle);
 		while (ecmd->argv[k][i] && ecmd->argv[k][i] != '=')
 		{
 			needle[i] = ecmd->argv[k][i];

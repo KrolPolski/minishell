@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:40 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 17:54:39 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/21 16:03:05 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,21 +19,22 @@ char	*ft_prompt(char *username, char *hostname, char *path)
 	char	*ptr_parking;
 
 	prompt = ft_strjoin("[", username);
+	check_malloc_failure(prompt);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, "@");
-	free_and_null(ptr_parking);
+	check_and_free(prompt, ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, hostname);
-	free_and_null(ptr_parking);
+	check_and_free(prompt, ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, " ");
-	free_and_null(ptr_parking);
+	check_and_free(prompt, ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, path);
-	free_and_null(ptr_parking);
+	check_and_free(prompt, ptr_parking);
 	ptr_parking = prompt;
 	prompt = ft_strjoin(prompt, "]$ ");
-	free_and_null(ptr_parking);
+	check_and_free(prompt, ptr_parking);
 	return (prompt);
 }
 
@@ -61,6 +62,7 @@ void	populate_env_matrix(t_info *info)
 	while (info->init_env[i])
 	{
 		info->curr_env[i] = ft_strdup(info->init_env[i]);
+		check_malloc_failure(info->curr_env[i]);
 		i++;
 	}
 	info->curr_env[i] = NULL;
@@ -74,9 +76,15 @@ void	set_username_dir(t_info *info)
 	while (info->curr_env[i] != NULL)
 	{
 		if (ft_strnstr(info->curr_env[i], "USER=", 5))
+		{
 			info->username = ft_strdup(info->curr_env[i] + 5);
+			check_malloc_failure(info->username);
+		}
 		else if (ft_strnstr(info->curr_env[i], "PWD=", 4))
+		{
 			info->init_dir = ft_strdup(info->curr_env[i] + 4);
+			check_malloc_failure (info->init_dir);
+		}
 		i++;
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_main.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/19 19:26:53 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/21 15:59:02 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ void	null_command_handler(t_parsing *p, t_line_info *li)
 		free_and_null(p->expanded);
 	if (li->heredoc_buff)
 	{
-		ft_printf("There must be a heredoc_buff that wants freedom\n");
 		free_and_null(li->heredoc_buff);
 	}
 }

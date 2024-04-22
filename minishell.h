@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/22 15:18:48 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:38:12 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@
 # define EXEC  1
 # define REDIR 2
 # define PIPE  3
-# define LIST  4
-# define BACK  5
 # define MAXARGS 100
 
 typedef struct s_cmd
@@ -56,19 +54,6 @@ typedef struct s_pipecmd
 	t_cmd		*left;
 	t_cmd		*right;
 }	t_pipecmd;
-
-typedef struct s_listcmd
-{
-	int			type;
-	t_cmd		*left;
-	t_cmd		*right;
-}	t_listcmd;
-
-typedef struct s_backcmd
-{
-	int			type;
-	t_cmd		*cmd;
-}	t_backcmd;
 
 typedef struct s_info
 {

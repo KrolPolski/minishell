@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/21 15:29:28 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:53:50 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,7 @@ int	gettoken(char **pstr, char **q, char **eq, t_line_info *li)
 }
 
 /*a function that begins the parsing and after the line is parsed puts
-null terminators after each token in it. Not sure if the leftovers check is 
-needed anymore*/
+null terminators after each token in it.*/ 
 t_cmd	*parsecommand(char *str, t_line_info *li)
 {
 	char	*end_str;
@@ -54,11 +53,6 @@ t_cmd	*parsecommand(char *str, t_line_info *li)
 		return (NULL);
 	}
 	peek(&str, end_str, "");
-	if (str != end_str)
-	{
-		printf("leftovers: %s\n", str);
-		panic("syntax");
-	}
 	nullterminate(cmd);
 	return (cmd);
 }

@@ -6,26 +6,20 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/21 15:13:16 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 13:35:17 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 # include "Libft/libft.h"
-# include "Libft/vec.h"
-# include "Libft/ft_printf.h"
-# include "Libft/get_next_line_bonus.h"
 # include <signal.h>
 # include <stdio.h>
 # include <fcntl.h>
-# include <stdlib.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <termios.h>
 # include <curses.h>
-# include <term.h>
-# include <termcap.h>
 
 # define EXEC  1
 # define REDIR 2

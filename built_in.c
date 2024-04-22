@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/21 14:57:12 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 13:52:06 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 /* changes directory and updates our custom prompt */
 void	ft_cd(t_execcmd *ecmd, t_info *info)
 {
-	char	buf[100];
 	char	*home_path;
 	char	*target_path;
 
@@ -31,10 +30,11 @@ void	ft_cd(t_execcmd *ecmd, t_info *info)
 	}
 	if (chdir(target_path) < 0)
 		printf("cannot cd %s\n", ecmd->argv[1]);
-	info->curr_dir = getcwd(buf, sizeof(buf));
+	info->curr_dir = getcwd(NULL, 0);
 	free_and_null(info->prompt);
 	info->prompt = ft_prompt(info->username, "AR-Shell", info->curr_dir);
 	free_and_null(home_path);
+	free_and_null(info->curr_dir);
 }
 
 void	ft_pwd(void)

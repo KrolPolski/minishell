@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   friends_of_gettoken.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 19:40:03 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 19:48:22 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:29:57 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/*a fucntion handling quote removal and setting of quote flags back to 0*/
+/*a function handling quote removal and setting of quote flags back to 0*/
 void	handle_quote_removal(char **str, t_line_info *li, bool qflag)
 {
 	if (qflag == 0)

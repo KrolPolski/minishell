@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/22 13:54:32 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:07:39 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ void	ft_cd(t_execcmd *ecmd, t_info *info)
 	if (chdir(target_path) < 0)
 		printf("cannot cd %s\n", ecmd->argv[1]);
 	info->curr_dir = getcwd(NULL, 0);
+	check_malloc_failure(info->curr_dir);
 	free_and_null(info->prompt);
 	info->prompt = ft_prompt(info->username, "AR-Shell", info->curr_dir);
 	free_and_null(home_path);
@@ -68,7 +69,7 @@ void	ft_env(t_info *info)
 	}
 }
 
-void	ft_echo(t_execcmd *ecmd)
+void	ft_echo(t_execcmd *ecmd, t_info *info)
 {
 	int	nl;
 	int	i;
@@ -89,6 +90,7 @@ void	ft_echo(t_execcmd *ecmd)
 	}
 	if (nl == 1)
 		ft_putchar_fd('\n', 1);
+	info->exit_code = 0;
 }
 
 void	handle_builtins(t_execcmd *ecmd, char *builtin_command, t_info *info)
@@ -98,7 +100,7 @@ void	handle_builtins(t_execcmd *ecmd, char *builtin_command, t_info *info)
 	if (!ft_strncmp(builtin_command, "cd", ft_strlen(builtin_command)))
 		return ;
 	if (!ft_strncmp(builtin_command, "echo", ft_strlen(builtin_command)))
-		ft_echo(ecmd);
+		ft_echo(ecmd, info);
 	if (!ft_strncmp(builtin_command, "env", ft_strlen(builtin_command)))
 		ft_env(info);
 	if (!ft_strncmp(builtin_command, "export", ft_strlen(builtin_command)))

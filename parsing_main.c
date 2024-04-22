@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 15:50:22 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/21 15:59:02 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:39:11 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ int	parsing(t_info *info)
 	while (p.str != NULL)
 	{
 		parsing_loop(&p, &li, info);
-		system("leaks -q minishell");
 		p.str = readline(info->prompt);
 		p.ptr_parking = p.str;
 	}

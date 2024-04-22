@@ -6,14 +6,13 @@
 #    By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/30 13:42:54 by rboudwin          #+#    #+#              #
-#    Updated: 2024/04/21 15:57:14 by rboudwin         ###   ########.fr        #
+#    Updated: 2024/04/22 15:35:01 by rboudwin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	:= minishell 
-#CFLAGS	:= -Wextra -Wall -Werror -Wunreachable-code -Ofast 
-CFLAGS := -I /Users/$(USER)/.brew/opt/readline/include -Wextra -Wall -Werror -Wunreachable-code #-fsanitize=address
-LDFLAGS := -L /Users/$(USER)/.brew/opt/readline/lib #-fsanitize=address
+CFLAGS := -I /Users/$(USER)/.brew/opt/readline/include -Wextra -Wall -Werror -Wunreachable-code
+LDFLAGS := -L /Users/$(USER)/.brew/opt/readline/lib
 SRCS	:= main.c signals.c parsing.c parsing2.c tools.c built_in.c \
 			built_in2.c env_and_quote_handler.c heredoc.c \
 			export.c export2.c unset.c parsing_main.c tools1.c tools2.c \
@@ -27,14 +26,13 @@ all: $(NAME)
 	@$(CC) $(CFLAGS) -o $@ -c $< 
 
 $(NAME): $(OBJS) 
-	@$(CC) $(OBJS) -o $(NAME) $(LDFLAGS) -lreadline -ltermcap -lncurses
-#-ltermcap -lncurses might be needed for termcap stuff like save/restore cursor
+	@$(CC) $(OBJS) -o $(NAME) $(LDFLAGS) -lreadline  
 
 Libft/libft.a: 
 	$(MAKE) -C Libft/ all
 	$(MAKE) -C Libft/ bonus
 
-clean:
+clean: 
 	@rm -rf $(OBJS)
 	rm -f Libft/.bonus;
 	$(MAKE) -C Libft/ clean

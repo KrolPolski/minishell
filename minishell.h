@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/22 13:35:17 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:38:12 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@
 # define EXEC  1
 # define REDIR 2
 # define PIPE  3
-# define LIST  4
-# define BACK  5
 # define MAXARGS 100
 
 typedef struct s_cmd
@@ -56,19 +54,6 @@ typedef struct s_pipecmd
 	t_cmd		*left;
 	t_cmd		*right;
 }	t_pipecmd;
-
-typedef struct s_listcmd
-{
-	int			type;
-	t_cmd		*left;
-	t_cmd		*right;
-}	t_listcmd;
-
-typedef struct s_backcmd
-{
-	int			type;
-	t_cmd		*cmd;
-}	t_backcmd;
 
 typedef struct s_info
 {
@@ -155,7 +140,7 @@ extern void	rl_replace_line(const char *text, int clear_undo);
 //built_in.c
 
 void		ft_cd(t_execcmd *ecmd, t_info *info);
-void		ft_echo(t_execcmd *ecmd);
+void		ft_echo(t_execcmd *ecmd, t_info *info);
 void		ft_env(t_info *info);
 void		ft_pwd(void);
 void		handle_builtins(t_execcmd *ecmd,
@@ -185,7 +170,7 @@ char		*replace_name(t_line_info *li, \
 
 //execute_tools.c
 
-int			fork1(void);
+int			fork_with_protection(void);
 void		handle_pipe_fds(int *p, int fd);
 void		wait_and_set_exit_code(t_info *info);
 

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 14:24:52 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/17 18:07:30 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:18:48 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	single_command_handler(t_cmd *cmd, t_info *info,
 		ft_pwd();
 	else
 	{
-		li->pid = fork1();
+		li->pid = fork_with_protection();
 		if (li->pid == 0)
 		{
 			signal(SIGQUIT, SIG_DFL);
@@ -43,7 +43,7 @@ void	single_command_handler(t_cmd *cmd, t_info *info,
 void	fork_and_execute(t_cmd *cmd, t_info *info,
 			t_line_info *li, t_parsing *p)
 {
-	li->pid = fork1();
+	li->pid = fork_with_protection();
 	if (li->pid == 0)
 	{
 		signal(SIGQUIT, SIG_DFL);

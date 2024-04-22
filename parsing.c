@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 14:36:57 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/22 15:53:50 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 16:07:48 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	gettoken(char **pstr, char **q, char **eq, t_line_info *li)
 }
 
 /*a function that begins the parsing and after the line is parsed puts
-null terminators after each token in it.*/ 
+null terminators after each token in it.*/
 t_cmd	*parsecommand(char *str, t_line_info *li)
 {
 	char	*end_str;

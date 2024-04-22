@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 19:29:52 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/22 16:05:03 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 16:07:36 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ bool	check_pipe_syntax(char *ps, char *es, t_line_info *li)
 	i = 0;
 	if (peek(&ps, es, "|"))
 	{
-		ft_putstr_fd("AR-Shell: syntax error: multiple operators\n", 2);
+		ft_putstr_fd("AR-Shell: syntax error: multiple pipe operators\n", 2);
 		return (FALSE);
 	}
 	while (ps[i])

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 10:09:19 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/22 13:52:06 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 13:54:32 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,14 @@ void	ft_cd(t_execcmd *ecmd, t_info *info)
 
 void	ft_pwd(void)
 {
-	char	buf[100];
+	char	*buf;
 
-	if (!(getcwd(buf, sizeof(buf))))
+	buf = getcwd(NULL, 0);
+	if (!buf)
 		printf("pwd error\n");
 	else
 		(printf("%s%s", buf, "\n"));
+	free_and_null(buf);
 }
 
 /* prints all env variables with values defined */

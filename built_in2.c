@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 15:54:15 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/15 16:07:41 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 16:40:53 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,6 @@ void	ft_exit(t_execcmd *ecmd, t_info *info)
 		exit_code = info->exit_code;
 	free_2d(info->curr_env);
 	ft_printf("exit\n");
+	write_history(".shell_history");
 	exit(exit_code);
 }

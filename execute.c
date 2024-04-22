@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 19:34:00 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 19:48:24 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:06:09 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void	handle_exec_node(t_cmd *cmd, char **env, t_info *info, char **builtins)
 			!ft_strncmp(ecmd->argv[0], builtins[i], ft_strlen(builtins[i])))
 		{
 			handle_builtins(ecmd, builtins[i], info);
-			exit(1);
+			exit(info->exit_code);
 		}
 		i++;
 	}

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   execute_tools.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 19:35:02 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/19 19:48:25 by akovalev         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:18:25 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	fork1(void)
+int	fork_with_protection(void)
 {
 	int	pid;
 

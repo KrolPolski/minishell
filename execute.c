@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/19 19:34:00 by akovalev          #+#    #+#             */
-/*   Updated: 2024/04/22 15:06:09 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:18:48 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@ void	handle_pipe_node(t_cmd *cmd, char **env, t_info *info, t_line_info *li)
 	pcmd = (t_pipecmd *)cmd;
 	if (pipe(p) < 0)
 		panic("pipe");
-	li->pid = fork1();
+	li->pid = fork_with_protection();
 	if (li->pid == 0)
 	{
 		handle_pipe_fds(p, 1);
 		execute(pcmd->left, env, info, li);
 	}
-	li->pid = fork1();
+	li->pid = fork_with_protection();
 	if (li->pid == 0)
 	{
 		handle_pipe_fds(p, 0);

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 18:01:56 by rboudwin          #+#    #+#             */
-/*   Updated: 2024/04/22 15:03:04 by rboudwin         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:18:48 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ char		*replace_name(t_line_info *li, \
 
 //execute_tools.c
 
-int			fork1(void);
+int			fork_with_protection(void);
 void		handle_pipe_fds(int *p, int fd);
 void		wait_and_set_exit_code(t_info *info);
 
